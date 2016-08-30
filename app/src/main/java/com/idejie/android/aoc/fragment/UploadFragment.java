@@ -23,6 +23,7 @@ import com.google.common.collect.ImmutableMap;
 import com.idejie.android.aoc.R;
 import com.idejie.android.aoc.dialog.CityDialog;
 import com.idejie.android.aoc.dialog.MyDialog;
+import com.idejie.android.aoc.dialog.SortDialog;
 import com.idejie.android.aoc.model.PriceModel;
 import com.idejie.android.aoc.model.SortModel;
 import com.idejie.android.aoc.repository.PriceRepository;
@@ -59,7 +60,8 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
     private TextView textProvince,textType,textRank;
     private String province,type,rank,price,amount,marketName;
     private LinearLayout lineProvince,lineType,lineRank;
-    private Handler hanDialog,hanCityDialog;
+    private Handler hanDialog,hanCityDialog,hanSortDialog;
+    private String sorts[][];
     /**
      * 初始化操作
      */
@@ -126,6 +128,15 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
 
             }
         };
+        hanSortDialog = new Handler() {
+            public void handleMessage(Message msg) {
+                // TODO Auto-generated method stub
+                CityDialog dialog=new CityDialog(context,hanCityDialog, (Integer) msg.obj);
+                dialog.show();
+
+
+            }
+        };
 
     }
 
@@ -170,6 +181,7 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
                 break;
             case R.id.line_2:
                 getSort();
+                SortDialog sortDialog=new SortDialog(context,hanSortDialog,sorts);
                 break;
             case R.id.line_3:
                 break;
