@@ -22,11 +22,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.idejie.android.aoc.R;
 import com.idejie.android.aoc.activity.TendencyActivity;
+import com.idejie.android.aoc.adapter.SearchListAdapter;
 import com.idejie.android.aoc.dialog.CityDialog;
 import com.idejie.android.aoc.dialog.MyDialog;
 import com.idejie.android.aoc.fragment.tab.SecondLayerFragment;
@@ -61,6 +63,8 @@ public class SearchFragment extends LazyFragment implements View.OnClickListener
     private View view;
     private String lat,lon;
     private Handler han;
+    private ListView listView;
+    private SearchListAdapter searchListAdapter;
     String url="http://api.map.baidu.com/geocoder/v2/";
 
     /**
@@ -148,6 +152,7 @@ public class SearchFragment extends LazyFragment implements View.OnClickListener
         tendBtn.setOnClickListener(this);
         cityText = (TextView) view.findViewById(R.id.textCity);
         cityText.setOnClickListener(this);
+        listView= (ListView) view.findViewById(R.id.listView);
         han = new Handler() {
             public void handleMessage(Message msg) {
                 // TODO Auto-generated method stub
