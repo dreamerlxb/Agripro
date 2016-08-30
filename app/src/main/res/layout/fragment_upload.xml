@@ -63,6 +63,7 @@
                     android:orientation="horizontal">
 
                     <TextView
+                        android:id="@+id/province"
                         android:text="省市"
                         android:textColor="@color/grey"
                         android:textSize="@dimen/text_size"
@@ -129,6 +130,7 @@
                     android:orientation="horizontal">
 
                     <TextView
+                        android:id="@+id/type"
                         android:text="品种"
                         android:textColor="@color/grey"
                         android:textSize="@dimen/text_size"
@@ -194,6 +196,7 @@
                     android:orientation="horizontal">
 
                     <TextView
+                        android:id="@+id/rank"
                         android:text="级别"
                         android:textColor="@color/grey"
                         android:textSize="@dimen/text_size"

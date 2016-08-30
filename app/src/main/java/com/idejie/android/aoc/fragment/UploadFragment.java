@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import android.support.v4.app.FragmentTransaction;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,15 +14,23 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.common.collect.ImmutableMap;
 import com.idejie.android.aoc.R;
+import com.idejie.android.aoc.model.PriceModel;
+import com.idejie.android.aoc.repository.PriceRepository;
 import com.idejie.android.aoc.tools.ImageLoaderHelper;
 import com.idejie.android.library.fragment.LazyFragment;
 import com.jorge.circlelibrary.ImageCycleView;
+import com.strongloop.android.loopback.RestAdapter;
+import com.strongloop.android.loopback.callbacks.VoidCallback;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by shandongdaxue on 16/8/10.
@@ -34,6 +43,8 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
     private ImageCycleView imageCycleView;
     private Button btnUpload,btnCancel;
     private EditText editPrice,editAmount,editMarketName;
+    private TextView textProvince,textType,textRank;
+    private String province,type,rank,price,amount,marketName;
     /**
      * 初始化操作
      */
@@ -67,6 +78,9 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
         btnCancel.setOnClickListener(this);
         btnUpload= (Button) view.findViewById(R.id.btn_upload);
         btnUpload.setOnClickListener(this);
+        textProvince= (TextView) view.findViewById(R.id.province);
+        textType= (TextView) view.findViewById(R.id.type);
+        textRank= (TextView) view.findViewById(R.id.rank);
         editPrice= (EditText) view.findViewById(R.id.edit_price);
         editAmount= (EditText) view.findViewById(R.id.edit_amount);
         editMarketName= (EditText) view.findViewById(R.id.edit_Market_name);
@@ -99,7 +113,7 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
         switch (view.getId()){
 
             case R.id.btn_upload:
-                btnUpload.setBackgroundResource(R.drawable.border_green);
+                upLoad();
                 Toast.makeText(context,"上传中",Toast.LENGTH_SHORT).show();
 
 //                beEmpty();//用于上传成功得到返回值以后再用
@@ -111,6 +125,48 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
                 break;
 
         }
+    }
+
+    private void upLoad() {
+//        if (textProvince.getText().equals("省市")||textType.getText().equals("品种")
+//                ||textRank.getText().equals("级别")||editPrice.getText().equals("元/公斤")){
+//            Toast.makeText(context,"请填写必要信息",Toast.LENGTH_SHORT).show();
+//        }else {
+            btnUpload.setBackgroundResource(R.drawable.border_green);
+            RestAdapter adapter = new RestAdapter(activity.getApplicationContext(), "http://192.168.1.114:3001/api");
+            adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
+            PriceRepository productRepository = adapter.createRepository(PriceRepository.class);
+            Map<String, Object> params = new HashMap<String, Object>();
+            params.put("regionId", 1);
+            params.put("sortId", 1);
+            params.put("gradeId", 2);
+            params.put("price", Double.parseDouble("21.2"));
+            params.put("turnover", 18);
+            params.put("marketName", "济南大超市");
+            params.put("userId", 28);
+            params.put("priceDate","2016-08-12 02:08:55");
+            PriceModel price = productRepository.createObject(params );
+
+            price.save(new VoidCallback() {
+                @Override
+                public void onSuccess() {
+                    // Pencil now exists on the server!
+                    Toast.makeText(context,"上传成功",Toast.LENGTH_SHORT).show();
+                    btnUpload.setBackgroundResource(R.drawable.border_grey);
+                    beEmpty();
+                }
+
+                @Override
+                public void onError(Throwable t) {
+                    Log.d("test","Throwable....."+t.toString());
+                    // save failed, handle the error
+                    Toast.makeText(context,"上传失败",Toast.LENGTH_SHORT).show();
+                    btnUpload.setBackgroundResource(R.drawable.border_grey);
+                    beEmpty();
+                }
+            });
+//        }
+
     }
 
     private void beEmpty() {

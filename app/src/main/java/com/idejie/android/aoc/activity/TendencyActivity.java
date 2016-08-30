@@ -21,13 +21,19 @@ import com.bigkoo.pickerview.TimePickerView;
 import com.idejie.android.aoc.model.PriceModel;
 import com.idejie.android.aoc.R;
 import com.idejie.android.aoc.repository.PriceRepository;
+import com.idejie.android.aoc.tools.AutoString;
 import com.strongloop.android.loopback.RestAdapter;
+import com.strongloop.android.loopback.callbacks.JsonObjectParser;
 import com.strongloop.android.loopback.callbacks.ListCallback;
 import com.strongloop.android.loopback.callbacks.ObjectCallback;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
 
 public class TendencyActivity extends Activity implements View.OnClickListener {
 
@@ -162,31 +168,45 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
         adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
         PriceRepository productRepository = adapter.createRepository(PriceRepository.class);
         Log.d("test","a");
-        productRepository.findById(1, new ObjectCallback<PriceModel>() {
-            @Override
-            public void onSuccess(PriceModel object) {
-                Log.d("test","findbyId..Obj..."+object.toString());
-                Log.d("test","Obj..."+object.getMarketName());
-            }
-
-            @Override
-            public void onError(Throwable t) {
-                Log.d("test","Throwable..Obj..."+t.toString());
-            }
-        });
-        productRepository.findAll(new ListCallback<PriceModel>() {
-            @Override
-            public void onSuccess(List<PriceModel> objects) {
-                Log.d("test",".1............"+objects.toString());
-            }
-
-            @Override
-            public void onError(Throwable t) {
-                Log.d("test","Throwable..Objs..."+t.toString());
-            }
-
-
-        });
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("id", 1);
+        params.put("filter[include]",new String[]{"user","region"});
+        productRepository. invokeStaticMethod("findById", params, new JsonObjectParser<PriceModel> (productRepository,new ObjectCallback<PriceModel>() {
+                    @Override
+                    public void onSuccess(PriceModel object) {
+                        Log.d("test","findbyId..Obj..."+object.toString());
+                        Log.d("test","Obj..."+object.getMarketName());
+                    }
+                    @Override
+                    public void onError(Throwable t) {
+                        Log.d("test","Throwable..Obj..."+t.toString());
+                    }
+                }));
+//        productRepository.findById(1,new ObjectCallback<PriceModel>() {
+//            @Override
+//            public void onSuccess(PriceModel object) {
+//                Log.d("test","findbyId..Obj..."+object.toString());
+//                Log.d("test","Obj..."+object.getMarketName());
+//            }
+//
+//            @Override
+//            public void onError(Throwable t) {
+//                Log.d("test","Throwable..Obj..."+t.toString());
+//            }
+//        });
+//        productRepository.findAll(new ListCallback<PriceModel>() {
+//            @Override
+//            public void onSuccess(List<PriceModel> objects) {
+//                Log.d("test",".1............"+objects.toString());
+//            }
+//
+//            @Override
+//            public void onError(Throwable t) {
+//                Log.d("test","Throwable..Objs..."+t.toString());
+//            }
+//
+//
+//        });
 
     }
 
