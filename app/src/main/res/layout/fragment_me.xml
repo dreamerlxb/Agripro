@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:myxmlns="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:background="@color/grey"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <RelativeLayout
+        android:id="@+id/layout_me_top"
+        android:clickable="true"
+        android:layout_width="match_parent"
+        android:background="@color/white"
+        android:layout_height="120dp">
+
+
+        <RelativeLayout
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:clickable="true"
+            android:id="@+id/Avatar">
+
+            <com.idejie.android.aoc.fragment.utils.CircleImageView
+                android:id="@+id/roundImageView"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:src="@mipmap/face"
+                android:clickable="true"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="12dp" />
+
+            <TextView
+                android:clickable="true"
+                android:text="登录/注册"
+                android:textSize="20sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tv_login"
+                android:textColor="@color/colorPrimary"
+                android:layout_below="@id/roundImageView"
+                android:layout_alignLeft="@id/roundImageView"
+                android:layout_alignStart="@id/roundImageView" />
+        </RelativeLayout>
+
+        <TextView
+            android:text="昵称"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="38dp"
+            android:layout_marginStart="38dp"
+            android:layout_marginTop="24dp"
+            android:id="@+id/tv_nickName"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/Avatar"
+            android:layout_toEndOf="@+id/Avatar"
+            />
+
+        <TextView
+            android:text="积分:20000000"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/t"
+            android:layout_marginBottom="29dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignLeft="@+id/tv_nickName"
+            android:layout_alignStart="@+id/tv_nickName" />
+
+
+    </RelativeLayout>
+
+
+    <LinearLayout
+        android:id="@+id/layout_me_second"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@id/layout_me_top"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+        <RelativeLayout
+            android:id="@+id/layout_me_guanzhu"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@color/white"
+            android:layout_marginTop="20dp"
+            android:layout_below="@id/layout_me_top"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@mipmap/icon_like"
+                android:layout_marginLeft="40dp"
+                android:layout_marginStart="40dp"
+                android:id="@+id/iv_guanzhu"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+
+            <TextView
+                android:text="我的关注"
+                android:textSize="20sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginStart="20dp"
+                android:id="@+id/tv_guanzhu"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@id/iv_guanzhu"
+                android:layout_toEndOf="@id/iv_guanzhu" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/layout_me_price"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@color/white"
+            android:layout_below="@id/layout_me_guanzhu"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="10dp">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@mipmap/icon_price"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginLeft="40dp"
+                android:layout_marginStart="40dp"
+                android:id="@+id/iv_price" />
+
+            <TextView
+                android:text="我的报价"
+                android:textSize="20sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@id/iv_price"
+                android:layout_toEndOf="@id/iv_price"
+                android:layout_marginLeft="20dp"
+                android:layout_marginStart="20dp"
+                android:id="@+id/tv_price" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/layout_me_comment"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@color/white"
+            android:layout_below="@id/layout_me_price"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="10dp">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@mipmap/icon_comment"
+                android:layout_marginLeft="40dp"
+                android:layout_marginStart="40dp"
+                android:id="@+id/iv_comment"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+
+            <TextView
+                android:text="我的评论"
+                android:textSize="20sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginStart="20dp"
+                android:id="@+id/tv_comment"
+                android:layout_alignTop="@id/iv_comment"
+                android:layout_toRightOf="@id/iv_comment"
+                android:layout_toEndOf="@id/iv_comment" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_me_third"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@id/layout_me_second"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+        <RelativeLayout
+            android:id="@+id/layout_me_mall"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@color/white"
+            android:layout_marginTop="20dp"
+            android:layout_below="@id/layout_me_top"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@mipmap/icon_mall"
+                android:layout_marginLeft="40dp"
+                android:layout_marginStart="40dp"
+                android:id="@+id/iv_mall"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+
+            <TextView
+                android:text="查看商城"
+                android:textSize="20sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/iv_mall"
+                android:layout_toRightOf="@id/iv_mall"
+                android:layout_toEndOf="@id/iv_mall"
+                android:layout_marginLeft="20dp"
+                android:layout_marginStart="20dp"
+                android:id="@+id/textView8" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/layout_me_tuiguang"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@color/white"
+            android:layout_below="@id/layout_me_mall"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="10dp">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@mipmap/icon_app"
+                android:layout_marginLeft="40dp"
+                android:layout_marginStart="40dp"
+                android:id="@+id/iv_app"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+
+            <TextView
+                android:text="相关推广"
+                android:textSize="20sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/iv_app"
+                android:layout_toRightOf="@id/iv_app"
+                android:layout_toEndOf="@id/iv_app"
+                android:layout_marginLeft="20dp"
+                android:layout_marginStart="20dp"
+                android:id="@+id/tv_app" />
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/layout_me_set"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@color/white"
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/layout_me_third"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@mipmap/icon_set"
+            android:id="@+id/iv_set"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginLeft="40dp"
+            android:layout_marginStart="40dp" />
+
+        <TextView
+            android:text="设置"
+            android:textSize="20sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            android:id="@+id/tv_set"
+            android:layout_alignBottom="@+id/iv_set"
+            android:layout_toRightOf="@+id/iv_set"
+            android:layout_toEndOf="@+id/iv_set" />
+    </RelativeLayout>
+
+    <Button
+        android:text="退   出"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/exitButton"
+        android:background="@color/red"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+</RelativeLayout>

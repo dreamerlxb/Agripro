@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <com.youth.banner.Banner
+        android:id="@+id/banner2"
+        android:layout_width="match_parent"
+        android:layout_height="140dp"
+        app:indicator_drawable_selected="@drawable/selected_radius"/>
+    <android.support.v4.widget.SwipeRefreshLayout
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/swipe_refresh_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:context="com.idejie.android.project.menu3d.fragment.DiscoverFragment"
+        tools:showIn="@layout/activity_main">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/list"
+            android:name="chenls.orderdishes.fragment.DiscoverFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorBackground"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            app:layoutManager="LinearLayoutManager"
+            tools:listitem="@layout/fragment_jiance" />
+    </android.support.v4.widget.SwipeRefreshLayout>
+</LinearLayout>
