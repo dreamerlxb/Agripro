@@ -1,6 +1,6 @@
 package com.idejie.android.aoc.repository;
 
-import com.idejie.android.aoc.Model.NewsModel;
+import com.idejie.android.aoc.model.NewsModel;
 import com.strongloop.android.loopback.ModelRepository;
 
 /**

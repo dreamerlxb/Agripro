@@ -1,10 +1,8 @@
-package com.idejie.android.aoc.Model;
+package com.idejie.android.aoc.model;
 
 import android.widget.ListView;
 
 import com.strongloop.android.loopback.Model;
-import com.strongloop.android.loopback.ModelRepository;
-import com.strongloop.android.loopback.RestAdapter;
 
 
 /**

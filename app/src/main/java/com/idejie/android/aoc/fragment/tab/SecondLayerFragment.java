@@ -1,9 +1,7 @@
 package com.idejie.android.aoc.fragment.tab;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.View;
@@ -11,15 +9,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.idejie.android.aoc.Model.NewsModel;
+import com.idejie.android.aoc.model.NewsModel;
 import com.idejie.android.aoc.R;
 import com.idejie.android.aoc.repository.NewsRepository;
 import com.idejie.android.library.fragment.LazyFragment;
 import com.idejie.android.library.view.indicator.BannerComponent;
-import com.idejie.android.library.view.indicator.Indicator;
 import com.idejie.android.library.view.indicator.IndicatorViewPager;
-import com.idejie.android.library.view.indicator.slidebar.ColorBar;
-import com.idejie.android.library.view.indicator.slidebar.ScrollBar;
 import com.strongloop.android.loopback.RestAdapter;
 import com.strongloop.android.loopback.callbacks.ListCallback;
 import com.strongloop.android.loopback.callbacks.ObjectCallback;

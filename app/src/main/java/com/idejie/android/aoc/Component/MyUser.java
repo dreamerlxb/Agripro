@@ -1,4 +1,4 @@
-package com.idejie.android.aoc.Component;
+package com.idejie.android.aoc.component;
 
 import com.idejie.android.aoc.activity.MainActivity;
 import com.idejie.android.aoc.activity.WelcomeActivity;

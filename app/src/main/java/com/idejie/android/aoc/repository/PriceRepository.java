@@ -1,6 +1,6 @@
 package com.idejie.android.aoc.repository;
 
-import com.idejie.android.aoc.Model.PriceModel;
+import com.idejie.android.aoc.model.PriceModel;
 import com.strongloop.android.loopback.ModelRepository;
 
 

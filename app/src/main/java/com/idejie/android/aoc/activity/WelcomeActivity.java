@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.idejie.android.aoc.Component.MyUser;
+import com.idejie.android.aoc.component.MyUser;
 import com.idejie.android.aoc.R;
 
 import java.util.ArrayList;

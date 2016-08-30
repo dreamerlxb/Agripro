@@ -13,7 +13,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 
 import com.bigkoo.pickerview.TimePickerView;
-import com.idejie.android.aoc.Model.PriceModel;
+import com.idejie.android.aoc.model.PriceModel;
 import com.idejie.android.aoc.R;
 import com.idejie.android.aoc.repository.PriceRepository;
 import com.strongloop.android.loopback.RestAdapter;
