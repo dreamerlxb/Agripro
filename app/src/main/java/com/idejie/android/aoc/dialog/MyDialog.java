@@ -73,7 +73,7 @@ public class MyDialog extends Dialog implements android.view.View.OnClickListene
 		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1); // , 1是可选写的
 		lp.setMargins(10, 0, 10, 0);
 		LinearLayout.LayoutParams lp1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1); // , 1是可选写的
-		lp.setMargins(0,10,0,0);
+		lp1.setMargins(0,8,0,0);
 		final String areas[][]=Areas.areas;
 		LinearLayout linearLayout=null;
 		for (int i=0;i<areas.length;i++){
@@ -114,9 +114,6 @@ public class MyDialog extends Dialog implements android.view.View.OnClickListene
 
 	public void onClick(View v) {
 		switch (v.getId()) {
-		case R.id.clearallpan:
-			Toast.makeText(context, "请在该区域之外点击", Toast.LENGTH_SHORT).show();
-			break;
 		}
 	}
 }

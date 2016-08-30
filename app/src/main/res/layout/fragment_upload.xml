@@ -70,13 +70,13 @@
                         android:gravity="center"
                         android:layout_marginLeft="10dp"
                         android:layout_gravity="center"
-                        android:layout_width="50dp"
+                        android:layout_width="100dp"
                         android:layout_height="40dp" />
 
                     <ImageView
                         android:layout_gravity="center"
                         android:background="@drawable/arrow"
-                        android:layout_marginLeft="110dp"
+                        android:layout_marginLeft="70dp"
                         android:layout_width="35dp"
                         android:layout_height="25dp"
                         android:id="@+id/imageView5" />
@@ -137,13 +137,13 @@
                         android:gravity="center"
                         android:layout_marginLeft="10dp"
                         android:layout_gravity="center"
-                        android:layout_width="50dp"
+                        android:layout_width="100dp"
                         android:layout_height="40dp" />
 
                     <ImageView
                         android:layout_gravity="center"
                         android:background="@drawable/arrow"
-                        android:layout_marginLeft="110dp"
+                        android:layout_marginLeft="70dp"
                         android:layout_width="35dp"
                         android:layout_height="25dp" />
 
@@ -203,13 +203,13 @@
                         android:gravity="center"
                         android:layout_marginLeft="10dp"
                         android:layout_gravity="center"
-                        android:layout_width="50dp"
+                        android:layout_width="100dp"
                         android:layout_height="40dp" />
 
                     <ImageView
                         android:layout_gravity="center"
                         android:background="@drawable/arrow"
-                        android:layout_marginLeft="110dp"
+                        android:layout_marginLeft="70dp"
                         android:layout_width="35dp"
                         android:layout_height="25dp" />
 

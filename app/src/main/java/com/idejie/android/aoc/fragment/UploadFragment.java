@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.FragmentTransaction;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -19,17 +21,28 @@ import android.widget.Toast;
 
 import com.google.common.collect.ImmutableMap;
 import com.idejie.android.aoc.R;
+import com.idejie.android.aoc.dialog.CityDialog;
+import com.idejie.android.aoc.dialog.MyDialog;
 import com.idejie.android.aoc.model.PriceModel;
+import com.idejie.android.aoc.model.SortModel;
 import com.idejie.android.aoc.repository.PriceRepository;
+import com.idejie.android.aoc.repository.SortRepository;
 import com.idejie.android.aoc.tools.ImageLoaderHelper;
 import com.idejie.android.library.fragment.LazyFragment;
 import com.jorge.circlelibrary.ImageCycleView;
 import com.strongloop.android.loopback.RestAdapter;
+import com.strongloop.android.loopback.callbacks.JsonObjectParser;
+import com.strongloop.android.loopback.callbacks.ListCallback;
+import com.strongloop.android.loopback.callbacks.ObjectCallback;
 import com.strongloop.android.loopback.callbacks.VoidCallback;
 
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -45,6 +58,8 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
     private EditText editPrice,editAmount,editMarketName;
     private TextView textProvince,textType,textRank;
     private String province,type,rank,price,amount,marketName;
+    private LinearLayout lineProvince,lineType,lineRank;
+    private Handler hanDialog,hanCityDialog;
     /**
      * 初始化操作
      */
@@ -66,7 +81,6 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
         view = inflater.inflate(R.layout.fragment_upload, container,
                 false);
         init();
-
         return view;
     }
 
@@ -74,6 +88,12 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
         //初始化广告栏
         initCycleView();
         //初始化各个控件
+        lineProvince= (LinearLayout) view.findViewById(R.id.line_1);
+        lineProvince.setOnClickListener(this);
+        lineType= (LinearLayout) view.findViewById(R.id.line_2);
+        lineType.setOnClickListener(this);
+        lineRank= (LinearLayout) view.findViewById(R.id.line_3);
+        lineRank.setOnClickListener(this);
         btnCancel= (Button) view.findViewById(R.id.btn_cancel);
         btnCancel.setOnClickListener(this);
         btnUpload= (Button) view.findViewById(R.id.btn_upload);
@@ -84,6 +104,28 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
         editPrice= (EditText) view.findViewById(R.id.edit_price);
         editAmount= (EditText) view.findViewById(R.id.edit_amount);
         editMarketName= (EditText) view.findViewById(R.id.edit_Market_name);
+
+        hanDialog = new Handler() {
+            public void handleMessage(Message msg) {
+                // TODO Auto-generated method stub
+                if (msg.what==1){
+                    String Jsmess = (String) msg.obj;
+                    textProvince.setText(Jsmess);
+                }else {
+                    CityDialog dialog=new CityDialog(context,hanCityDialog, (Integer) msg.obj);
+                    dialog.show();
+                }
+
+            }
+        };
+        hanCityDialog = new Handler() {
+            public void handleMessage(Message msg) {
+                // TODO Auto-generated method stub
+                String Jsmess = (String) msg.obj;
+                textProvince.setText(Jsmess);
+
+            }
+        };
 
     }
 
@@ -117,21 +159,51 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
                 Toast.makeText(context,"上传中",Toast.LENGTH_SHORT).show();
 
 //                beEmpty();//用于上传成功得到返回值以后再用
-
                 break;
             case R.id.btn_cancel:
                 beEmpty();
                 //哎我发现取消按钮没有上一页
                 break;
+            case R.id.line_1:
+                MyDialog dialog=new MyDialog(context,hanDialog);
+                dialog.show();
+                break;
+            case R.id.line_2:
+                getSort();
+                break;
+            case R.id.line_3:
+                break;
 
         }
     }
 
+
+
+    private void getSort() {
+        RestAdapter adapter = new RestAdapter(getApplicationContext(), "http://192.168.1.114:3001/api");
+        adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
+        SortRepository sortRepository = adapter.createRepository(SortRepository.class);
+        Log.d("test","a");
+        sortRepository.findAll(new ListCallback<SortModel>() {
+            @Override
+            public void onSuccess(List<SortModel> objects) {
+                Log.d("test","getName();............"+objects.get(1).getName());
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                Log.d("test","Throwable..Objs..."+t.toString());
+            }
+
+
+        });
+    }
+
     private void upLoad() {
-//        if (textProvince.getText().equals("省市")||textType.getText().equals("品种")
-//                ||textRank.getText().equals("级别")||editPrice.getText().equals("元/公斤")){
-//            Toast.makeText(context,"请填写必要信息",Toast.LENGTH_SHORT).show();
-//        }else {
+        if (textProvince.getText().equals("省市")||textType.getText().equals("品种")
+                ||textRank.getText().equals("级别")||editPrice.getText().equals("元/公斤")){
+            Toast.makeText(context,"请填写必要信息",Toast.LENGTH_SHORT).show();
+        }else {
             btnUpload.setBackgroundResource(R.drawable.border_green);
             RestAdapter adapter = new RestAdapter(activity.getApplicationContext(), "http://192.168.1.114:3001/api");
             adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
@@ -165,7 +237,7 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
                     beEmpty();
                 }
             });
-//        }
+        }
 
     }
 
