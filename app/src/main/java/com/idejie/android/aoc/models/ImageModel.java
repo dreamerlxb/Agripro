@@ -1,4 +1,4 @@
-package com.idejie.android.aoc.model;
+package com.idejie.android.aoc.models;
 
 import com.strongloop.android.loopback.Model;
 
