@@ -87,9 +87,20 @@
 
     </LinearLayout>
 
+    <TextView
+        android:text="今日价格"
+        android:textSize="25dp"
+        android:gravity="center"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:background="@color/white"
+        android:layout_width="match_parent"
+        android:layout_height="50dp" />
+
+
     <ListView
         android:id="@+id/listView"
-        android:layout_margin="8dp"
+        android:layout_margin="5dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"></ListView>
 

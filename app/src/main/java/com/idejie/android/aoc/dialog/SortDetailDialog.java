@@ -96,14 +96,15 @@ public class SortDetailDialog extends Dialog implements View.OnClickListener{
 				final Button btn=new Button(context);
 				btn.setText(objectArray.get(i).getSubName());
 				btn.setLayoutParams(lp);
+				final int finalI = i;
 				btn.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View view) {
 
 						Message mess=new Message();
+						mess.what= (int) objectArray.get(finalI).getId();
 						mess.obj =btn.getText().toString();
 						han.sendMessage(mess);
-
 						dialog.dismiss();
 					}
 				});

@@ -26,8 +26,10 @@ import com.idejie.android.aoc.dialog.MyDialog;
 import com.idejie.android.aoc.dialog.SortDetailDialog;
 import com.idejie.android.aoc.dialog.SortDialog;
 import com.idejie.android.aoc.model.PriceModel;
+import com.idejie.android.aoc.model.RegionModel;
 import com.idejie.android.aoc.model.SortModel;
 import com.idejie.android.aoc.repository.PriceRepository;
+import com.idejie.android.aoc.repository.RegionRepository;
 import com.idejie.android.aoc.repository.SortRepository;
 import com.idejie.android.aoc.tools.ImageLoaderHelper;
 import com.idejie.android.library.fragment.LazyFragment;
@@ -42,7 +44,9 @@ import com.strongloop.android.loopback.callbacks.VoidCallback;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,6 +68,7 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
     private Handler hanDialog,hanCityDialog,hanSortDialog,hanDetailDialog;
     private int sorts[][];
     private List<SortModel> objectArray;
+    private int regionId,sortId,gradeId;
     /**
      * 初始化操作
      */
@@ -115,6 +120,7 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
                 if (msg.what==1){
                     String Jsmess = (String) msg.obj;
                     textProvince.setText(Jsmess);
+                    getCityId(Jsmess);
                 }else {
                     CityDialog dialog=new CityDialog(context,hanCityDialog, (Integer) msg.obj);
                     dialog.show();
@@ -142,9 +148,33 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
             public void handleMessage(Message msg) {
                 // TODO Auto-generated method stub
                 String Jsmess = (String) msg.obj;
+                sortId=msg.what;
                 textType.setText(Jsmess);
             }
         };
+
+    }
+
+    private void getCityId(final String name) {
+        RestAdapter adapter = new RestAdapter(activity.getApplicationContext(), "http://192.168.1.114:3001/api");
+        adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
+        RegionRepository regionRepository = adapter.createRepository(RegionRepository.class);
+        regionRepository.findAll(new ListCallback<RegionModel>() {
+            @Override
+            public void onSuccess(List<RegionModel> objects) {
+                for (int i=0;i<objects.size();i++){
+                    if(objects.get(i).getCity().equals(name)){
+                        regionId= (int) objects.get(i).getId();
+                    }
+                }
+
+            }
+
+            @Override
+            public void onError(Throwable t) {
+
+            }
+        });
 
     }
 
@@ -191,11 +221,16 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
                 getSort();
                 break;
             case R.id.line_3:
+                getRank();
                 break;
 
         }
     }
 
+    private void getRank() {
+
+
+    }
 
 
     private void getSort() {
@@ -232,15 +267,17 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
             PriceRepository productRepository = adapter.createRepository(PriceRepository.class);
             Map<String, Object> params = new HashMap<String, Object>();
             params.put("regionId", 1);
-            params.put("sortId", 1);
+            params.put("sortId", sortId);
             params.put("gradeId", 2);
-            params.put("price", Double.parseDouble("21.2"));
-            params.put("turnover", 18);
-            params.put("marketName", "济南大超市");
+            params.put("price", editPrice.getText().toString());
+            params.put("turnover", editAmount.getText().toString());
+            params.put("marketName", editMarketName.getText().toString());
             params.put("userId", 28);
+
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
+            System.out.println(df.format(new Date()));// new Date()为获取当前系统时间
             params.put("priceDate","2016-08-12 02:08:55");
             PriceModel price = productRepository.createObject(params );
-
             price.save(new VoidCallback() {
                 @Override
                 public void onSuccess() {
