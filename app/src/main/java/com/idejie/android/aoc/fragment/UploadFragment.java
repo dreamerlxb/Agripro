@@ -23,6 +23,7 @@ import com.google.common.collect.ImmutableMap;
 import com.idejie.android.aoc.R;
 import com.idejie.android.aoc.dialog.CityDialog;
 import com.idejie.android.aoc.dialog.MyDialog;
+import com.idejie.android.aoc.dialog.SortDetailDialog;
 import com.idejie.android.aoc.dialog.SortDialog;
 import com.idejie.android.aoc.model.PriceModel;
 import com.idejie.android.aoc.model.SortModel;
@@ -60,8 +61,9 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
     private TextView textProvince,textType,textRank;
     private String province,type,rank,price,amount,marketName;
     private LinearLayout lineProvince,lineType,lineRank;
-    private Handler hanDialog,hanCityDialog,hanSortDialog;
-    private String sorts[][];
+    private Handler hanDialog,hanCityDialog,hanSortDialog,hanDetailDialog;
+    private int sorts[][];
+    private List<SortModel> objectArray;
     /**
      * 初始化操作
      */
@@ -131,10 +133,16 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
         hanSortDialog = new Handler() {
             public void handleMessage(Message msg) {
                 // TODO Auto-generated method stub
-                CityDialog dialog=new CityDialog(context,hanCityDialog, (Integer) msg.obj);
-                dialog.show();
-
-
+                String Jsmess = (String) msg.obj;
+                SortDetailDialog detailDialog=new SortDetailDialog(context,hanDetailDialog,objectArray,Jsmess);
+                detailDialog.show();
+            }
+        };
+        hanDetailDialog = new Handler() {
+            public void handleMessage(Message msg) {
+                // TODO Auto-generated method stub
+                String Jsmess = (String) msg.obj;
+                textType.setText(Jsmess);
             }
         };
 
@@ -181,7 +189,6 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
                 break;
             case R.id.line_2:
                 getSort();
-                SortDialog sortDialog=new SortDialog(context,hanSortDialog,sorts);
                 break;
             case R.id.line_3:
                 break;
@@ -199,7 +206,10 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
         sortRepository.findAll(new ListCallback<SortModel>() {
             @Override
             public void onSuccess(List<SortModel> objects) {
-                Log.d("test","getName();............"+objects.get(1).getName());
+                objectArray=objects;
+                SortDialog sortDialog=new SortDialog(context,hanSortDialog,objects);
+                sortDialog.show();
+
             }
 
             @Override

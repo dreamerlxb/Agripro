@@ -16,7 +16,10 @@ import android.widget.RelativeLayout;
 
 import com.idejie.android.aoc.R;
 import com.idejie.android.aoc.activity.MainActivity;
+import com.idejie.android.aoc.model.SortModel;
 import com.idejie.android.aoc.tools.Areas;
+
+import java.util.List;
 
 public class SortDetailDialog extends Dialog implements View.OnClickListener{
 
@@ -27,15 +30,16 @@ public class SortDetailDialog extends Dialog implements View.OnClickListener{
 	private RelativeLayout clearallpan;
 	private LinearLayout lin;
 	private int cityId;
-	private Button btnCity;
-	private String sorts[][];
+	private Button btnTopName;
+	private String name;
+	private List<SortModel> objectArray;
 
-	public SortDetailDialog(Context context, Handler han, String[][] sorts,int cityId) {
+	public SortDetailDialog(Context context, Handler han, List<SortModel> objectArray, String name) {
 		super(context);
 		this.context = context;
 		this.han=han;
-		this.sorts=sorts;
-		this.cityId=cityId;
+		this.name=name;
+		this.objectArray=objectArray;
 		dialog=this;
 	}
 	
@@ -70,7 +74,7 @@ public class SortDetailDialog extends Dialog implements View.OnClickListener{
 	}
 
 	private void initView() {
-		btnCity= (Button) findViewById(R.id.province);
+		btnTopName= (Button) findViewById(R.id.top_name);
 		clearallpan = (RelativeLayout) findViewById(R.id.clearallpan);
 		lin= (LinearLayout) findViewById(R.id.line);
 		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1); // , 1是可选写的
@@ -78,39 +82,46 @@ public class SortDetailDialog extends Dialog implements View.OnClickListener{
 		LinearLayout.LayoutParams lp1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1); // , 1是可选写的
 		lp1.setMargins(0,8,0,0);
 		LinearLayout linearLayout=null;
-		btnCity.setText(sorts[cityId][0]);
-		for (int i=1;i<sorts[cityId].length;i++){
-
-			if ((i-1)%4==0){
-				LinearLayout lin1=new LinearLayout(context);
-				lin1.setMinimumHeight(40);
-				lin1.setLayoutParams(lp1);
-				lin.addView(lin1);
-				linearLayout=lin1;
-			}
-			Button btn=new Button(context);
-			btn.setText(sorts[cityId][i]);
-			btn.setLayoutParams(lp);
-			final int finalI = i;
-			btn.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View view) {
-
-					Message mess=new Message();
-					mess.what=1;
-					mess.obj =sorts[cityId][finalI];
-					han.sendMessage(mess);
-
-					dialog.dismiss();
+		btnTopName.setText(name);
+		btnTopName.setOnClickListener( this);
+		int j=0;
+		for (int i=0;i<objectArray.size();i++){
+			if (objectArray.get(i).getName().equals(name)){
+				if (j%4==0){
+					linearLayout=new LinearLayout(context);
+					linearLayout.setMinimumHeight(40);
+					linearLayout.setLayoutParams(lp1);
+					lin.addView(linearLayout);
 				}
-			});
-			linearLayout.addView(btn);
-		}
+				final Button btn=new Button(context);
+				btn.setText(objectArray.get(i).getSubName());
+				btn.setLayoutParams(lp);
+				btn.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View view) {
 
+						Message mess=new Message();
+						mess.obj =btn.getText().toString();
+						han.sendMessage(mess);
+
+						dialog.dismiss();
+					}
+				});
+				linearLayout.addView(btn);
+				j++;
+			}
+
+		}
 	}
 
 	public void onClick(View v) {
 		switch (v.getId()) {
+			case R.id.top_name:
+				Message mess=new Message();
+				mess.obj =name;
+				han.sendMessage(mess);
+				dialog.dismiss();
+			break;
 
 		}
 	}

@@ -26,12 +26,17 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.common.collect.ImmutableMap;
 import com.idejie.android.aoc.R;
 import com.idejie.android.aoc.activity.TendencyActivity;
 import com.idejie.android.aoc.adapter.SearchListAdapter;
 import com.idejie.android.aoc.dialog.CityDialog;
 import com.idejie.android.aoc.dialog.MyDialog;
 import com.idejie.android.aoc.fragment.tab.SecondLayerFragment;
+import com.idejie.android.aoc.model.RegionModel;
+import com.idejie.android.aoc.repository.PriceRepository;
+import com.idejie.android.aoc.repository.RegionRepository;
+import com.idejie.android.aoc.tools.Areas;
 import com.idejie.android.aoc.tools.AutoString;
 import com.idejie.android.aoc.tools.NetThread;
 import com.idejie.android.library.fragment.LazyFragment;
@@ -39,6 +44,8 @@ import com.idejie.android.library.view.indicator.Indicator;
 import com.idejie.android.library.view.indicator.IndicatorViewPager;
 import com.idejie.android.library.view.indicator.slidebar.ColorBar;
 import com.idejie.android.library.view.indicator.transition.OnTransitionTextListener;
+import com.strongloop.android.loopback.RestAdapter;
+import com.strongloop.android.loopback.callbacks.VoidCallback;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -249,10 +256,37 @@ public class SearchFragment extends LazyFragment implements View.OnClickListener
             case R.id.textCity:
                 MyDialog dialog=new MyDialog(context,hanDialog);
                 dialog.show();
+
                 break;
         }
     }
 
+    //用于一次性上传省市信息的方法
+    private void upload() {
+        String[][] areas= Areas.areas;
+        for (int i=0;i<areas.length;i++){
+            for (int j=1;j<areas[i].length;j++){
+                RestAdapter adapter = new RestAdapter(getApplicationContext(), "http://192.168.1.114:3001/api");
+                adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
+                RegionRepository regionRepository = adapter.createRepository(RegionRepository.class);
+                RegionModel region= regionRepository.createObject(ImmutableMap.of("Province", areas[i][0]));
+//                region.setProvince(areas[i][0]);
+                region.setCity(areas[i][j]);
+                region.save(new VoidCallback() {
+                    @Override
+                    public void onSuccess() {
+                        Log.d("test","上传成功");
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+
+                    }
+                });
+            }
+
+        }
+    }
 
 
 }

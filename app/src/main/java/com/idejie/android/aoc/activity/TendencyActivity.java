@@ -21,19 +21,21 @@ import com.bigkoo.pickerview.TimePickerView;
 import com.idejie.android.aoc.model.PriceModel;
 import com.idejie.android.aoc.R;
 import com.idejie.android.aoc.repository.PriceRepository;
-import com.idejie.android.aoc.tools.AutoString;
 import com.strongloop.android.loopback.RestAdapter;
+import com.strongloop.android.loopback.callbacks.JsonArrayParser;
 import com.strongloop.android.loopback.callbacks.JsonObjectParser;
 import com.strongloop.android.loopback.callbacks.ListCallback;
 import com.strongloop.android.loopback.callbacks.ObjectCallback;
 
+import org.json.JSONObject;
+
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
-
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
 
 public class TendencyActivity extends Activity implements View.OnClickListener {
 
@@ -44,6 +46,7 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
     private TextView textTimeS,textTimeO;
     private Boolean ifMap=false;
     private ImageView imageBack;
+    private List<PriceModel> informations;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -135,7 +138,7 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
                 linearParams1.height = 1;// 控件的高强制设成20
 
                 chartWeb.setLayoutParams(linearParams1);
-                getDate();
+                getDate("region");
                 break;
             case R.id.btn_map:
                 LinearLayout.LayoutParams linearParams2 =(LinearLayout.LayoutParams)
@@ -161,53 +164,53 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
         }
 
     }
+    //重写了HashMap使得map不覆盖
+    class MyHashMap<S, O> extends HashMap
+    {
+        @Override
+        public Object put(Object key, Object value)
+        {
+            //如果已经存在key，不覆盖原有key对应的value
+            if(!this.containsKey(key))
+                return super.put(key, value);
 
-    private void getDate() {
+            return null;
+        }
+    }
+
+    private void getDate(final String name) {
         Log.d("test","aaa");
         RestAdapter adapter = new RestAdapter(getApplicationContext(), "http://192.168.1.114:3001/api");
         adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
         PriceRepository productRepository = adapter.createRepository(PriceRepository.class);
-        Log.d("test","a");
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("id", 1);
-        params.put("filter[include]",new String[]{"user","region"});
-        productRepository. invokeStaticMethod("findById", params, new JsonObjectParser<PriceModel> (productRepository,new ObjectCallback<PriceModel>() {
-                    @Override
-                    public void onSuccess(PriceModel object) {
-                        Log.d("test","findbyId..Obj..."+object.toString());
-                        Log.d("test","Obj..."+object.getMarketName());
-                    }
-                    @Override
-                    public void onError(Throwable t) {
-                        Log.d("test","Throwable..Obj..."+t.toString());
-                    }
-                }));
-//        productRepository.findById(1,new ObjectCallback<PriceModel>() {
-//            @Override
-//            public void onSuccess(PriceModel object) {
-//                Log.d("test","findbyId..Obj..."+object.toString());
-//                Log.d("test","Obj..."+object.getMarketName());
-//            }
-//
-//            @Override
-//            public void onError(Throwable t) {
-//                Log.d("test","Throwable..Obj..."+t.toString());
-//            }
-//        });
-//        productRepository.findAll(new ListCallback<PriceModel>() {
-//            @Override
-//            public void onSuccess(List<PriceModel> objects) {
-//                Log.d("test",".1............"+objects.toString());
-//            }
-//
-//            @Override
-//            public void onError(Throwable t) {
-//                Log.d("test","Throwable..Objs..."+t.toString());
-//            }
-//
-//
-//        });
+        Map<String, Object> filterMap = new HashMap<String, Object>();
+        filterMap.put("include",name);
+        params.put("filter",filterMap);
+        productRepository. invokeStaticMethod("all", params, new JsonArrayParser<PriceModel> (productRepository,new ListCallback<PriceModel>() {
 
+            @Override
+            public void onSuccess(List<PriceModel> objects) {
+                Log.d("test",1+"");
+                if (name.equals("region")){
+                    informations=objects;
+                    informations.get(0).getRegion().getCity();
+                    //getDate("sort");
+                }else if (name.equals("sort"))
+                {
+                    for (int i=0;i<informations.size();i++){
+                        informations.get(i).setSortModel(objects.get(i).getSortModel());
+                    }
+                    Log.d("test","........."+informations.get(1).getSortModel().getSubName());
+                    Log.d("test","........."+informations.get(1).getRegionModel().getCity());
+
+                }
+            }
+            @Override
+            public void onError(Throwable t) {
+                Log.d("test","Throwable..Obj..."+t.toString());
+            }
+        }));
     }
 
 

@@ -22,7 +22,36 @@ public class PriceModel extends Model {
      */
     private double price,turnover;
     private String marketName,priceDate,created,lastUpdated;
+
+
     private int UserId,regoinId,sortId,gradeId;
+    private Region region;
+    private RegionModel regionModel;
+    private SortModel sortModel;
+
+    public Region getRegion() {
+        return region;
+    }
+
+    public void setRegion(Region region) {
+        this.region = region;
+    }
+
+    public RegionModel getRegionModel() {
+        return regionModel;
+    }
+
+    public void setRegionModel(RegionModel regionModel) {
+        this.regionModel = regionModel;
+    }
+
+    public SortModel getSortModel() {
+        return sortModel;
+    }
+
+    public void setSortModel(SortModel sortModel) {
+        this.sortModel = sortModel;
+    }
 
     public double getPrice() {
         return price;
