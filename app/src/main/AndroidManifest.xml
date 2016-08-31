@@ -83,7 +83,8 @@
             android:label="@string/title_activity_modify_psword" />
         <activity
             android:name=".ModifySuccessActivity"
-            android:label="@string/title_activity_modify_success"></activity>
+            android:label="@string/title_activity_modify_success" />
+        <activity android:name=".activity.GuanzhuActivity"></activity>
     </application>
 
 </manifest>

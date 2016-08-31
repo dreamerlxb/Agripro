@@ -116,7 +116,8 @@ public class MeFragment extends LazyFragment implements View.OnClickListener{
                 Intent intent=new Intent(activity, LoginActivity.class);
                 startActivity(intent);
                 break;
-
+            case R.id.layout_me_guanzhu:
+                startActivity(new Intent(activity,));
         }
     }
 
