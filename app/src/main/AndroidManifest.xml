@@ -74,7 +74,16 @@
         <activity android:name=".activity.TuiActivity" />
         <activity
             android:name=".activity.BackUpActivity"
-            android:label="@string/title_activity_back_up"></activity>
+            android:label="@string/title_activity_back_up" />
+        <activity
+            android:name=".VerifyActivity"
+            android:label="@string/title_activity_verify" />
+        <activity
+            android:name=".ModifyPswordActivity"
+            android:label="@string/title_activity_modify_psword" />
+        <activity
+            android:name=".ModifySuccessActivity"
+            android:label="@string/title_activity_modify_success"></activity>
     </application>
 
 </manifest>
