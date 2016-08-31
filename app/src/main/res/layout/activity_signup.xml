@@ -8,7 +8,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.idejie.android.aoc.activity.LoginActivity">
+    tools:context="com.idejie.android.aoc.activity.SignupActivity">
 
     <!-- Login progress -->
     <ProgressBar
@@ -70,7 +70,7 @@
                         android:id="@+id/button"
                         android:layout_weight="1.23"
                         android:elevation="0dp"
-                        android:background="@android:color/transparent"
+                        android:background="?android:attr/textColorHighlight"
                         android:textColor="@android:color/holo_green_dark" />
                 </LinearLayout>
 
@@ -119,32 +119,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="@string/action_sign_in"
+                android:text="注册"
                 android:textStyle="bold"
                 android:background="@color/bg_page"
                 android:textSize="18sp" />
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <TextView
-                    android:text="手机快速注册"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/tv_signup"
-                    android:layout_weight="1"
-                    android:textAlignment="viewStart" />
-
-                <TextView
-                    android:text="找回密码"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/textView5"
-                    android:layout_weight="1"
-                    android:textAlignment="textEnd" />
-            </LinearLayout>
 
         </LinearLayout>
     </ScrollView>

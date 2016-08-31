@@ -8,7 +8,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.idejie.android.aoc.activity.LoginActivity">
+    tools:context="com.idejie.android.aoc.activity.BackUpActivity">
 
     <!-- Login progress -->
     <ProgressBar
@@ -35,13 +35,12 @@
                 android:layout_height="wrap_content">
 
                 <AutoCompleteTextView
-                    android:id="@+id/phone"
+                    android:id="@+id/email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/prompt_email"
+                    android:inputType="textEmailAddress"
                     android:maxLines="1"
-                    android:inputType="phone"
-                    android:ems="11"
                     android:singleLine="true" />
 
             </android.support.design.widget.TextInputLayout>
@@ -72,27 +71,6 @@
                 android:layout_marginTop="16dp"
                 android:text="@string/action_sign_in"
                 android:textStyle="bold" />
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <TextView
-                    android:text="手机快速注册"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/tv_signup"
-                    android:layout_weight="1" />
-
-                <TextView
-                    android:text="找回密码"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/tv_backup"
-                    android:layout_weight="1"
-                    android:textAlignment="textEnd" />
-            </LinearLayout>
 
         </LinearLayout>
     </ScrollView>
