@@ -149,6 +149,7 @@ public class MeFragment extends LazyFragment implements View.OnClickListener{
     private void exit() {
         onDestroy();
         System.exit(0);
+        //退出成功
     }
 
 
