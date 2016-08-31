@@ -13,6 +13,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.idejie.android.aoc.R;
+import com.idejie.android.aoc.activity.GuanzhuActivity;
 import com.idejie.android.aoc.activity.LoginActivity;
 import com.idejie.android.library.fragment.LazyFragment;
 import com.idejie.android.library.view.indicator.IndicatorViewPager;
@@ -113,11 +114,11 @@ public class MeFragment extends LazyFragment implements View.OnClickListener{
 //        Toast.makeText(activity,"hh"+view.toString(), Toast.LENGTH_LONG).show();
         switch (view.getId()){
             case  R.id.tv_login:
-                Intent intent=new Intent(activity, LoginActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(activity, LoginActivity.class));
                 break;
             case R.id.layout_me_guanzhu:
-                startActivity(new Intent(activity,));
+                startActivity(new Intent(activity, GuanzhuActivity.class));
+                break;
         }
     }
 
