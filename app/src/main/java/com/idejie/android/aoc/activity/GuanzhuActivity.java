@@ -3,6 +3,8 @@ package com.idejie.android.aoc.activity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.idejie.android.aoc.R;
+
 public class GuanzhuActivity extends AppCompatActivity {
 
     @Override

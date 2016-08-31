@@ -15,6 +15,11 @@ import android.widget.TextView;
 import com.idejie.android.aoc.R;
 import com.idejie.android.aoc.activity.GuanzhuActivity;
 import com.idejie.android.aoc.activity.LoginActivity;
+import com.idejie.android.aoc.activity.MallActivity;
+import com.idejie.android.aoc.activity.MyCommentActivity;
+import com.idejie.android.aoc.activity.MyPriceActivity;
+import com.idejie.android.aoc.activity.SettingsActivity;
+import com.idejie.android.aoc.activity.TuiActivity;
 import com.idejie.android.library.fragment.LazyFragment;
 import com.idejie.android.library.view.indicator.IndicatorViewPager;
 
@@ -31,6 +36,7 @@ public class MeFragment extends LazyFragment implements View.OnClickListener{
     private Activity activity;
     private Context context;
     private View view;
+    private static Boolean isExit = false;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,9 +125,31 @@ public class MeFragment extends LazyFragment implements View.OnClickListener{
             case R.id.layout_me_guanzhu:
                 startActivity(new Intent(activity, GuanzhuActivity.class));
                 break;
+            case R.id.layout_me_price:
+                startActivity(new Intent(activity, MyPriceActivity.class));
+                break;
+            case R.id.layout_me_comment:
+                startActivity(new Intent(activity, MyCommentActivity.class));
+                break;
+            case R.id.layout_me_mall:
+                startActivity(new Intent(activity, MallActivity.class));
+                break;
+            case R.id.layout_me_tuiguang:
+                startActivity(new Intent(activity, TuiActivity.class));
+                break;
+            case R.id.layout_me_set:
+                startActivity(new Intent(activity, SettingsActivity.class));
+                break;
+            case R.id.exitButton:
+                exit();
+                break;
         }
     }
 
+    private void exit() {
+        onDestroy();
+        System.exit(0);
+    }
 
 
 }
