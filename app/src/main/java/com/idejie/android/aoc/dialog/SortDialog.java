@@ -19,7 +19,10 @@ import android.widget.Toast;
 
 import com.idejie.android.aoc.R;
 import com.idejie.android.aoc.activity.MainActivity;
+import com.idejie.android.aoc.model.SortModel;
 import com.idejie.android.aoc.tools.Areas;
+
+import java.util.List;
 
 public class SortDialog extends Dialog implements android.view.View.OnClickListener{
 
@@ -29,13 +32,13 @@ public class SortDialog extends Dialog implements android.view.View.OnClickListe
     private Handler han;
     private RelativeLayout clearallpan;
     private LinearLayout lin;
-    private String sorts[][];
+    private List<SortModel> objects;
 
-    public SortDialog(Context context,Handler han,String[][] sorts) {
+    public SortDialog(Context context, Handler han, List<SortModel> objects) {
         super(context);
         this.context = context;
         this.han=han;
-        this.sorts=sorts;
+        this.objects=objects;
         dialog=this;
     }
 
@@ -77,37 +80,54 @@ public class SortDialog extends Dialog implements android.view.View.OnClickListe
         LinearLayout.LayoutParams lp1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1); // , 1是可选写的
         lp1.setMargins(0,8,0,0);
         LinearLayout linearLayout=null;
-        for (int i=0;i<sorts.length;i++){
-            if (i%4==0){
-                LinearLayout lin1=new LinearLayout(context);
-                lin1.setMinimumHeight(40);
-                lin1.setLayoutParams(lp1);
-                lin.addView(lin1);
-                linearLayout=lin1;
-            }
-            Button btn=new Button(context);
-            btn.setText(sorts[i][0]);
-            btn.setLayoutParams(lp);
-            final int finalI = i;
-            btn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Log.d("test","i..."+ finalI +"...len..."+sorts[finalI].length);
-                    if (sorts[finalI].length==1){
+        int j=0;
+        for (int i=0;i<objects.size();i++){
+
+            if (i==0){
+                linearLayout=new LinearLayout(context);
+                linearLayout.setMinimumHeight(40);
+                linearLayout.setLayoutParams(lp1);
+                lin.addView(linearLayout);
+                final Button btn=new Button(context);
+                btn.setText(objects.get(i).getName());
+                btn.setLayoutParams(lp);
+                btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
                         Message mess=new Message();
-                        mess.what=1;
-                        mess.obj =sorts[finalI][0];
+                        mess.obj =btn.getText().toString();
                         han.sendMessage(mess);
-                    }else {
-                        Message mess=new Message();
-                        mess.what=sorts[finalI].length;
-                        mess.obj =finalI;
-                        han.sendMessage(mess);
+
+                        dialog.dismiss();
                     }
-                    dialog.dismiss();
+                });
+                linearLayout.addView(btn);
+            }
+            if (i>0&&!objects.get(i).getName().equals(objects.get(i-1).getName())){
+                j++;
+                if (j%4==0){
+                    linearLayout=new LinearLayout(context);
+                    linearLayout.setMinimumHeight(40);
+                    linearLayout.setLayoutParams(lp1);
+                    lin.addView(linearLayout);
                 }
-            });
-            linearLayout.addView(btn);
+                final Button btn=new Button(context);
+                btn.setText(objects.get(i).getName());
+                btn.setLayoutParams(lp);
+                btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        Message mess=new Message();
+                        mess.obj =btn.getText().toString();
+                        han.sendMessage(mess);
+                        dialog.dismiss();
+                    }
+                });
+                linearLayout.addView(btn);
+            }
+
         }
 
     }
