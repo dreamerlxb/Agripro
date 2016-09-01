@@ -171,7 +171,7 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
             @Override
             public void onSuccess(List<RegionModel> objects) {
                 for (int i=0;i<objects.size();i++){
-                    if(objects.get(i).getCity().equals(textProvince.getText().toString())){
+                    if(textProvince.getText().toString().equals(objects.get(i).getCity())){
                         regionId= (int) objects.get(i).getId();
                         break;
                     }else if(objects.get(i).getProvince().equals(textProvince.getText().toString())){

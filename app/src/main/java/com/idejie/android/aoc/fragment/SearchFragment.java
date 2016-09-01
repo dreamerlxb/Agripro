@@ -190,7 +190,7 @@ public class SearchFragment extends LazyFragment implements View.OnClickListener
                     String city=temp3.getString("city");
                     Log.d("test","city........"+city);
                     cityText.setText(city);
-                    getCityId(city);
+                    getCityId();
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -203,7 +203,7 @@ public class SearchFragment extends LazyFragment implements View.OnClickListener
                 if (msg.what==1){
                     String Jsmess = (String) msg.obj;
                     cityText.setText(Jsmess);
-                    getCityId(Jsmess);
+                    getCityId();
                 }else {
                     CityDialog dialog=new CityDialog(context,hanCityDialog, (Integer) msg.obj);
                     dialog.show();
@@ -216,7 +216,7 @@ public class SearchFragment extends LazyFragment implements View.OnClickListener
                 // TODO Auto-generated method stub
                     String Jsmess = (String) msg.obj;
                     cityText.setText(Jsmess);
-                    getCityId(Jsmess);
+                    getCityId();
 
             }
         };
@@ -239,7 +239,7 @@ public class SearchFragment extends LazyFragment implements View.OnClickListener
         }
     }
 
-    private void getCityId(final String name) {
+    private void getCityId() {
         RestAdapter adapter = new RestAdapter(activity.getApplicationContext(),apiUrl);
         adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
         RegionRepository regionRepository = adapter.createRepository(RegionRepository.class);
@@ -247,16 +247,19 @@ public class SearchFragment extends LazyFragment implements View.OnClickListener
             @Override
             public void onSuccess(List<RegionModel> objects) {
                 for (int i=0;i<objects.size();i++){
-                    if(objects.get(i).getCity().equals(name)){
+                    if(cityText.getText().toString().equals(objects.get(i).getCity())){
                         regionId= (int) objects.get(i).getId();
                     }
+                    else if(objects.get(i).getProvince().equals(cityText.getText().toString())){
+                    regionId= (int) objects.get(i).getId();
+                }
                 }
                 getPrice();
             }
 
             @Override
             public void onError(Throwable t) {
-
+                Log.d("test","t...."+t.toString());
             }
         });
 
