@@ -6,7 +6,6 @@ import android.os.Bundle;
 
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.app.FragmentTransaction;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,7 +18,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.common.collect.ImmutableMap;
 import com.idejie.android.aoc.R;
 import com.idejie.android.aoc.dialog.CityDialog;
 import com.idejie.android.aoc.dialog.MyDialog;
@@ -35,14 +33,9 @@ import com.idejie.android.aoc.tools.ImageLoaderHelper;
 import com.idejie.android.library.fragment.LazyFragment;
 import com.jorge.circlelibrary.ImageCycleView;
 import com.strongloop.android.loopback.RestAdapter;
-import com.strongloop.android.loopback.callbacks.JsonObjectParser;
 import com.strongloop.android.loopback.callbacks.ListCallback;
-import com.strongloop.android.loopback.callbacks.ObjectCallback;
 import com.strongloop.android.loopback.callbacks.VoidCallback;
 
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -69,6 +62,7 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
     private int sorts[][];
     private List<SortModel> objectArray;
     private int regionId,sortId,gradeId;
+    private String apiUrl="http://211.87.227.214:3001/api";
     /**
      * 初始化操作
      */
@@ -156,7 +150,7 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
     }
 
     private void getCityId(final String name) {
-        RestAdapter adapter = new RestAdapter(activity.getApplicationContext(), "http://192.168.1.114:3001/api");
+        RestAdapter adapter = new RestAdapter(activity.getApplicationContext(),apiUrl);
         adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
         RegionRepository regionRepository = adapter.createRepository(RegionRepository.class);
         regionRepository.findAll(new ListCallback<RegionModel>() {
@@ -205,7 +199,7 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
 
             case R.id.btn_upload:
                 upLoad();
-                Toast.makeText(context,"上传中",Toast.LENGTH_SHORT).show();
+
 
 //                beEmpty();//用于上传成功得到返回值以后再用
                 break;
@@ -234,7 +228,7 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
 
 
     private void getSort() {
-        RestAdapter adapter = new RestAdapter(getApplicationContext(), "http://192.168.1.114:3001/api");
+        RestAdapter adapter = new RestAdapter(getApplicationContext(), apiUrl);
         adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
         SortRepository sortRepository = adapter.createRepository(SortRepository.class);
         Log.d("test","a");
@@ -261,8 +255,9 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
                 ||textRank.getText().equals("级别")||editPrice.getText().equals("元/公斤")){
             Toast.makeText(context,"请填写必要信息",Toast.LENGTH_SHORT).show();
         }else {
+            Toast.makeText(context,"上传中",Toast.LENGTH_SHORT).show();
             btnUpload.setBackgroundResource(R.drawable.border_green);
-            RestAdapter adapter = new RestAdapter(activity.getApplicationContext(), "http://192.168.1.114:3001/api");
+            RestAdapter adapter = new RestAdapter(activity.getApplicationContext(), apiUrl);
             adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
             PriceRepository productRepository = adapter.createRepository(PriceRepository.class);
             Map<String, Object> params = new HashMap<String, Object>();

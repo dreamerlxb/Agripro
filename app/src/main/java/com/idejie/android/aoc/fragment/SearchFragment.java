@@ -5,8 +5,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
-import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -14,9 +12,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,8 +28,6 @@ import com.idejie.android.aoc.adapter.SearchListAdapter;
 import com.idejie.android.aoc.bean.SearchList;
 import com.idejie.android.aoc.dialog.CityDialog;
 import com.idejie.android.aoc.dialog.MyDialog;
-import com.idejie.android.aoc.dialog.SortDialog;
-import com.idejie.android.aoc.fragment.tab.SecondLayerFragment;
 import com.idejie.android.aoc.model.PriceModel;
 import com.idejie.android.aoc.model.RegionModel;
 import com.idejie.android.aoc.model.SortModel;
@@ -45,10 +38,7 @@ import com.idejie.android.aoc.tools.Areas;
 import com.idejie.android.aoc.tools.AutoString;
 import com.idejie.android.aoc.tools.NetThread;
 import com.idejie.android.library.fragment.LazyFragment;
-import com.idejie.android.library.view.indicator.Indicator;
 import com.idejie.android.library.view.indicator.IndicatorViewPager;
-import com.idejie.android.library.view.indicator.slidebar.ColorBar;
-import com.idejie.android.library.view.indicator.transition.OnTransitionTextListener;
 import com.strongloop.android.loopback.RestAdapter;
 import com.strongloop.android.loopback.callbacks.JsonArrayParser;
 import com.strongloop.android.loopback.callbacks.ListCallback;
@@ -92,6 +82,7 @@ public class SearchFragment extends LazyFragment implements View.OnClickListener
     private ArrayList<SearchList> priceArray;
     private ArrayList<PriceModel> yesterdayArray;
     private List<SortModel> sortObjects;
+    private String apiUrl="http://211.87.227.214:3001/api";
 
     /**
      * 初始化操作
@@ -249,7 +240,7 @@ public class SearchFragment extends LazyFragment implements View.OnClickListener
     }
 
     private void getCityId(final String name) {
-        RestAdapter adapter = new RestAdapter(activity.getApplicationContext(), "http://192.168.1.114:3001/api");
+        RestAdapter adapter = new RestAdapter(activity.getApplicationContext(),apiUrl);
         adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
         RegionRepository regionRepository = adapter.createRepository(RegionRepository.class);
         regionRepository.findAll(new ListCallback<RegionModel>() {
@@ -272,7 +263,7 @@ public class SearchFragment extends LazyFragment implements View.OnClickListener
     }
 
     private void getPrice() {
-        RestAdapter adapter = new RestAdapter(getApplicationContext(), "http://192.168.1.114:3001/api");
+        RestAdapter adapter = new RestAdapter(getApplicationContext(),apiUrl);
         adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
         PriceRepository productRepository = adapter.createRepository(PriceRepository.class);
         Map<String, Object> params = new HashMap<String, Object>();
@@ -355,7 +346,7 @@ public class SearchFragment extends LazyFragment implements View.OnClickListener
     }
 
     private void getSortObjects() {
-        RestAdapter adapter = new RestAdapter(getApplicationContext(), "http://192.168.1.114:3001/api");
+        RestAdapter adapter = new RestAdapter(getApplicationContext(),apiUrl);
         adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
         SortRepository sortRepository = adapter.createRepository(SortRepository.class);
         Log.d("test","a");
@@ -378,7 +369,7 @@ public class SearchFragment extends LazyFragment implements View.OnClickListener
         String[][] areas= Areas.areas;
         for (int i=0;i<areas.length;i++){
             for (int j=1;j<areas[i].length;j++){
-                RestAdapter adapter = new RestAdapter(getApplicationContext(), "http://192.168.1.114:3001/api");
+                RestAdapter adapter = new RestAdapter(getApplicationContext(),apiUrl);
                 adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
                 RegionRepository regionRepository = adapter.createRepository(RegionRepository.class);
                 RegionModel region= regionRepository.createObject(ImmutableMap.of("Province", areas[i][0]));

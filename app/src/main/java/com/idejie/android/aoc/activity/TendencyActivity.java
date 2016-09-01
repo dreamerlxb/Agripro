@@ -20,13 +20,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigkoo.pickerview.TimePickerView;
-import com.idejie.android.aoc.dialog.CityDialog;
 import com.idejie.android.aoc.dialog.CityTDialog;
-import com.idejie.android.aoc.dialog.MyDialog;
 import com.idejie.android.aoc.dialog.MyTDialog;
-import com.idejie.android.aoc.dialog.SortDetailDialog;
 import com.idejie.android.aoc.dialog.SortDetailTDialog;
-import com.idejie.android.aoc.dialog.SortDialog;
 import com.idejie.android.aoc.dialog.SortTDialog;
 import com.idejie.android.aoc.model.PriceModel;
 import com.idejie.android.aoc.R;
@@ -37,17 +33,11 @@ import com.idejie.android.aoc.repository.RegionRepository;
 import com.idejie.android.aoc.repository.SortRepository;
 import com.strongloop.android.loopback.RestAdapter;
 import com.strongloop.android.loopback.callbacks.JsonArrayParser;
-import com.strongloop.android.loopback.callbacks.JsonObjectParser;
 import com.strongloop.android.loopback.callbacks.ListCallback;
-import com.strongloop.android.loopback.callbacks.ObjectCallback;
-
-import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -65,6 +55,7 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
     private Handler hanDialog,hanCityDialog,hanSortDialog,hanDetailDialog;
     private int regionId,sortId,gradeId;
     private List<SortModel> objectArray;
+    private String apiUrl="http://211.87.227.214:3001/api";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -241,7 +232,7 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
     }
 
     private void getCityId(final String name) {
-        RestAdapter adapter = new RestAdapter(getApplicationContext(), "http://192.168.1.114:3001/api");
+        RestAdapter adapter = new RestAdapter(getApplicationContext(),apiUrl);
         adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
         RegionRepository regionRepository = adapter.createRepository(RegionRepository.class);
         regionRepository.findAll(new ListCallback<RegionModel>() {
@@ -266,7 +257,7 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
 
     private void getDate(final String name) {
         Log.d("test","aaa");
-        RestAdapter adapter = new RestAdapter(getApplicationContext(), "http://192.168.1.114:3001/api");
+        RestAdapter adapter = new RestAdapter(getApplicationContext(), apiUrl);
         adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
         PriceRepository productRepository = adapter.createRepository(PriceRepository.class);
         Map<String, Object> params = new HashMap<String, Object>();
@@ -346,7 +337,7 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
 
 
     private void getSort() {
-        RestAdapter adapter = new RestAdapter(getApplicationContext(), "http://192.168.1.114:3001/api");
+        RestAdapter adapter = new RestAdapter(getApplicationContext(), apiUrl);
         adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
         SortRepository sortRepository = adapter.createRepository(SortRepository.class);
         Log.d("test","a");
@@ -363,7 +354,6 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
             public void onError(Throwable t) {
                 Log.d("test","Throwable..Objs..."+t.toString());
             }
-
 
         });
     }

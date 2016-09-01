@@ -17,6 +17,7 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="app_html">http://blog.idejie.com</string>
+    <string name="base_url">http://blog.idejie.com</string>
     <string name="find">搜索</string>
     <string name="yaowen">要闻</string>
     <string name="tag">标签</string>
