@@ -173,6 +173,10 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
                 for (int i=0;i<objects.size();i++){
                     if(objects.get(i).getCity().equals(textProvince.getText().toString())){
                         regionId= (int) objects.get(i).getId();
+                        break;
+                    }else if(objects.get(i).getProvince().equals(textProvince.getText().toString())){
+                        regionId= (int) objects.get(i).getId();
+                        break;
                     }
                 }
 
@@ -332,6 +336,9 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
         editPrice.setText("");
         editAmount.setText("");
         editMarketName.setText("");
+        textProvince.setText("省市");
+        textType.setText("品种");
+        textRank.setText("等级");
 
     }
 
