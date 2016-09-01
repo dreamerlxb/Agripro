@@ -20,12 +20,15 @@ import android.widget.Toast;
 
 import com.idejie.android.aoc.R;
 import com.idejie.android.aoc.dialog.CityDialog;
+import com.idejie.android.aoc.dialog.GradeDialog;
 import com.idejie.android.aoc.dialog.MyDialog;
 import com.idejie.android.aoc.dialog.SortDetailDialog;
 import com.idejie.android.aoc.dialog.SortDialog;
+import com.idejie.android.aoc.model.GradeModel;
 import com.idejie.android.aoc.model.PriceModel;
 import com.idejie.android.aoc.model.RegionModel;
 import com.idejie.android.aoc.model.SortModel;
+import com.idejie.android.aoc.repository.GradeRepository;
 import com.idejie.android.aoc.repository.PriceRepository;
 import com.idejie.android.aoc.repository.RegionRepository;
 import com.idejie.android.aoc.repository.SortRepository;
@@ -58,9 +61,10 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
     private TextView textProvince,textType,textRank;
     private String province,type,rank,price,amount,marketName;
     private LinearLayout lineProvince,lineType,lineRank;
-    private Handler hanDialog,hanCityDialog,hanSortDialog,hanDetailDialog;
+    private Handler hanDialog,hanCityDialog,hanSortDialog,hanDetailDialog,hanGradeDialog;
     private int sorts[][];
     private List<SortModel> objectArray;
+    private List<GradeModel> gradeArray;
     private int regionId,sortId,gradeId;
     private String apiUrl="http://211.87.227.214:3001/api";
     /**
@@ -114,7 +118,7 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
                 if (msg.what==1){
                     String Jsmess = (String) msg.obj;
                     textProvince.setText(Jsmess);
-                    getCityId(Jsmess);
+                    getCityId();
                 }else {
                     CityDialog dialog=new CityDialog(context,hanCityDialog, (Integer) msg.obj);
                     dialog.show();
@@ -127,7 +131,7 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
                 // TODO Auto-generated method stub
                 String Jsmess = (String) msg.obj;
                 textProvince.setText(Jsmess);
-
+                getCityId();
             }
         };
         hanSortDialog = new Handler() {
@@ -146,10 +150,20 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
                 textType.setText(Jsmess);
             }
         };
+        hanGradeDialog = new Handler() {
+            public void handleMessage(Message msg) {
+                // TODO Auto-generated method stub
+                gradeId=msg.what;
+                String Jsmess = (String) msg.obj;
+                textRank.setText(Jsmess);
+
+            }
+        };
+
 
     }
 
-    private void getCityId(final String name) {
+    private void getCityId() {
         RestAdapter adapter = new RestAdapter(activity.getApplicationContext(),apiUrl);
         adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
         RegionRepository regionRepository = adapter.createRepository(RegionRepository.class);
@@ -157,7 +171,7 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
             @Override
             public void onSuccess(List<RegionModel> objects) {
                 for (int i=0;i<objects.size();i++){
-                    if(objects.get(i).getCity().equals(name)){
+                    if(objects.get(i).getCity().equals(textProvince.getText().toString())){
                         regionId= (int) objects.get(i).getId();
                     }
                 }
@@ -215,6 +229,9 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
                 getSort();
                 break;
             case R.id.line_3:
+                if (textType.getText().equals("品种")){
+                    Toast.makeText(context,"请先选好品种",Toast.LENGTH_SHORT).show();
+                }
                 getRank();
                 break;
 
@@ -222,8 +239,25 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
     }
 
     private void getRank() {
+        RestAdapter adapter = new RestAdapter(getApplicationContext(), apiUrl);
+        adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
+        GradeRepository gradeRepository = adapter.createRepository(GradeRepository.class);
+        Log.d("test","a");
+        gradeRepository.findAll(new ListCallback<GradeModel>() {
+            @Override
+            public void onSuccess(List<GradeModel> objects) {
+                gradeArray=objects;
+                GradeDialog gradeDialog=new GradeDialog(context,hanGradeDialog,objects,sortId,textType.getText().toString());
+                gradeDialog.show();
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                Log.d("test","Throwable..Objs..."+t.toString());
+            }
 
 
+        });
     }
 
 
@@ -261,17 +295,15 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
             adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
             PriceRepository productRepository = adapter.createRepository(PriceRepository.class);
             Map<String, Object> params = new HashMap<String, Object>();
-            params.put("regionId", 1);
+            params.put("regionId", regionId);
             params.put("sortId", sortId);
-            params.put("gradeId", 2);
-            params.put("price", editPrice.getText().toString());
-            params.put("turnover", editAmount.getText().toString());
+            params.put("gradeId", gradeId);
+            params.put("price", Integer.parseInt(editPrice.getText().toString()));
+            params.put("turnover",Integer.parseInt(editAmount.getText().toString()) );
             params.put("marketName", editMarketName.getText().toString());
             params.put("userId", 28);
-
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
-            System.out.println(df.format(new Date()));// new Date()为获取当前系统时间
-            params.put("priceDate","2016-08-12 02:08:55");
+            params.put("priceDate",df.format(new Date()));
             PriceModel price = productRepository.createObject(params );
             price.save(new VoidCallback() {
                 @Override
