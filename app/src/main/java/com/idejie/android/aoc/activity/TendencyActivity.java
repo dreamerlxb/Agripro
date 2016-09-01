@@ -16,10 +16,15 @@ import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigkoo.pickerview.TimePickerView;
+import com.idejie.android.aoc.adapter.SearchListAdapter;
+import com.idejie.android.aoc.adapter.TendListAdapter;
+import com.idejie.android.aoc.bean.SearchList;
+import com.idejie.android.aoc.bean.TendList;
 import com.idejie.android.aoc.dialog.CityTDialog;
 import com.idejie.android.aoc.dialog.GradeDialog;
 import com.idejie.android.aoc.dialog.GradeTDialog;
@@ -39,7 +44,10 @@ import com.strongloop.android.loopback.RestAdapter;
 import com.strongloop.android.loopback.callbacks.JsonArrayParser;
 import com.strongloop.android.loopback.callbacks.ListCallback;
 
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -61,6 +69,9 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
     private List<SortModel> objectArray;
     private List<GradeModel> gradeArray;
     private String apiUrl="http://211.87.227.214:3001/api";
+    private ListView listView;
+    private TendListAdapter tendListAdapter;
+    private ArrayList<TendList> priceArray;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -191,7 +202,6 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
                 LinearLayout.LayoutParams linearParams =(LinearLayout.LayoutParams)
                         chartWeb.getLayoutParams(); //取控件textView当前的布局参数
                 linearParams.height = ((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 260, getResources().getDisplayMetrics()));
-
                 chartWeb.setLayoutParams(linearParams);
                 chartWeb.loadUrl("file:///android_asset/test4.html");
                 btnLine.setBackgroundResource(R.drawable.border_green);
@@ -209,7 +219,7 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
                 linearParams1.height = 1;// 控件的高强制设成20
 
                 chartWeb.setLayoutParams(linearParams1);
-                getDate("region");
+                getPrice();
                 break;
             case R.id.btn_map:
                 LinearLayout.LayoutParams linearParams2 =(LinearLayout.LayoutParams)
@@ -276,34 +286,46 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
 
     }
 
-
-    private void getDate(final String name) {
-        Log.d("test","aaa");
-        RestAdapter adapter = new RestAdapter(getApplicationContext(), apiUrl);
+    private void getPrice() {
+        RestAdapter adapter = new RestAdapter(getApplicationContext(),apiUrl);
         adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
         PriceRepository productRepository = adapter.createRepository(PriceRepository.class);
         Map<String, Object> params = new HashMap<String, Object>();
         Map<String, Object> filterMap = new HashMap<String, Object>();
-        filterMap.put("include",name);
+        filterMap.put("include","sort");
         params.put("filter",filterMap);
-        productRepository. invokeStaticMethod("all", params, new JsonArrayParser<PriceModel> (productRepository,new ListCallback<PriceModel>() {
+        productRepository. invokeStaticMethod("all", params, new JsonArrayParser<PriceModel>(productRepository,new ListCallback<PriceModel>() {
 
             @Override
             public void onSuccess(List<PriceModel> objects) {
-                Log.d("test",1+"");
-                if (name.equals("region")){
-                    informations=objects;
-                    informations.get(0).getRegion().getCity();
-                    //getDate("sort");
-                }else if (name.equals("sort"))
-                {
-                    for (int i=0;i<informations.size();i++){
-                        informations.get(i).setSortModel(objects.get(i).getSortModel());
-                    }
-                    Log.d("test","........."+informations.get(1).getSortModel().getSubName());
-                    Log.d("test","........."+informations.get(1).getRegionModel().getCity());
+                for(int i=0;i<objects.size();i++){
+                    PriceModel priceModel=objects.get(i);
+                    if (priceModel.getRegionId()==regionId&&priceModel.getSortId()
+                            ==sortId&&priceModel.getGradeId()==gradeId){
+                        //比较时间
+                        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                        try {
+                            Date dateTimeS = dateFormat.parse(textTimeS.getText().toString());
+                            Date dateTimeO = dateFormat.parse(textTimeO.getText().toString());
+                            Date dateTime=dateFormat.parse(priceModel.getPriceDate());
+                            int t1 = dateTimeS.compareTo(dateTime);
+                            int t2 = dateTimeO.compareTo(dateTime);
+                            if (t1<=0&&t2>=0){
+                                TendList tendList=new TendList(textProvince.getText().toString(),textType.getText().toString(),
+                                textRank.getText().toString(),priceModel.getPrice()+"",priceModel.getPriceDate());
+                                priceArray.add(tendList);
+                            }
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
 
+                        tendListAdapter=new TendListAdapter(TendencyActivity.this,R.layout.item_tend_list,priceArray);
+                        listView.setAdapter(tendListAdapter);
+                    }
                 }
+
+
+
             }
             @Override
             public void onError(Throwable t) {
@@ -311,6 +333,9 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
             }
         }));
     }
+
+
+
 
 
     private void showTimeChoose(final int i) {

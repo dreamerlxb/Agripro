@@ -76,7 +76,6 @@ public class SearchFragment extends LazyFragment implements View.OnClickListener
     private String lat,lon;
     private Handler han;
     private ListView listView;
-    private SearchListAdapter searchListAdapter;
     String url="http://api.map.baidu.com/geocoder/v2/";
     private int regionId;
     private ArrayList<SearchList> priceArray;

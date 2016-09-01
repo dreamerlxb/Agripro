@@ -14,42 +14,35 @@
         android:textSize="@dimen/item_size"
         android:layout_weight="2"
         android:layout_width="0dp"
-        android:layout_height="match_parent" />
+        android:layout_height="60dp" />
     <TextView
         android:id="@+id/text_sort"
         android:gravity="center"
         android:textSize="@dimen/item_size"
         android:layout_weight="2"
         android:layout_width="0dp"
-        android:layout_height="match_parent" />
+        android:layout_height="60dp" />
     <TextView
         android:id="@+id/text_rank"
         android:gravity="center"
         android:textSize="@dimen/item_size"
         android:layout_weight="2"
         android:layout_width="0dp"
-        android:layout_height="match_parent" />
+        android:layout_height="60dp" />
     <TextView
         android:id="@+id/text_price"
         android:gravity="center"
         android:textSize="@dimen/item_size"
         android:layout_weight="3"
         android:layout_width="0dp"
-        android:layout_height="match_parent" />
+        android:layout_height="60dp" />
     <TextView
         android:id="@+id/text_date"
         android:gravity="center"
         android:textSize="@dimen/item_size"
         android:layout_weight="3"
         android:layout_width="0dp"
-        android:layout_height="match_parent" />
-
-
-
-
-
-
-
+        android:layout_height="60dp" />
 
 
 
