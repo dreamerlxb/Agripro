@@ -5,7 +5,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -14,14 +13,12 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.idejie.android.aoc.R;
 import com.idejie.android.aoc.activity.MainActivity;
 import com.idejie.android.aoc.tools.Areas;
 
-public class CityDialog extends Dialog implements View.OnClickListener{
+public class CityTDialog extends Dialog implements View.OnClickListener{
 
 	Context context;
 	View localView;
@@ -32,7 +29,7 @@ public class CityDialog extends Dialog implements View.OnClickListener{
 	private int cityId;
 	private Button btnCity;
 
-	public CityDialog(Context context, Handler han,int cityId) {
+	public CityTDialog(Context context, Handler han, int cityId) {
 		super(context);
 		this.context = context;
 		this.han=han;
@@ -48,7 +45,7 @@ public class CityDialog extends Dialog implements View.OnClickListener{
         // 这句代码换掉dialog默认背景，否则dialog的边缘发虚透明而且很宽
         // 总之达不到想要的效果
         getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-    	LayoutInflater inflater = ((MainActivity) context).getLayoutInflater();
+    	LayoutInflater inflater = getLayoutInflater();
 		localView = inflater.inflate(R.layout.dialog_city, null);
 		localView.setAnimation(AnimationUtils.loadAnimation(context, R.anim.slide_bottom_to_top));
 		setContentView(localView);   

@@ -2,6 +2,8 @@ package com.idejie.android.aoc.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
@@ -18,9 +20,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigkoo.pickerview.TimePickerView;
+import com.idejie.android.aoc.dialog.CityDialog;
+import com.idejie.android.aoc.dialog.CityTDialog;
+import com.idejie.android.aoc.dialog.MyDialog;
+import com.idejie.android.aoc.dialog.MyTDialog;
+import com.idejie.android.aoc.dialog.SortDetailDialog;
+import com.idejie.android.aoc.dialog.SortDetailTDialog;
+import com.idejie.android.aoc.dialog.SortDialog;
+import com.idejie.android.aoc.dialog.SortTDialog;
 import com.idejie.android.aoc.model.PriceModel;
 import com.idejie.android.aoc.R;
+import com.idejie.android.aoc.model.RegionModel;
+import com.idejie.android.aoc.model.SortModel;
 import com.idejie.android.aoc.repository.PriceRepository;
+import com.idejie.android.aoc.repository.RegionRepository;
+import com.idejie.android.aoc.repository.SortRepository;
 import com.strongloop.android.loopback.RestAdapter;
 import com.strongloop.android.loopback.callbacks.JsonArrayParser;
 import com.strongloop.android.loopback.callbacks.JsonObjectParser;
@@ -42,11 +56,15 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
     private WebView chartWeb;
     private Button btnLine,btnGraph,btnMap;
     private LinearLayout lin4,lin5;
+    private LinearLayout lineProvince,lineType,lineRank;
     private TimePickerView pvTime;
-    private TextView textTimeS,textTimeO;
+    private TextView textTimeS,textTimeO,textProvince,textType,textRank;
     private Boolean ifMap=false;
     private ImageView imageBack;
     private List<PriceModel> informations;
+    private Handler hanDialog,hanCityDialog,hanSortDialog,hanDetailDialog;
+    private int regionId,sortId,gradeId;
+    private List<SortModel> objectArray;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +73,9 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
     }
 
     private void init() {
+        textProvince= (TextView) findViewById(R.id.province);
+        textType= (TextView) findViewById(R.id.type);
+        textRank= (TextView) findViewById(R.id.rank);
         textTimeS= (TextView) findViewById(R.id.text_timeS);
         textTimeO= (TextView) findViewById(R.id.text_timeO);
         chartWeb= (WebView) findViewById(R.id.chart_webView);
@@ -64,6 +85,12 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
         btnGraph.setOnClickListener(this);
         btnMap= (Button) findViewById(R.id.btn_map);
         btnMap.setOnClickListener(this);
+        lineProvince= (LinearLayout) findViewById(R.id.line_1);
+        lineProvince.setOnClickListener(this);
+        lineType= (LinearLayout) findViewById(R.id.line_2);
+        lineType.setOnClickListener(this);
+        lineRank= (LinearLayout) findViewById(R.id.line_3);
+        lineRank.setOnClickListener(this);
         lin4= (LinearLayout) findViewById(R.id.line_4);
         lin4.setOnClickListener(this);
         lin5= (LinearLayout) findViewById(R.id.line_5);
@@ -71,6 +98,44 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
         imageBack= (ImageView) findViewById(R.id.back);
         imageBack.setOnClickListener(this);
         initWeb();
+        hanDialog = new Handler() {
+            public void handleMessage(Message msg) {
+                // TODO Auto-generated method stub
+                if (msg.what==1){
+                    String Jsmess = (String) msg.obj;
+                    textProvince.setText(Jsmess);
+                    getCityId(Jsmess);
+                }else {
+                    CityTDialog dialog=new CityTDialog(TendencyActivity.this,hanCityDialog, (Integer) msg.obj);
+                    dialog.show();
+                }
+
+            }
+        };
+        hanCityDialog = new Handler() {
+            public void handleMessage(Message msg) {
+                // TODO Auto-generated method stub
+                String Jsmess = (String) msg.obj;
+                textProvince.setText(Jsmess);
+
+            }
+        };
+        hanSortDialog = new Handler() {
+            public void handleMessage(Message msg) {
+                // TODO Auto-generated method stub
+                String Jsmess = (String) msg.obj;
+                SortDetailTDialog detailDialog=new SortDetailTDialog(TendencyActivity.this,hanDetailDialog,objectArray,Jsmess);
+                detailDialog.show();
+            }
+        };
+        hanDetailDialog = new Handler() {
+            public void handleMessage(Message msg) {
+                // TODO Auto-generated method stub
+                String Jsmess = (String) msg.obj;
+                sortId=msg.what;
+                textType.setText(Jsmess);
+            }
+        };
 
 
     }
@@ -152,6 +217,16 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
                 chartWeb.setBackgroundResource(R.color.white);
                 ifMap=true;
                 break;
+            case R.id.line_1:
+                MyTDialog dialog=new MyTDialog(TendencyActivity.this,hanDialog);
+                dialog.show();
+                break;
+            case R.id.line_2:
+                getSort();
+                break;
+            case R.id.line_3:
+                getRank();
+                break;
             case R.id.line_4:
                 showTimeChoose(0);
                 break;
@@ -164,19 +239,30 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
         }
 
     }
-    //重写了HashMap使得map不覆盖
-    class MyHashMap<S, O> extends HashMap
-    {
-        @Override
-        public Object put(Object key, Object value)
-        {
-            //如果已经存在key，不覆盖原有key对应的value
-            if(!this.containsKey(key))
-                return super.put(key, value);
 
-            return null;
-        }
+    private void getCityId(final String name) {
+        RestAdapter adapter = new RestAdapter(getApplicationContext(), "http://192.168.1.114:3001/api");
+        adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
+        RegionRepository regionRepository = adapter.createRepository(RegionRepository.class);
+        regionRepository.findAll(new ListCallback<RegionModel>() {
+            @Override
+            public void onSuccess(List<RegionModel> objects) {
+                for (int i=0;i<objects.size();i++){
+                    if(objects.get(i).getCity().equals(name)){
+                        regionId= (int) objects.get(i).getId();
+                    }
+                }
+
+            }
+
+            @Override
+            public void onError(Throwable t) {
+
+            }
+        });
+
     }
+
 
     private void getDate(final String name) {
         Log.d("test","aaa");
@@ -251,6 +337,35 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
             }
         });
         pvTime.show();
+    }
+
+    private void getRank() {
+
+
+    }
+
+
+    private void getSort() {
+        RestAdapter adapter = new RestAdapter(getApplicationContext(), "http://192.168.1.114:3001/api");
+        adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
+        SortRepository sortRepository = adapter.createRepository(SortRepository.class);
+        Log.d("test","a");
+        sortRepository.findAll(new ListCallback<SortModel>() {
+            @Override
+            public void onSuccess(List<SortModel> objects) {
+                objectArray=objects;
+                SortTDialog sortDialog=new SortTDialog(TendencyActivity.this,hanSortDialog,objects);
+                sortDialog.show();
+
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                Log.d("test","Throwable..Objs..."+t.toString());
+            }
+
+
+        });
     }
     public static String getTime(Date date) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");

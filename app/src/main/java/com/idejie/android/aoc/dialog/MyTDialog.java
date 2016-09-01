@@ -14,14 +14,12 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.idejie.android.aoc.R;
 import com.idejie.android.aoc.activity.MainActivity;
 import com.idejie.android.aoc.tools.Areas;
 
-public class CityDialog extends Dialog implements View.OnClickListener{
+public class MyTDialog extends Dialog implements View.OnClickListener{
 
 	Context context;
 	View localView;
@@ -29,14 +27,11 @@ public class CityDialog extends Dialog implements View.OnClickListener{
 	private Handler han;
 	private RelativeLayout clearallpan;
 	private LinearLayout lin;
-	private int cityId;
-	private Button btnCity;
 
-	public CityDialog(Context context, Handler han,int cityId) {
+	public MyTDialog(Context context, Handler han) {
 		super(context);
 		this.context = context;
 		this.han=han;
-		this.cityId=cityId;
 		dialog=this;
 	}
 	
@@ -48,8 +43,8 @@ public class CityDialog extends Dialog implements View.OnClickListener{
         // 这句代码换掉dialog默认背景，否则dialog的边缘发虚透明而且很宽
         // 总之达不到想要的效果
         getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-    	LayoutInflater inflater = ((MainActivity) context).getLayoutInflater();
-		localView = inflater.inflate(R.layout.dialog_city, null);
+    	LayoutInflater inflater = getLayoutInflater();
+		localView = inflater.inflate(R.layout.animclearpan, null);
 		localView.setAnimation(AnimationUtils.loadAnimation(context, R.anim.slide_bottom_to_top));
 		setContentView(localView);   
         // 这句话起全屏的作用
@@ -71,8 +66,6 @@ public class CityDialog extends Dialog implements View.OnClickListener{
 	}
 
 	private void initView() {
-		btnCity= (Button) findViewById(R.id.province);
-		btnCity.setOnClickListener(this);
 		clearallpan = (RelativeLayout) findViewById(R.id.clearallpan);
 		lin= (LinearLayout) findViewById(R.id.line);
 		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1); // , 1是可选写的
@@ -81,10 +74,9 @@ public class CityDialog extends Dialog implements View.OnClickListener{
 		lp1.setMargins(0,8,0,0);
 		final String areas[][]=Areas.areas;
 		LinearLayout linearLayout=null;
-		btnCity.setText(areas[cityId][0]);
-		for (int i=1;i<areas[cityId].length;i++){
+		for (int i=0;i<areas.length;i++){
 
-			if ((i-1)%4==0){
+			if (i%4==0){
 				LinearLayout lin1=new LinearLayout(context);
 				lin1.setMinimumHeight(40);
 				lin1.setLayoutParams(lp1);
@@ -92,18 +84,24 @@ public class CityDialog extends Dialog implements View.OnClickListener{
 				linearLayout=lin1;
 			}
 			Button btn=new Button(context);
-			btn.setText(areas[cityId][i]);
+			btn.setText(areas[i][0]);
 			btn.setLayoutParams(lp);
 			final int finalI = i;
 			btn.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View view) {
-
-
-					Message mess=new Message();
-					mess.what=1;
-					mess.obj =areas[cityId][finalI];
-					han.sendMessage(mess);
+					Log.d("test","i..."+ finalI +"...len..."+areas[finalI].length);
+					if (areas[finalI].length==1){
+						Message mess=new Message();
+						mess.what=1;
+						mess.obj =areas[finalI][0];
+						han.sendMessage(mess);
+					}else {
+						Message mess=new Message();
+						mess.what=areas[finalI].length;
+						mess.obj =finalI;
+						han.sendMessage(mess);
+					}
 					dialog.dismiss();
 				}
 			});
@@ -114,14 +112,6 @@ public class CityDialog extends Dialog implements View.OnClickListener{
 
 	public void onClick(View v) {
 		switch (v.getId()) {
-			case R.id.province:
-				Message mess=new Message();
-				mess.what=1;
-				mess.obj =btnCity.getText().toString();
-				han.sendMessage(mess);
-
-				dialog.dismiss();
-				break;
 		}
 	}
 }

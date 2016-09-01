@@ -5,7 +5,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -14,14 +13,14 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.idejie.android.aoc.R;
 import com.idejie.android.aoc.activity.MainActivity;
-import com.idejie.android.aoc.tools.Areas;
+import com.idejie.android.aoc.model.SortModel;
 
-public class CityDialog extends Dialog implements View.OnClickListener{
+import java.util.List;
+
+public class SortDetailTDialog extends Dialog implements View.OnClickListener{
 
 	Context context;
 	View localView;
@@ -30,13 +29,16 @@ public class CityDialog extends Dialog implements View.OnClickListener{
 	private RelativeLayout clearallpan;
 	private LinearLayout lin;
 	private int cityId;
-	private Button btnCity;
+	private Button btnTopName;
+	private String name;
+	private List<SortModel> objectArray;
 
-	public CityDialog(Context context, Handler han,int cityId) {
+	public SortDetailTDialog(Context context, Handler han, List<SortModel> objectArray, String name) {
 		super(context);
 		this.context = context;
 		this.han=han;
-		this.cityId=cityId;
+		this.name=name;
+		this.objectArray=objectArray;
 		dialog=this;
 	}
 	
@@ -48,8 +50,8 @@ public class CityDialog extends Dialog implements View.OnClickListener{
         // 这句代码换掉dialog默认背景，否则dialog的边缘发虚透明而且很宽
         // 总之达不到想要的效果
         getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-    	LayoutInflater inflater = ((MainActivity) context).getLayoutInflater();
-		localView = inflater.inflate(R.layout.dialog_city, null);
+    	LayoutInflater inflater = getLayoutInflater();
+		localView = inflater.inflate(R.layout.dialog_detail_sort, null);
 		localView.setAnimation(AnimationUtils.loadAnimation(context, R.anim.slide_bottom_to_top));
 		setContentView(localView);   
         // 这句话起全屏的作用
@@ -71,57 +73,56 @@ public class CityDialog extends Dialog implements View.OnClickListener{
 	}
 
 	private void initView() {
-		btnCity= (Button) findViewById(R.id.province);
-		btnCity.setOnClickListener(this);
+		btnTopName= (Button) findViewById(R.id.top_name);
 		clearallpan = (RelativeLayout) findViewById(R.id.clearallpan);
 		lin= (LinearLayout) findViewById(R.id.line);
 		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1); // , 1是可选写的
 		lp.setMargins(10, 0, 10, 0);
 		LinearLayout.LayoutParams lp1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1); // , 1是可选写的
 		lp1.setMargins(0,8,0,0);
-		final String areas[][]=Areas.areas;
 		LinearLayout linearLayout=null;
-		btnCity.setText(areas[cityId][0]);
-		for (int i=1;i<areas[cityId].length;i++){
-
-			if ((i-1)%4==0){
-				LinearLayout lin1=new LinearLayout(context);
-				lin1.setMinimumHeight(40);
-				lin1.setLayoutParams(lp1);
-				lin.addView(lin1);
-				linearLayout=lin1;
-			}
-			Button btn=new Button(context);
-			btn.setText(areas[cityId][i]);
-			btn.setLayoutParams(lp);
-			final int finalI = i;
-			btn.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View view) {
-
-
-					Message mess=new Message();
-					mess.what=1;
-					mess.obj =areas[cityId][finalI];
-					han.sendMessage(mess);
-					dialog.dismiss();
+		btnTopName.setText(name);
+		btnTopName.setOnClickListener( this);
+		int j=0;
+		for (int i=0;i<objectArray.size();i++){
+			if (objectArray.get(i).getName().equals(name)){
+				if (j%4==0){
+					linearLayout=new LinearLayout(context);
+					linearLayout.setMinimumHeight(40);
+					linearLayout.setLayoutParams(lp1);
+					lin.addView(linearLayout);
 				}
-			});
-			linearLayout.addView(btn);
-		}
+				final Button btn=new Button(context);
+				btn.setText(objectArray.get(i).getSubName());
+				btn.setLayoutParams(lp);
+				final int finalI = i;
+				btn.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View view) {
 
+						Message mess=new Message();
+						mess.what= (int) objectArray.get(finalI).getId();
+						mess.obj =btn.getText().toString();
+						han.sendMessage(mess);
+						dialog.dismiss();
+					}
+				});
+				linearLayout.addView(btn);
+				j++;
+			}
+
+		}
 	}
 
 	public void onClick(View v) {
 		switch (v.getId()) {
-			case R.id.province:
+			case R.id.top_name:
 				Message mess=new Message();
-				mess.what=1;
-				mess.obj =btnCity.getText().toString();
+				mess.obj =name;
 				han.sendMessage(mess);
-
 				dialog.dismiss();
-				break;
+			break;
+
 		}
 	}
 }
