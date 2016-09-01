@@ -118,10 +118,10 @@ public class SortDetailDialog extends Dialog implements View.OnClickListener{
 	public void onClick(View v) {
 		switch (v.getId()) {
 			case R.id.top_name:
-				Message mess=new Message();
-				mess.obj =name;
-				han.sendMessage(mess);
-				dialog.dismiss();
+//				Message mess=new Message();
+//				mess.obj =name;
+//				han.sendMessage(mess);
+//				dialog.dismiss();
 			break;
 
 		}

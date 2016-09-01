@@ -235,8 +235,10 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
             case R.id.line_3:
                 if (textType.getText().equals("品种")){
                     Toast.makeText(context,"请先选好品种",Toast.LENGTH_SHORT).show();
+                }else {
+                    getRank();
                 }
-                getRank();
+
                 break;
 
         }

@@ -21,13 +21,17 @@ import android.widget.Toast;
 
 import com.bigkoo.pickerview.TimePickerView;
 import com.idejie.android.aoc.dialog.CityTDialog;
+import com.idejie.android.aoc.dialog.GradeDialog;
+import com.idejie.android.aoc.dialog.GradeTDialog;
 import com.idejie.android.aoc.dialog.MyTDialog;
 import com.idejie.android.aoc.dialog.SortDetailTDialog;
 import com.idejie.android.aoc.dialog.SortTDialog;
+import com.idejie.android.aoc.model.GradeModel;
 import com.idejie.android.aoc.model.PriceModel;
 import com.idejie.android.aoc.R;
 import com.idejie.android.aoc.model.RegionModel;
 import com.idejie.android.aoc.model.SortModel;
+import com.idejie.android.aoc.repository.GradeRepository;
 import com.idejie.android.aoc.repository.PriceRepository;
 import com.idejie.android.aoc.repository.RegionRepository;
 import com.idejie.android.aoc.repository.SortRepository;
@@ -52,9 +56,10 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
     private Boolean ifMap=false;
     private ImageView imageBack;
     private List<PriceModel> informations;
-    private Handler hanDialog,hanCityDialog,hanSortDialog,hanDetailDialog;
+    private Handler hanDialog,hanCityDialog,hanSortDialog,hanDetailDialog,hanGradeDialog;
     private int regionId,sortId,gradeId;
     private List<SortModel> objectArray;
+    private List<GradeModel> gradeArray;
     private String apiUrl="http://211.87.227.214:3001/api";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,7 +100,7 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
                 if (msg.what==1){
                     String Jsmess = (String) msg.obj;
                     textProvince.setText(Jsmess);
-                    getCityId(Jsmess);
+                    getCityId();
                 }else {
                     CityTDialog dialog=new CityTDialog(TendencyActivity.this,hanCityDialog, (Integer) msg.obj);
                     dialog.show();
@@ -108,7 +113,7 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
                 // TODO Auto-generated method stub
                 String Jsmess = (String) msg.obj;
                 textProvince.setText(Jsmess);
-
+                getCityId();
             }
         };
         hanSortDialog = new Handler() {
@@ -125,6 +130,16 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
                 String Jsmess = (String) msg.obj;
                 sortId=msg.what;
                 textType.setText(Jsmess);
+            }
+        };
+
+        hanGradeDialog = new Handler() {
+            public void handleMessage(Message msg) {
+                // TODO Auto-generated method stub
+                gradeId=msg.what;
+                String Jsmess = (String) msg.obj;
+                textRank.setText(Jsmess);
+
             }
         };
 
@@ -216,7 +231,12 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
                 getSort();
                 break;
             case R.id.line_3:
-                getRank();
+                if (textType.getText().equals("品种")){
+                    Toast.makeText(TendencyActivity.this,"请先选好品种",Toast.LENGTH_SHORT).show();
+                }else {
+                    getRank();
+                }
+
                 break;
             case R.id.line_4:
                 showTimeChoose(0);
@@ -231,7 +251,7 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
 
     }
 
-    private void getCityId(final String name) {
+    private void getCityId() {
         RestAdapter adapter = new RestAdapter(getApplicationContext(),apiUrl);
         adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
         RegionRepository regionRepository = adapter.createRepository(RegionRepository.class);
@@ -239,16 +259,18 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
             @Override
             public void onSuccess(List<RegionModel> objects) {
                 for (int i=0;i<objects.size();i++){
-                    if(objects.get(i).getCity().equals(name)){
+                    if(textProvince.getText().toString().equals(objects.get(i).getCity())){
+                        regionId= (int) objects.get(i).getId();
+                    }
+                    else if(objects.get(i).getProvince().equals(textProvince.getText().toString())){
                         regionId= (int) objects.get(i).getId();
                     }
                 }
-
             }
 
             @Override
             public void onError(Throwable t) {
-
+                Log.d("test","t...."+t.toString());
             }
         });
 
@@ -330,17 +352,11 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
         pvTime.show();
     }
 
-    private void getRank() {
-
-
-    }
-
 
     private void getSort() {
         RestAdapter adapter = new RestAdapter(getApplicationContext(), apiUrl);
         adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
         SortRepository sortRepository = adapter.createRepository(SortRepository.class);
-        Log.d("test","a");
         sortRepository.findAll(new ListCallback<SortModel>() {
             @Override
             public void onSuccess(List<SortModel> objects) {
@@ -357,6 +373,30 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
 
         });
     }
+
+
+    private void getRank() {
+        RestAdapter adapter = new RestAdapter(getApplicationContext(), apiUrl);
+        adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
+        GradeRepository gradeRepository = adapter.createRepository(GradeRepository.class);
+        Log.d("test","a");
+        gradeRepository.findAll(new ListCallback<GradeModel>() {
+            @Override
+            public void onSuccess(List<GradeModel> objects) {
+                gradeArray=objects;
+                GradeTDialog gradeDialog=new GradeTDialog(TendencyActivity.this,hanGradeDialog,objects,sortId,textType.getText().toString());
+                gradeDialog.show();
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                Log.d("test","Throwable..Objs..."+t.toString());
+            }
+
+
+        });
+    }
+
     public static String getTime(Date date) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         return format.format(date);
@@ -370,8 +410,6 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
             chartWeb.goBack(); //goBack()表示返回WebView的上一页面
             return true;
         }
-//        finish();//结束退出程序
-//        return false;
         return super.onKeyDown(keyCode,event);
     }
 }
