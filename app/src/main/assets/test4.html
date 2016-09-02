@@ -16,10 +16,17 @@
     var myChart = echarts.init(dom);
     var app = {};
     option = null;
-    function fetchData(cb) {
+
+    //通过暴露的my对象来获取数据
+    var data = lineDate.getX();
+    //将json字符串转换为数组
+    var f = eval(data);
+    alert(lineDate.getX());
+    alert(f);
+    function fetchData(c) {
         // 通过 setTimeout 模拟异步加载
         setTimeout(function () {
-            cb({
+            c({
                 categories: ["8.29","8.30","8.31","9.1","9.2","9.3"],
                 data: [5, 20, 36, 10, 10, 20]
             });

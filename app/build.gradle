@@ -67,4 +67,5 @@ dependencies {
     compile 'junit:junit:4.12'
     compile 'com.android.support:support-vector-drawable:24.1.1'
     testCompile 'junit:junit:4.12'
+    compile files('libs/gson-2.3.1.jar')
 }

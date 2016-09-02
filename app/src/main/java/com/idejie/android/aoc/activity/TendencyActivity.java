@@ -21,8 +21,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigkoo.pickerview.TimePickerView;
+import com.google.gson.Gson;
 import com.idejie.android.aoc.adapter.SearchListAdapter;
 import com.idejie.android.aoc.adapter.TendListAdapter;
+import com.idejie.android.aoc.bean.LineData;
 import com.idejie.android.aoc.bean.SearchList;
 import com.idejie.android.aoc.bean.TendList;
 import com.idejie.android.aoc.dialog.CityTDialog;
@@ -40,6 +42,7 @@ import com.idejie.android.aoc.repository.GradeRepository;
 import com.idejie.android.aoc.repository.PriceRepository;
 import com.idejie.android.aoc.repository.RegionRepository;
 import com.idejie.android.aoc.repository.SortRepository;
+import com.idejie.android.aoc.tools.LineTableDate;
 import com.strongloop.android.loopback.RestAdapter;
 import com.strongloop.android.loopback.callbacks.JsonArrayParser;
 import com.strongloop.android.loopback.callbacks.ListCallback;
@@ -178,7 +181,6 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
         chartWeb.getSettings().setLoadWithOverviewMode(true);
         //开启脚本支持
         chartWeb.getSettings().setJavaScriptEnabled(true);
-        chartWeb.loadUrl("file:///android_asset/test4.html");
         //不显示webview缩放按钮
         chartWeb.getSettings().setDisplayZoomControls(false);
         //在当前页面打开链接了
@@ -195,6 +197,15 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
                 return super.onJsAlert(view, url, message, result);
             }
         });
+        chartWeb.loadUrl("file:///android_asset/test4.html");
+        //关联数据
+        List<LineData> mlist = new ArrayList<LineData>();
+        for (int i = 0; i <10 ; i++) {
+            mlist.add(new LineData(i,"xa"));
+        }
+        Gson gson = new Gson();
+        String data  = gson.toJson(mlist);
+        chartWeb.addJavascriptInterface(new LineTableDate(TendencyActivity.this,data,"2"),"lineDate");
     }
 
 
@@ -251,7 +262,6 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
                 }else {
                     getRank();
                 }
-
                 break;
             case R.id.line_4:
                 showTimeChoose(0);
