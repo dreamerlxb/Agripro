@@ -66,7 +66,7 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
     private List<SortModel> objectArray;
     private List<GradeModel> gradeArray;
     private int regionId,sortId,gradeId;
-    private String apiUrl="http://211.87.227.214:3001/api";
+    private String apiUrl="http://192.168.1.114:3001/api";
     /**
      * 初始化操作
      */

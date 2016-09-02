@@ -68,7 +68,8 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
     private int regionId,sortId,gradeId;
     private List<SortModel> objectArray;
     private List<GradeModel> gradeArray;
-    private String apiUrl="http://211.87.227.214:3001/api";
+//    private String apiUrl="http://211.87.227.214:3001/api";
+    private String apiUrl="http://192.168.1.114:3001/api";
     private ListView listView;
     private TendListAdapter tendListAdapter;
     private ArrayList<TendList> priceArray;
@@ -80,6 +81,8 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
     }
 
     private void init() {
+        priceArray=new ArrayList<TendList>();
+        listView= (ListView) findViewById(R.id.listView);
         textProvince= (TextView) findViewById(R.id.province);
         textType= (TextView) findViewById(R.id.type);
         textRank= (TextView) findViewById(R.id.rank);
@@ -207,6 +210,7 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
                 btnLine.setBackgroundResource(R.drawable.border_green);
                 btnGraph.setBackgroundResource(R.drawable.border_grey);
                 btnMap.setBackgroundResource(R.drawable.border_grey);
+                listClear();
                 ifMap=false;
                 break;
             case R.id.btn_graph:
@@ -222,6 +226,7 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
                 getPrice();
                 break;
             case R.id.btn_map:
+                listClear();
                 LinearLayout.LayoutParams linearParams2 =(LinearLayout.LayoutParams)
                         chartWeb.getLayoutParams(); //取控件textView当前的布局参数
                 linearParams2.height = ((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 260, getResources().getDisplayMetrics()));
@@ -287,6 +292,7 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
     }
 
     private void getPrice() {
+
         RestAdapter adapter = new RestAdapter(getApplicationContext(),apiUrl);
         adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
         PriceRepository productRepository = adapter.createRepository(PriceRepository.class);
@@ -298,26 +304,38 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
 
             @Override
             public void onSuccess(List<PriceModel> objects) {
-                for(int i=0;i<objects.size();i++){
+                //listview清空
+                listClear();
+                listInit();
+                 for(int i=0;i<objects.size();i++){
                     PriceModel priceModel=objects.get(i);
                     if (priceModel.getRegionId()==regionId&&priceModel.getSortId()
                             ==sortId&&priceModel.getGradeId()==gradeId){
-                        //比较时间
-                        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                        try {
-                            Date dateTimeS = dateFormat.parse(textTimeS.getText().toString());
-                            Date dateTimeO = dateFormat.parse(textTimeO.getText().toString());
-                            Date dateTime=dateFormat.parse(priceModel.getPriceDate());
-                            int t1 = dateTimeS.compareTo(dateTime);
-                            int t2 = dateTimeO.compareTo(dateTime);
-                            if (t1<=0&&t2>=0){
-                                TendList tendList=new TendList(textProvince.getText().toString(),textType.getText().toString(),
-                                textRank.getText().toString(),priceModel.getPrice()+"",priceModel.getPriceDate());
-                                priceArray.add(tendList);
+                        if (textTimeS.getText().toString().equals("开始")&&textTimeO.getText().toString().equals("结束")){
+                            TendList tendList=new TendList(textProvince.getText().toString(),textType.getText().toString(),
+                                    textRank.getText().toString(),priceModel.getPrice()+"",priceModel.getPriceDate().substring(0,10));
+                            priceArray.add(tendList);
+                        }else if (!textTimeS.getText().toString().equals("开始")&&!textTimeO.getText().toString().equals("结束")){
+                            //比较时间
+                            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                            try {
+                                Date dateTimeS = dateFormat.parse(textTimeS.getText().toString());
+                                Date dateTimeO = dateFormat.parse(textTimeO.getText().toString());
+                                Date dateTime=dateFormat.parse(priceModel.getPriceDate());
+                                int t1 = dateTimeS.compareTo(dateTime);
+                                int t2 = dateTimeO.compareTo(dateTime);
+                                if (t1<=0&&t2>=0){
+                                    TendList tendList=new TendList(textProvince.getText().toString(),textType.getText().toString(),
+                                            textRank.getText().toString(),priceModel.getPrice()+"",priceModel.getPriceDate().substring(0,10));
+                                    priceArray.add(tendList);
+                                }
+                            } catch (ParseException e) {
+                                e.printStackTrace();
                             }
-                        } catch (ParseException e) {
-                            e.printStackTrace();
+                        }else {
+                            Toast.makeText(TendencyActivity.this,"请填写完整时间信息",Toast.LENGTH_SHORT).show();
                         }
+
 
                         tendListAdapter=new TendListAdapter(TendencyActivity.this,R.layout.item_tend_list,priceArray);
                         listView.setAdapter(tendListAdapter);
@@ -334,8 +352,18 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
         }));
     }
 
+    private void listInit() {
+        TendList tendList=new TendList("地区","品种",
+                "等级","价格","日期");
+        priceArray.add(tendList);
+    }
 
+    private void listClear() {
+        priceArray.clear();
+        tendListAdapter=new TendListAdapter(TendencyActivity.this,R.layout.item_tend_list,priceArray);
+        listView.setAdapter(tendListAdapter);
 
+    }
 
 
     private void showTimeChoose(final int i) {

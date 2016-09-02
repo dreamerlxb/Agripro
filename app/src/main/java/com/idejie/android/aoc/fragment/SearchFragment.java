@@ -81,7 +81,7 @@ public class SearchFragment extends LazyFragment implements View.OnClickListener
     private ArrayList<SearchList> priceArray;
     private ArrayList<PriceModel> yesterdayArray;
     private List<SortModel> sortObjects;
-    private String apiUrl="http://211.87.227.214:3001/api";
+    private String apiUrl="http://192.168.1.114:3001/api";
 
     /**
      * 初始化操作
@@ -190,7 +190,6 @@ public class SearchFragment extends LazyFragment implements View.OnClickListener
                     Log.d("test","city........"+city);
                     cityText.setText(city);
                     getCityId();
-
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -248,8 +247,7 @@ public class SearchFragment extends LazyFragment implements View.OnClickListener
                 for (int i=0;i<objects.size();i++){
                     if(cityText.getText().toString().equals(objects.get(i).getCity())){
                         regionId= (int) objects.get(i).getId();
-                    }
-                    else if(objects.get(i).getProvince().equals(cityText.getText().toString())){
+                    } else if(objects.get(i).getProvince().equals(cityText.getText().toString())){
                     regionId= (int) objects.get(i).getId();
                 }
                 }
@@ -311,7 +309,7 @@ public class SearchFragment extends LazyFragment implements View.OnClickListener
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         String dateString = formatter.format(date);
         for (int i=0;i<objects.size();i++){
-            if (dateString.equals(objects.get(i).getPriceDate().substring(0,10))){
+            if (objects.get(i).getRegionId()==regionId&&dateString.equals(objects.get(i).getPriceDate().substring(0,10))){
                 yesterdayArray.add(objects.get(i));
             }
         }

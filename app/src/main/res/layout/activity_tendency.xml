@@ -409,7 +409,7 @@
                 android:id="@+id/listView"
                 android:layout_margin="5dp"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"></ListView>
+                android:layout_height="220dp"></ListView>
 
         </LinearLayout>
     </ScrollView>
