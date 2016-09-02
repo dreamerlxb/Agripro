@@ -51,7 +51,9 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -81,6 +83,8 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tendency);
         init();
+        //折线图初始化
+        getInitPriceLine();
     }
 
     private void init() {
@@ -161,6 +165,7 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
         };
 
 
+
     }
 
 
@@ -205,42 +210,54 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.btn_line:
-                LinearLayout.LayoutParams linearParams =(LinearLayout.LayoutParams)
-                        chartWeb.getLayoutParams(); //取控件textView当前的布局参数
-                linearParams.height = ((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 260, getResources().getDisplayMetrics()));
-                chartWeb.setLayoutParams(linearParams);
-                getPriceLine();
-                 //变色
-                btnLine.setBackgroundResource(R.drawable.border_green);
-                btnGraph.setBackgroundResource(R.drawable.border_grey);
-                btnMap.setBackgroundResource(R.drawable.border_grey);
-                listClear();
-                ifMap=false;
+                if(isReady()){
+                    LinearLayout.LayoutParams linearParams =(LinearLayout.LayoutParams)
+                            chartWeb.getLayoutParams(); //取控件textView当前的布局参数
+                    linearParams.height = ((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 260, getResources().getDisplayMetrics()));
+                    chartWeb.setLayoutParams(linearParams);
+                    getPriceLine();
+                    //变色
+                    btnLine.setBackgroundResource(R.drawable.border_green);
+                    btnGraph.setBackgroundResource(R.drawable.border_grey);
+                    btnMap.setBackgroundResource(R.drawable.border_grey);
+                    listClear();
+                    ifMap=false;
+                }else {
+                    Toast.makeText(TendencyActivity.this,"请填写必要参数",Toast.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.btn_graph:
-                btnLine.setBackgroundResource(R.drawable.border_grey);
-                btnGraph.setBackgroundResource(R.drawable.border_green);
-                btnMap.setBackgroundResource(R.drawable.border_grey);
-                ifMap=false;
-                LinearLayout.LayoutParams linearParams1 =(LinearLayout.LayoutParams)
-                        chartWeb.getLayoutParams(); //取控件textView当前的布局参数
-                linearParams1.height = 1;// 控件的高强制设成20
+                if (isReady()){
+                    btnLine.setBackgroundResource(R.drawable.border_grey);
+                    btnGraph.setBackgroundResource(R.drawable.border_green);
+                    btnMap.setBackgroundResource(R.drawable.border_grey);
+                    ifMap=false;
+                    LinearLayout.LayoutParams linearParams1 =(LinearLayout.LayoutParams)
+                            chartWeb.getLayoutParams(); //取控件textView当前的布局参数
+                    linearParams1.height = 1;// 控件的高强制设成20
 
-                chartWeb.setLayoutParams(linearParams1);
-                getPrice();
+                    chartWeb.setLayoutParams(linearParams1);
+                    getPrice();
+                }else {
+                    Toast.makeText(TendencyActivity.this,"请填写必要参数",Toast.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.btn_map:
-                listClear();
-                LinearLayout.LayoutParams linearParams2 =(LinearLayout.LayoutParams)
-                        chartWeb.getLayoutParams(); //取控件textView当前的布局参数
-                linearParams2.height = ((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 260, getResources().getDisplayMetrics()));
-                chartWeb.setLayoutParams(linearParams2);
-                chartWeb.loadUrl("file:///android_asset/test5.html");
-                btnLine.setBackgroundResource(R.drawable.border_grey);
-                btnGraph.setBackgroundResource(R.drawable.border_grey);
-                btnMap.setBackgroundResource(R.drawable.border_green);
-                chartWeb.setBackgroundResource(R.color.white);
-                ifMap=true;
+                if (isReady()){
+                    listClear();
+                    LinearLayout.LayoutParams linearParams2 =(LinearLayout.LayoutParams)
+                            chartWeb.getLayoutParams(); //取控件textView当前的布局参数
+                    linearParams2.height = ((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 260, getResources().getDisplayMetrics()));
+                    chartWeb.setLayoutParams(linearParams2);
+                    chartWeb.loadUrl("file:///android_asset/test5.html");
+                    btnLine.setBackgroundResource(R.drawable.border_grey);
+                    btnGraph.setBackgroundResource(R.drawable.border_grey);
+                    btnMap.setBackgroundResource(R.drawable.border_green);
+                    chartWeb.setBackgroundResource(R.color.white);
+                    ifMap=true;
+                }else {
+                    Toast.makeText(TendencyActivity.this,"请填写必要参数",Toast.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.line_1:
                 MyTDialog dialog=new MyTDialog(TendencyActivity.this,hanDialog);
@@ -267,6 +284,15 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
                 break;
         }
 
+    }
+
+    private boolean isReady() {
+        Boolean ifReady=false;
+        if (!textProvince.getText().toString().equals("省市")&&!textType.getText().toString().equals("品种")&&!textRank.getText().toString().equals("等级")){
+            ifReady=true;
+        }
+
+        return ifReady;
     }
 
     private void getCityId() {
@@ -358,6 +384,7 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
             }
         }));
     }
+
     private void getPriceLine() {
         RestAdapter adapter = new RestAdapter(getApplicationContext(),apiUrl);
         adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
@@ -377,8 +404,13 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
                             ==sortId&&priceModel.getGradeId()==gradeId){
                         if (textTimeS.getText().toString().equals("开始")&&textTimeO.getText().toString().equals("结束")){
                             if (priceModel.getPriceDate().substring(0,10).equals(lastDate)){
-                                //只添加最后一次上传的价格
+                                //只添加第一次上传的价格
                             }else {
+                                //控制最近的七个
+                                if (mlist.size()==7){
+                                    //去掉最远的一个
+                                    mlist.remove(0);
+                                }
                                 mlist.add(new LineData((int) priceModel.getPrice(),priceModel.getPriceDate().substring(0,10)));
                                 lastDate=priceModel.getPriceDate().substring(0,10);
                             }
@@ -406,6 +438,54 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
                             }
                         }else {
                             Toast.makeText(TendencyActivity.this,"请填写完整时间信息",Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                }
+                chartWeb.loadUrl("file:///android_asset/test4.html");
+                //关联数据
+                Gson gson = new Gson();
+                String data  = gson.toJson(mlist);
+                chartWeb.addJavascriptInterface(new LineTableDate(TendencyActivity.this,data,"2"),"lineDate");
+
+
+
+            }
+            @Override
+            public void onError(Throwable t) {
+                Log.d("test","Throwable..Obj..."+t.toString());
+            }
+        }));
+    }
+    private void getInitPriceLine() {
+        RestAdapter adapter = new RestAdapter(getApplicationContext(),apiUrl);
+        adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
+        PriceRepository productRepository = adapter.createRepository(PriceRepository.class);
+        Map<String, Object> params = new HashMap<String, Object>();
+        Map<String, Object> filterMap = new HashMap<String, Object>();
+        filterMap.put("include","sort");
+        params.put("filter",filterMap);
+        productRepository. invokeStaticMethod("all", params, new JsonArrayParser<PriceModel>(productRepository,new ListCallback<PriceModel>() {
+            @Override
+            public void onSuccess(List<PriceModel> objects) {
+                List<LineData> mlist = new ArrayList<LineData>();
+                String lastDate="";
+                for(int i=0;i<objects.size();i++){
+                    PriceModel priceModel=objects.get(i);
+                    if (priceModel.getRegionId()==1&&priceModel.getSortId()
+                            ==22&&priceModel.getGradeId()==2){
+                        if (textTimeS.getText().toString().equals("开始")&&textTimeO.getText().toString().equals("结束")){
+                            if (priceModel.getPriceDate().substring(0,10).equals(lastDate)){
+                                //只添加第一次上传的价格
+                            }else {
+                                //控制最近的七个
+                                if (mlist.size()==7){
+                                    //去掉最远的一个
+                                    mlist.remove(0);
+                                }
+                                mlist.add(new LineData((int) priceModel.getPrice(),priceModel.getPriceDate().substring(0,10)));
+                                lastDate=priceModel.getPriceDate().substring(0,10);
+                            }
                         }
                     }
 
