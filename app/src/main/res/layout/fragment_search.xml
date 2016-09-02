@@ -98,6 +98,44 @@
         android:layout_height="50dp" />
 
 
+    <LinearLayout
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:orientation="horizontal" android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:weightSum="4"
+        android:background="#ffffff">
+
+        <TextView
+            android:text="品种"
+            android:gravity="center"
+            android:textSize="@dimen/item_size"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="60dp" />
+        <TextView
+            android:text="价格"
+            android:gravity="center"
+            android:textSize="@dimen/item_size"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="60dp" />
+        <TextView
+            android:text="涨跌"
+            android:gravity="center"
+            android:textSize="@dimen/item_size"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="60dp" />
+        <TextView
+            android:text="地区"
+            android:gravity="center"
+            android:textSize="@dimen/item_size"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="60dp" />
+
+    </LinearLayout>
     <ListView
         android:id="@+id/listView"
         android:layout_margin="5dp"

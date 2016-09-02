@@ -446,7 +446,6 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
                                 if (t1<=0&&t2>=0){
 
                                     if (priceModel.getPriceDate().substring(0,10).equals(lastDate)){
-                                        //只添加最后一次上传的价格
                                         number++;
                                         price= (int) (price+priceModel.getPrice());
                                     }else {
