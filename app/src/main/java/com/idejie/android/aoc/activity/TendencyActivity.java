@@ -366,7 +366,8 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
                                         number++;
                                         price= (int) (price+priceModel.getPrice());
                                     }else {
-
+                                        number++;
+                                        price= (int) (price+priceModel.getPrice());
                                         TendList tendList=new TendList(textProvince.getText().toString(),textType.getText().toString(),
                                                 textRank.getText().toString(),price/number+"",priceModel.getPriceDate().substring(0,10));
                                         priceArray.add(tendList);
@@ -429,6 +430,8 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
                                     //去掉最远的一个
                                     mlist.remove(0);
                                 }
+                                number++;
+                                price= (int) (price+priceModel.getPrice());
                                 mlist.add(new LineData(price/number,priceModel.getPriceDate().substring(0,10)));
                                 lastDate=priceModel.getPriceDate().substring(0,10);
                                 number=0;
@@ -449,6 +452,8 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
                                         number++;
                                         price= (int) (price+priceModel.getPrice());
                                     }else {
+                                        number++;
+                                        price= (int) (price+priceModel.getPrice());
                                         mlist.add(new LineData(price/number,priceModel.getPriceDate().substring(0,10)));
                                         lastDate=priceModel.getPriceDate().substring(0,10);
                                         number=0;
@@ -509,6 +514,8 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
                                     //去掉最远的一个
                                     mlist.remove(0);
                                 }
+                                number++;
+                                price= (int) (price+priceModel.getPrice());
                                 mlist.add(new LineData(price/number,priceModel.getPriceDate().substring(0,10)));
                                 lastDate=priceModel.getPriceDate().substring(0,10);
                                 number=0;

@@ -317,6 +317,8 @@ public class SearchFragment extends LazyFragment implements View.OnClickListener
                     number2++;
                     price2= (int) (price2+objects.get(i).getPrice());
                 }else {
+                    number2++;
+                    price2= (int) (price2+objects.get(i).getPrice());
                     yesterdayArray.add(new SearchList(price2/number2,getSort(objects.get(i).getSortId())));
                     lastDate2=objects.get(i).getPriceDate().substring(0,10);
                     number2=0;
@@ -332,14 +334,16 @@ public class SearchFragment extends LazyFragment implements View.OnClickListener
         int number=0;
         String lastDate="";
         for (int i=0;i<objects.size();i++){
-            Log.d("test","....date..."+dateNow);
-            Log.d("test","....dateO..."+objects.get(i).getPriceDate().substring(0,10));
             if (objects.get(i).getRegionId()==regionId&&objects.get(i).getPriceDate().substring(0,10).equals(dateNow)) {
 
                 if (objects.get(i).getPriceDate().substring(0,10).equals(lastDate)){
+                    Log.d("test",".....11");
                     number++;
                     price= (int) (price+objects.get(i).getPrice());
                 }else {
+                    number++;
+                    price= (int) (price+objects.get(i).getPrice());
+                    Log.d("test",".....12");
                     lastDate=objects.get(i).getPriceDate().substring(0,10);
                     SearchList searchDate = new SearchList();
                     searchDate.setArea(cityText.getText().toString());
