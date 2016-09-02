@@ -72,6 +72,7 @@ public class CityDialog extends Dialog implements View.OnClickListener{
 
 	private void initView() {
 		btnCity= (Button) findViewById(R.id.province);
+		btnCity.setOnClickListener(this);
 		clearallpan = (RelativeLayout) findViewById(R.id.clearallpan);
 		lin= (LinearLayout) findViewById(R.id.line);
 		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1); // , 1是可选写的
@@ -103,7 +104,6 @@ public class CityDialog extends Dialog implements View.OnClickListener{
 					mess.what=1;
 					mess.obj =areas[cityId][finalI];
 					han.sendMessage(mess);
-
 					dialog.dismiss();
 				}
 			});
@@ -114,7 +114,14 @@ public class CityDialog extends Dialog implements View.OnClickListener{
 
 	public void onClick(View v) {
 		switch (v.getId()) {
+			case R.id.province:
+				Message mess=new Message();
+				mess.what=1;
+				mess.obj =btnCity.getText().toString();
+				han.sendMessage(mess);
 
+				dialog.dismiss();
+				break;
 		}
 	}
 }

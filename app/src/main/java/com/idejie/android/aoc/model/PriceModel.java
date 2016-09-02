@@ -24,8 +24,17 @@ public class PriceModel extends Model {
     private String marketName,priceDate,created,lastUpdated;
 
 
-    private int UserId,regoinId,sortId,gradeId;
+    private int UserId,regionId,sortId,gradeId;
     private Region region;
+
+    public int getRegionId() {
+        return regionId;
+    }
+
+    public void setRegionId(int regionId) {
+        this.regionId = regionId;
+    }
+
     private RegionModel regionModel;
     private SortModel sortModel;
 
@@ -111,13 +120,6 @@ public class PriceModel extends Model {
         UserId = userId;
     }
 
-    public int getRegoinId() {
-        return regoinId;
-    }
-
-    public void setRegoinId(int regoinId) {
-        this.regoinId = regoinId;
-    }
 
     public int getSortId() {
         return sortId;

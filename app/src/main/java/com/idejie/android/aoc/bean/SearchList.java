@@ -7,6 +7,9 @@ package com.idejie.android.aoc.bean;
 public class SearchList {
     private String sort,price,tend,area;
 
+    public SearchList() {
+    }
+
     public SearchList(String sort, String price, String tend, String area) {
         this.sort = sort;
         this.price = price;

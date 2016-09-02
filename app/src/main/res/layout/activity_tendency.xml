@@ -103,7 +103,7 @@
                         android:layout_gravity="center"
                         android:layout_width="120dp"
                         android:layout_height="40dp"
-                        android:id="@+id/textView3" />
+                        android:id="@+id/province" />
 
                     <ImageView
                         android:layout_gravity="center"
@@ -152,6 +152,7 @@
 
                     <TextView
                         android:text="品种"
+                        android:id="@+id/type"
                         android:textColor="@color/grey"
                         android:textSize="@dimen/text_size"
                         android:gravity="center"
@@ -205,6 +206,7 @@
                     android:orientation="horizontal">
 
                     <TextView
+                        android:id="@+id/rank"
                         android:text="级别"
                         android:textColor="@color/grey"
                         android:textSize="@dimen/text_size"
@@ -403,10 +405,11 @@
                 android:layout_height="260dp">
             </WebView>
 
-            <TextView
-                android:text="测试用"
+            <ListView
+                android:id="@+id/listView"
+                android:layout_margin="5dp"
                 android:layout_width="match_parent"
-                android:layout_height="30dp" />
+                android:layout_height="220dp"></ListView>
 
         </LinearLayout>
     </ScrollView>

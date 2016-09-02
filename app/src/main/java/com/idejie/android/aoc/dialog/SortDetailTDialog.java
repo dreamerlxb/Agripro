@@ -17,11 +17,10 @@ import android.widget.RelativeLayout;
 import com.idejie.android.aoc.R;
 import com.idejie.android.aoc.activity.MainActivity;
 import com.idejie.android.aoc.model.SortModel;
-import com.idejie.android.aoc.tools.Areas;
 
 import java.util.List;
 
-public class SortDetailDialog extends Dialog implements View.OnClickListener{
+public class SortDetailTDialog extends Dialog implements View.OnClickListener{
 
 	Context context;
 	View localView;
@@ -34,7 +33,7 @@ public class SortDetailDialog extends Dialog implements View.OnClickListener{
 	private String name;
 	private List<SortModel> objectArray;
 
-	public SortDetailDialog(Context context, Handler han, List<SortModel> objectArray, String name) {
+	public SortDetailTDialog(Context context, Handler han, List<SortModel> objectArray, String name) {
 		super(context);
 		this.context = context;
 		this.han=han;
@@ -51,7 +50,7 @@ public class SortDetailDialog extends Dialog implements View.OnClickListener{
         // 这句代码换掉dialog默认背景，否则dialog的边缘发虚透明而且很宽
         // 总之达不到想要的效果
         getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-    	LayoutInflater inflater = ((MainActivity) context).getLayoutInflater();
+    	LayoutInflater inflater = getLayoutInflater();
 		localView = inflater.inflate(R.layout.dialog_detail_sort, null);
 		localView.setAnimation(AnimationUtils.loadAnimation(context, R.anim.slide_bottom_to_top));
 		setContentView(localView);   
