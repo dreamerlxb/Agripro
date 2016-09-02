@@ -334,6 +334,9 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
                 //listview清空
                 listClear();
                 listInit();
+                int number=0;
+                int price=0;
+                String lastDate="";
                  for(int i=0;i<objects.size();i++){
                     PriceModel priceModel=objects.get(i);
                     if (priceModel.getRegionId()==regionId&&priceModel.getSortId()
@@ -358,9 +361,20 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
                                 int t1 = dateTimeS.compareTo(dateTime);
                                 int t2 = dateTimeO.compareTo(dateTime);
                                 if (t1<=0&&t2>=0){
-                                    TendList tendList=new TendList(textProvince.getText().toString(),textType.getText().toString(),
-                                            textRank.getText().toString(),priceModel.getPrice()+"",priceModel.getPriceDate().substring(0,10));
-                                    priceArray.add(tendList);
+                                    if (priceModel.getPriceDate().substring(0,10).equals(lastDate)){
+                                        //只添加最后一次上传的价格
+                                        number++;
+                                        price= (int) (price+priceModel.getPrice());
+                                    }else {
+
+                                        TendList tendList=new TendList(textProvince.getText().toString(),textType.getText().toString(),
+                                                textRank.getText().toString(),price/number+"",priceModel.getPriceDate().substring(0,10));
+                                        priceArray.add(tendList);
+                                        lastDate=priceModel.getPriceDate().substring(0,10);
+                                        number=0;
+                                        price=0;
+                                    }
+
                                 }
                             } catch (ParseException e) {
                                 e.printStackTrace();
@@ -398,6 +412,8 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
             public void onSuccess(List<PriceModel> objects) {
                 List<LineData> mlist = new ArrayList<LineData>();
                 String lastDate="";
+                int number=0;
+                int price=0;
                 for(int i=0;i<objects.size();i++){
                     PriceModel priceModel=objects.get(i);
                     if (priceModel.getRegionId()==regionId&&priceModel.getSortId()
@@ -405,14 +421,18 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
                         if (textTimeS.getText().toString().equals("开始")&&textTimeO.getText().toString().equals("结束")){
                             if (priceModel.getPriceDate().substring(0,10).equals(lastDate)){
                                 //只添加第一次上传的价格
+                                number++;
+                                price= (int) (price+priceModel.getPrice());
                             }else {
                                 //控制最近的七个
                                 if (mlist.size()==7){
                                     //去掉最远的一个
                                     mlist.remove(0);
                                 }
-                                mlist.add(new LineData((int) priceModel.getPrice(),priceModel.getPriceDate().substring(0,10)));
+                                mlist.add(new LineData(price/number,priceModel.getPriceDate().substring(0,10)));
                                 lastDate=priceModel.getPriceDate().substring(0,10);
+                                number=0;
+                                price=0;
                             }
                         }else if (!textTimeS.getText().toString().equals("开始")&&!textTimeO.getText().toString().equals("结束")){
                             //比较时间
@@ -427,9 +447,13 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
 
                                     if (priceModel.getPriceDate().substring(0,10).equals(lastDate)){
                                         //只添加最后一次上传的价格
+                                        number++;
+                                        price= (int) (price+priceModel.getPrice());
                                     }else {
-                                        mlist.add(new LineData((int) priceModel.getPrice(),priceModel.getPriceDate().substring(0,10)));
+                                        mlist.add(new LineData(price/number,priceModel.getPriceDate().substring(0,10)));
                                         lastDate=priceModel.getPriceDate().substring(0,10);
+                                        number=0;
+                                        price=0;
                                     }
 
                                 }
@@ -470,21 +494,26 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
             public void onSuccess(List<PriceModel> objects) {
                 List<LineData> mlist = new ArrayList<LineData>();
                 String lastDate="";
+                int number=0;
+                int price=0;
                 for(int i=0;i<objects.size();i++){
                     PriceModel priceModel=objects.get(i);
                     if (priceModel.getRegionId()==1&&priceModel.getSortId()
                             ==22&&priceModel.getGradeId()==2){
                         if (textTimeS.getText().toString().equals("开始")&&textTimeO.getText().toString().equals("结束")){
                             if (priceModel.getPriceDate().substring(0,10).equals(lastDate)){
-                                //只添加第一次上传的价格
+                                number++;
+                                price= (int) (price+priceModel.getPrice());
                             }else {
                                 //控制最近的七个
                                 if (mlist.size()==7){
                                     //去掉最远的一个
                                     mlist.remove(0);
                                 }
-                                mlist.add(new LineData((int) priceModel.getPrice(),priceModel.getPriceDate().substring(0,10)));
+                                mlist.add(new LineData(price/number,priceModel.getPriceDate().substring(0,10)));
                                 lastDate=priceModel.getPriceDate().substring(0,10);
+                                number=0;
+                                price=0;
                             }
                         }
                     }
