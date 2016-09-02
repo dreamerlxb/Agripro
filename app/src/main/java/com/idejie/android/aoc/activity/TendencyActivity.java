@@ -370,12 +370,18 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
             @Override
             public void onSuccess(List<PriceModel> objects) {
                 List<LineData> mlist = new ArrayList<LineData>();
+                String lastDate="";
                 for(int i=0;i<objects.size();i++){
                     PriceModel priceModel=objects.get(i);
                     if (priceModel.getRegionId()==regionId&&priceModel.getSortId()
                             ==sortId&&priceModel.getGradeId()==gradeId){
                         if (textTimeS.getText().toString().equals("开始")&&textTimeO.getText().toString().equals("结束")){
-                            mlist.add(new LineData((int) priceModel.getPrice(),priceModel.getPriceDate().substring(0,10)));
+                            if (priceModel.getPriceDate().substring(0,10).equals(lastDate)){
+                                //只添加最后一次上传的价格
+                            }else {
+                                mlist.add(new LineData((int) priceModel.getPrice(),priceModel.getPriceDate().substring(0,10)));
+                                lastDate=priceModel.getPriceDate().substring(0,10);
+                            }
                         }else if (!textTimeS.getText().toString().equals("开始")&&!textTimeO.getText().toString().equals("结束")){
                             //比较时间
                             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -386,7 +392,14 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
                                 int t1 = dateTimeS.compareTo(dateTime);
                                 int t2 = dateTimeO.compareTo(dateTime);
                                 if (t1<=0&&t2>=0){
-                                    mlist.add(new LineData((int) priceModel.getPrice(),priceModel.getPriceDate().substring(0,10)));
+
+                                    if (priceModel.getPriceDate().substring(0,10).equals(lastDate)){
+                                        //只添加最后一次上传的价格
+                                    }else {
+                                        mlist.add(new LineData((int) priceModel.getPrice(),priceModel.getPriceDate().substring(0,10)));
+                                        lastDate=priceModel.getPriceDate().substring(0,10);
+                                    }
+
                                 }
                             } catch (ParseException e) {
                                 e.printStackTrace();
