@@ -198,14 +198,6 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
             }
         });
         chartWeb.loadUrl("file:///android_asset/test4.html");
-        //关联数据
-        List<LineData> mlist = new ArrayList<LineData>();
-        for (int i = 0; i <10 ; i++) {
-            mlist.add(new LineData(i,"xa"));
-        }
-        Gson gson = new Gson();
-        String data  = gson.toJson(mlist);
-        chartWeb.addJavascriptInterface(new LineTableDate(TendencyActivity.this,data,"2"),"lineDate");
     }
 
 
@@ -217,7 +209,8 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
                         chartWeb.getLayoutParams(); //取控件textView当前的布局参数
                 linearParams.height = ((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 260, getResources().getDisplayMetrics()));
                 chartWeb.setLayoutParams(linearParams);
-                chartWeb.loadUrl("file:///android_asset/test4.html");
+                getPriceLine();
+                 //变色
                 btnLine.setBackgroundResource(R.drawable.border_green);
                 btnGraph.setBackgroundResource(R.drawable.border_grey);
                 btnMap.setBackgroundResource(R.drawable.border_grey);
@@ -302,16 +295,14 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
     }
 
     private void getPrice() {
-
         RestAdapter adapter = new RestAdapter(getApplicationContext(),apiUrl);
         adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
         PriceRepository productRepository = adapter.createRepository(PriceRepository.class);
         Map<String, Object> params = new HashMap<String, Object>();
-        Map<String, Object> filterMap = new HashMap<String, Object>();
+        final Map<String, Object> filterMap = new HashMap<String, Object>();
         filterMap.put("include","sort");
         params.put("filter",filterMap);
         productRepository. invokeStaticMethod("all", params, new JsonArrayParser<PriceModel>(productRepository,new ListCallback<PriceModel>() {
-
             @Override
             public void onSuccess(List<PriceModel> objects) {
                 //listview清空
@@ -321,13 +312,19 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
                     PriceModel priceModel=objects.get(i);
                     if (priceModel.getRegionId()==regionId&&priceModel.getSortId()
                             ==sortId&&priceModel.getGradeId()==gradeId){
+                        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                         if (textTimeS.getText().toString().equals("开始")&&textTimeO.getText().toString().equals("结束")){
-                            TendList tendList=new TendList(textProvince.getText().toString(),textType.getText().toString(),
-                                    textRank.getText().toString(),priceModel.getPrice()+"",priceModel.getPriceDate().substring(0,10));
-                            priceArray.add(tendList);
+
+                            Log.d("test",dateFormat.format(new Date())+"........"+priceModel.getPriceDate().substring(0,10));
+                            if (dateFormat.format(new Date()).equals(priceModel.getPriceDate().substring(0,10))){
+                                    TendList tendList=new TendList(textProvince.getText().toString(),textType.getText().toString(),
+                                            textRank.getText().toString(),priceModel.getPrice()+"",priceModel.getPriceDate().substring(0,10));
+                                    priceArray.add(tendList);
+                            }
+
                         }else if (!textTimeS.getText().toString().equals("开始")&&!textTimeO.getText().toString().equals("结束")){
                             //比较时间
-                            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
                             try {
                                 Date dateTimeS = dateFormat.parse(textTimeS.getText().toString());
                                 Date dateTimeO = dateFormat.parse(textTimeO.getText().toString());
@@ -346,11 +343,65 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
                             Toast.makeText(TendencyActivity.this,"请填写完整时间信息",Toast.LENGTH_SHORT).show();
                         }
 
-
-                        tendListAdapter=new TendListAdapter(TendencyActivity.this,R.layout.item_tend_list,priceArray);
-                        listView.setAdapter(tendListAdapter);
                     }
+                     tendListAdapter=new TendListAdapter(TendencyActivity.this,R.layout.item_tend_list,priceArray);
+                     listView.setAdapter(tendListAdapter);
                 }
+
+
+
+
+            }
+            @Override
+            public void onError(Throwable t) {
+                Log.d("test","Throwable..Obj..."+t.toString());
+            }
+        }));
+    }
+    private void getPriceLine() {
+        RestAdapter adapter = new RestAdapter(getApplicationContext(),apiUrl);
+        adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
+        PriceRepository productRepository = adapter.createRepository(PriceRepository.class);
+        Map<String, Object> params = new HashMap<String, Object>();
+        Map<String, Object> filterMap = new HashMap<String, Object>();
+        filterMap.put("include","sort");
+        params.put("filter",filterMap);
+        productRepository. invokeStaticMethod("all", params, new JsonArrayParser<PriceModel>(productRepository,new ListCallback<PriceModel>() {
+            @Override
+            public void onSuccess(List<PriceModel> objects) {
+                List<LineData> mlist = new ArrayList<LineData>();
+                for(int i=0;i<objects.size();i++){
+                    PriceModel priceModel=objects.get(i);
+                    if (priceModel.getRegionId()==regionId&&priceModel.getSortId()
+                            ==sortId&&priceModel.getGradeId()==gradeId){
+                        if (textTimeS.getText().toString().equals("开始")&&textTimeO.getText().toString().equals("结束")){
+                            mlist.add(new LineData((int) priceModel.getPrice(),priceModel.getPriceDate().substring(0,10)));
+                        }else if (!textTimeS.getText().toString().equals("开始")&&!textTimeO.getText().toString().equals("结束")){
+                            //比较时间
+                            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                            try {
+                                Date dateTimeS = dateFormat.parse(textTimeS.getText().toString());
+                                Date dateTimeO = dateFormat.parse(textTimeO.getText().toString());
+                                Date dateTime=dateFormat.parse(priceModel.getPriceDate());
+                                int t1 = dateTimeS.compareTo(dateTime);
+                                int t2 = dateTimeO.compareTo(dateTime);
+                                if (t1<=0&&t2>=0){
+                                    mlist.add(new LineData((int) priceModel.getPrice(),priceModel.getPriceDate().substring(0,10)));
+                                }
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                        }else {
+                            Toast.makeText(TendencyActivity.this,"请填写完整时间信息",Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                }
+                chartWeb.loadUrl("file:///android_asset/test4.html");
+                //关联数据
+                Gson gson = new Gson();
+                String data  = gson.toJson(mlist);
+                chartWeb.addJavascriptInterface(new LineTableDate(TendencyActivity.this,data,"2"),"lineDate");
 
 
 

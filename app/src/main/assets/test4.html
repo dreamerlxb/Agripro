@@ -21,16 +21,23 @@
     var data = lineDate.getX();
     //将json字符串转换为数组
     var f = eval(data);
-    alert(lineDate.getX());
-    alert(f);
+    var s=[];
+    var x=[];
+    for(var i = 0;i<f.length;i++){
+        var en = f[i];
+        alert(en.date);
+        s.push(en.date);
+        x.push(en.price);
+    }
+
     function fetchData(c) {
         // 通过 setTimeout 模拟异步加载
         setTimeout(function () {
             c({
-                categories: ["8.29","8.30","8.31","9.1","9.2","9.3"],
-                data: [5, 20, 36, 10, 10, 20]
+                categories: s,
+                data: x
             });
-        }, 3000);
+        }, 1000);
     }
 
     // 初始 option
@@ -43,7 +50,6 @@
             data:['销量']
         },
         xAxis: {
-            type : 'category',
             boundaryGap : false,
             data: []
         },
