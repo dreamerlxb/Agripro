@@ -2,6 +2,7 @@ package com.idejie.android.aoc.fragment;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import android.os.Handler;
@@ -46,6 +47,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by shandongdaxue on 16/8/10.
@@ -214,11 +217,26 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
     @Override
     public void onClick(View view) {
         switch (view.getId()){
-
             case R.id.btn_upload:
-                upLoad();
-
-
+                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
+                int i=0;
+                SharedPreferences pref=context.getSharedPreferences("LoadNumber", MODE_PRIVATE);
+                String date=pref.getString("date",df.format(new Date()).substring(0,10));
+                if (date.equals(df.format(new Date()).substring(0,10))){
+                    i=pref.getInt("number",0);
+                }else {
+                    i=0;
+                }
+                if (i>=2){
+                    Toast.makeText(context,"您今天上传次数已到达上限:0/2",Toast.LENGTH_SHORT).show();
+                }else {
+                    //储存账号密码
+                    SharedPreferences.Editor editor=context.getSharedPreferences("LoadNumber",MODE_PRIVATE).edit();
+                    editor.putString("date",df.format(new Date()).substring(0,10));
+                    editor.putInt("number",i+1);
+                    editor.commit();
+                    upLoad();
+                }
 //                beEmpty();//用于上传成功得到返回值以后再用
                 break;
             case R.id.btn_cancel:
