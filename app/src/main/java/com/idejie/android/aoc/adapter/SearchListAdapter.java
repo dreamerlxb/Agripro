@@ -53,7 +53,7 @@ public class SearchListAdapter  extends ArrayAdapter<SearchList> {
             viewHolder=(ViewHolder) view.getTag();
         }
         viewHolder.textSort.setText(searchList.getSort());
-        viewHolder.textPrice.setText(searchList.getPrice());
+        viewHolder.textPrice.setText(searchList.getPrice()+"");
         viewHolder.textTend.setText(searchList.getTend());
         viewHolder.textArea.setText(searchList.getArea());
 

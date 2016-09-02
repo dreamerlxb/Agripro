@@ -289,12 +289,10 @@ public class SearchFragment extends LazyFragment implements View.OnClickListener
         String tend="-";
         for(int i=0;i<yesterdayArray.size();i++){
             if (searchList.getSort().equals(yesterdayArray.get(i).getSort())){
-                tend= String.valueOf((searchList.getPrice()-yesterdayArray.get(i).getPrice())*100/searchList.getPrice()).substring(0,4)+"%";
+                tend= String.valueOf(((int)searchList.getPrice()-yesterdayArray.get(i).getPrice())*100/searchList.getPrice())+"%";
                 if ((searchList.getPrice()-yesterdayArray.get(i).getPrice())<0){
-                    tend= String.valueOf((searchList.getPrice()-yesterdayArray.get(i).getPrice())*100/searchList.getPrice()).substring(0,5)+"%";
+                    tend= String.valueOf((searchList.getPrice()-yesterdayArray.get(i).getPrice())*100/searchList.getPrice())+"%";
                 }
-
-                break;
             }
         }
         return tend;
@@ -311,6 +309,7 @@ public class SearchFragment extends LazyFragment implements View.OnClickListener
         int price2=0;
         int number2=0;
         String lastDate2="";
+        Log.d("test",".....110");
         for (int i=0;i<objects.size();i++){
             if (objects.get(i).getRegionId()==regionId&&dateString.equals(objects.get(i).getPriceDate().substring(0,10))){
                 if (objects.get(i).getPriceDate().substring(0,10).equals(lastDate2)){
@@ -327,30 +326,35 @@ public class SearchFragment extends LazyFragment implements View.OnClickListener
 
             }
         }
+        Log.d("test",".....111");
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");//设置日期格式
         final String dateNow=df.format(new Date());
         priceArray.clear();
         int price=0;
         int number=0;
         String lastDate="";
+        Log.d("test",".....112");
         for (int i=0;i<objects.size();i++){
+            Log.d("test",".....113");
             if (objects.get(i).getRegionId()==regionId&&objects.get(i).getPriceDate().substring(0,10).equals(dateNow)) {
 
                 if (objects.get(i).getPriceDate().substring(0,10).equals(lastDate)){
-                    Log.d("test",".....11");
+                    Log.d("test",".....114");
                     number++;
                     price= (int) (price+objects.get(i).getPrice());
                 }else {
                     number++;
                     price= (int) (price+objects.get(i).getPrice());
-                    Log.d("test",".....12");
                     lastDate=objects.get(i).getPriceDate().substring(0,10);
                     SearchList searchDate = new SearchList();
                     searchDate.setArea(cityText.getText().toString());
-                    searchDate.setPrice(Integer.parseInt(price/number+"元/kg"));
+                    searchDate.setPrice(price/number);
+                    Log.d("test",".....1151");
                     searchDate.setTend(getTend(new SearchList(price/number,getSort(objects.get(i).getSortId()))));
+                    Log.d("test",".....1152");
                     searchDate.setSort(getSort(objects.get(i).getSortId()));
                     priceArray.add(searchDate);
+                    Log.d("test",".....115");
                     number=0;
                     price=0;
                 }
