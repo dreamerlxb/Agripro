@@ -46,7 +46,6 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -70,7 +69,7 @@
             android:name=".activity.SettingsActivity"
             android:label="@string/title_activity_settings" />
         <activity android:name=".activity.MyPriceActivity" >
-            </activity>
+        </activity>
         <activity android:name=".activity.MyCommentActivity" />
         <activity android:name=".activity.MallActivity" />
         <activity android:name=".activity.TuiActivity" />

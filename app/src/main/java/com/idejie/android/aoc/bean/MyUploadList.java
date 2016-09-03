@@ -1,5 +1,7 @@
 package com.idejie.android.aoc.bean;
 
+import java.util.Objects;
+
 /**
  * Created by slf on 16/8/31.
  */
@@ -11,14 +13,24 @@ public class MyUploadList {
     private String area;
     private String upDate;
     private int price;
+    private int id;
 
-    public MyUploadList(String sort, int amount, String marketName, String area, String upDate, int price) {
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public MyUploadList(String sort, int amount, String marketName, String area, String upDate, int price, int id) {
         this.sort = sort;
         this.amount = amount;
         this.marketName = marketName;
         this.area = area;
         this.upDate = upDate;
         this.price = price;
+        this.id = id;
     }
 
     public String getSort() {
