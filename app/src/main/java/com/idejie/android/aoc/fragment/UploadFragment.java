@@ -370,6 +370,7 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
             @Override
             public void onImageClick(int position, View imageView) {
                 /**实现点击事件*/
+
             }
             @Override
             public void displayImage(String imageURL, ImageView imageView) {
