@@ -1,14 +1,21 @@
 package com.idejie.android.aoc.fragment.tab;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.idejie.android.aoc.activity.NewsDetailActivity;
+import com.idejie.android.aoc.adapter.YaowenRecyclerViewAdapter;
 import com.idejie.android.aoc.model.NewsModel;
 import com.idejie.android.aoc.R;
 import com.idejie.android.aoc.repository.NewsRepository;
@@ -22,6 +29,7 @@ import com.strongloop.android.remoting.adapters.Adapter;
 import com.youth.banner.Banner;
 import com.youth.banner.BannerConfig;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +47,9 @@ public class SecondLayerFragment extends LazyFragment implements SwipeRefreshLay
     private int position;
     private BannerComponent bannerComponent;
     private SwipeRefreshLayout swipeRefreshLayout;
-
+    private OnListFragmentInteractionListener mListener;
+    public  RecyclerView recyclerView;
+    public List<String> mTitle;
     @Override
     protected void onCreateViewLazy(Bundle savedInstanceState) {
         super.onCreateViewLazy(savedInstanceState);
@@ -61,6 +71,9 @@ public class SecondLayerFragment extends LazyFragment implements SwipeRefreshLay
         }
 
     }
+    public interface OnListFragmentInteractionListener {
+        void onYaowenListItemClick(NewsModel news);
+    }
     private void startYujing() {
         setContentView(R.layout.fragment_tabmain_yujing);
         String[] images= getResources().getStringArray(R.array.url4);
@@ -74,13 +87,13 @@ public class SecondLayerFragment extends LazyFragment implements SwipeRefreshLay
             @Override
             public void OnBannerClick(View view, int position) {
                 Toast.makeText(getApplicationContext(),"你点击了："+position,Toast.LENGTH_LONG).show();
-                queryYaowen(true);
+//                queryYaowen(true);
             }
         });
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
-        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
-        swipeRefreshLayout.setOnRefreshListener(this);
-        queryYaowen(true);
+//        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
+//        swipeRefreshLayout.setOnRefreshListener(this);
+//        queryYaowen(true);
     }
 
     private void startZhangwang() {
@@ -127,13 +140,16 @@ public class SecondLayerFragment extends LazyFragment implements SwipeRefreshLay
         //记得设置标题列表哦
         banner.setBannerTitle(titles);
         banner.setImages(images);
+        queryYaowen(true);
         banner.setOnBannerClickListener(new Banner.OnBannerClickListener() {//设置点击事件
             @Override
             public void OnBannerClick(View view, int position) {
                 Toast.makeText(getApplicationContext(),"你点击了："+position,Toast.LENGTH_LONG).show();
+                swipeRefreshLayout= (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout1);
+//                queryYaowen(true);
             }
         });
-        queryYaowen(true);
+
     }
 
     private void queryYaowen(boolean b) {
@@ -141,48 +157,34 @@ public class SecondLayerFragment extends LazyFragment implements SwipeRefreshLay
             swipeRefreshLayout.setRefreshing(false);
             Toast.makeText(getContext(),"请检查网络连接",Toast.LENGTH_LONG).show();
         }
-        RestAdapter adapter = new RestAdapter(getApplicationContext(), "http://192.168.1.114:3001/api");
+        RestAdapter adapter = new RestAdapter(getApplicationContext(), "http://211.87.227.214:3001/api");
         adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
         NewsRepository newRepo=adapter.createRepository(NewsRepository.class);
-        Map<String,Object> params =new HashMap<String,Object>();
-//        Map<String,Object>filter=new HashMap<String,Object>();
-//        filter.put("include","new");
-//            pramas.put("filter",filter);
-        newRepo.invokeStaticMethod("count", null, new Adapter.Callback() {
-            @Override
-            public void onSuccess(String response) {
-                Toast.makeText(getContext(),response,Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onError(Throwable t) {
-                Toast.makeText(getContext(),t.toString(),Toast.LENGTH_LONG).show();
-            }
-        });
-        newRepo.findById(0,new ObjectCallback<NewsModel>(){
-
-            @Override
-            public void onSuccess(NewsModel object) {
-
-            }
-
-            @Override
-            public void onError(Throwable t) {
-
-            }
-        });
         newRepo.findAll(new ListCallback<NewsModel>() {
             @Override
             public void onSuccess(List<NewsModel> objects) {
-                Toast.makeText(getContext(),"标题:"+objects.get(0).getTitle()+"\n摘要:"+objects.get(0).getSummary()+"\n内容:"+objects.get(0).getContent()+"\n图片ID:"+objects.get(0).getImageId()+"\n标签id:"+objects.get(0).getTagId(),Toast.LENGTH_LONG).show();
-                Log.d("aoc=======","==="+objects.get(0).toString());
+                initData(objects);
+//                Toast.makeText(getContext(),"标题:"+objects.get(0).getTitle()+"\n摘要:"+objects.get(0).getSummary()+"\n内容:"+objects.get(0).getContent()+"\n图片ID:"+objects.get(0).getImageId()+"\n标签id:"+objects.get(0).getTagId(),Toast.LENGTH_LONG).show();
+//                Log.d("aoc=======","==="+objects.get(0).toString());
+//                swipeRefreshLayout.setRefreshing(false);
+                RecyclerView recyclerView= (RecyclerView) findViewById(R.id.YaowenList);
+                recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                recyclerView.setAdapter(new HomeAdapter());
+//                swipeRefreshLayout.setRefreshing(false);
             }
 
             @Override
             public void onError(Throwable t) {
-                Toast.makeText(getContext(),"失败了",Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(),"失败了"+t,Toast.LENGTH_LONG).show();
             }
         });
+    }
+    public void onYaowenListItemClick(NewsModel news){
+        Intent intent =new Intent(getContext(),NewsDetailActivity.class);
+        Bundle bundle=new Bundle();
+        bundle.putString("id",news.getId().toString());
+        intent.putExtras(bundle);
+        startActivityForResult(intent,1);
     }
 
     private int[] images = {R.mipmap.welcome1, R.mipmap.welcome2, R.mipmap.welcome3, R.mipmap.welcome4};
@@ -209,10 +211,6 @@ public class SecondLayerFragment extends LazyFragment implements SwipeRefreshLay
             return convertView;
         }
 
-//        @Override
-//        public int getItemPosition(Object object) {
-//            return RecyclingPagerAdapter.POSITION_NONE;
-//        }
 
         @Override
         public int getCount() {
@@ -225,9 +223,68 @@ public class SecondLayerFragment extends LazyFragment implements SwipeRefreshLay
         super.onAttach(context);
     }
 
+    protected void initData(List<NewsModel> obj)
+    {
+        mTitle = new ArrayList<String>();
+        RestAdapter adapter = new RestAdapter(getApplicationContext(), "http://211.87.227.214:3001/api");
+        adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
+        NewsRepository newRepo=adapter.createRepository(NewsRepository.class);
+        newRepo.findAll(new ListCallback<NewsModel>() {
+            @Override
+            public void onSuccess(List<NewsModel> objects) {
+                for (int i=0;i<objects.size();i++){
+                    mTitle.add(objects.get(i).getTitle());
+                }
+            }
+            @Override
+            public void onError(Throwable t) {
 
+            }
+        });
+        for (int i=0;i<obj.size();i++){
+            mTitle.add(obj.get(i).getTitle());
+        }
+
+    }
     @Override
     public void onRefresh() {
         queryYaowen(true);
     }
+    class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.MyViewHolder>
+    {
+
+        @Override
+        public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
+        {
+            MyViewHolder holder = new MyViewHolder(LayoutInflater.from(getContext()).inflate(R.layout.fragment_news_yaowen, parent,
+                    false));
+            return holder;
+        }
+
+        @Override
+        public void onBindViewHolder(MyViewHolder holder, int position)
+        {
+            holder.tv.setText(mTitle.get(position));
+        }
+
+        @Override
+        public int getItemCount()
+        {
+            return mTitle.size();
+        }
+
+        class MyViewHolder extends RecyclerView.ViewHolder
+        {
+
+            TextView tv;
+
+            public MyViewHolder(View view)
+            {
+                super(view);
+                tv = (TextView) view.findViewById(R.id.tv_item_title);
+            }
+        }
+    }
+
 }
+

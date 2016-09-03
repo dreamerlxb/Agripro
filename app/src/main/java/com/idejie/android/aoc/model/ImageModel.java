@@ -1,5 +1,7 @@
 package com.idejie.android.aoc.model;
 
+import android.content.Context;
+
 import com.strongloop.android.loopback.Model;
 
 /**
@@ -123,5 +125,9 @@ public class ImageModel extends Model {
 
     public void setUserId(Object userId) {
         this.userId = userId;
+    }
+
+    public String getFileUrl(Context context) {
+        return context.toString();
     }
 }
