@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +14,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.idejie.android.aoc.activity.NewsDetailActivity;
-import com.idejie.android.aoc.adapter.YaowenRecyclerViewAdapter;
 import com.idejie.android.aoc.model.NewsModel;
 import com.idejie.android.aoc.R;
 import com.idejie.android.aoc.repository.NewsRepository;
@@ -24,15 +22,11 @@ import com.idejie.android.library.view.indicator.BannerComponent;
 import com.idejie.android.library.view.indicator.IndicatorViewPager;
 import com.strongloop.android.loopback.RestAdapter;
 import com.strongloop.android.loopback.callbacks.ListCallback;
-import com.strongloop.android.loopback.callbacks.ObjectCallback;
-import com.strongloop.android.remoting.adapters.Adapter;
 import com.youth.banner.Banner;
 import com.youth.banner.BannerConfig;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -45,10 +39,7 @@ public class SecondLayerFragment extends LazyFragment implements SwipeRefreshLay
     public static final String TOKEN="4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO";
     private String tabName;
     private int position;
-    private BannerComponent bannerComponent;
     private SwipeRefreshLayout swipeRefreshLayout;
-    private OnListFragmentInteractionListener mListener;
-    public  RecyclerView recyclerView;
     public List<String> mTitle;
     @Override
     protected void onCreateViewLazy(Bundle savedInstanceState) {
@@ -87,13 +78,10 @@ public class SecondLayerFragment extends LazyFragment implements SwipeRefreshLay
             @Override
             public void OnBannerClick(View view, int position) {
                 Toast.makeText(getApplicationContext(),"你点击了："+position,Toast.LENGTH_LONG).show();
-//                queryYaowen(true);
             }
         });
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
-//        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
-//        swipeRefreshLayout.setOnRefreshListener(this);
-//        queryYaowen(true);
+
     }
 
     private void startZhangwang() {
