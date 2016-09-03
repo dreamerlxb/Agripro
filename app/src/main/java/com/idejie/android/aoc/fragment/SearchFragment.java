@@ -25,6 +25,7 @@ import com.google.common.collect.ImmutableMap;
 import com.idejie.android.aoc.R;
 import com.idejie.android.aoc.activity.TendencyActivity;
 import com.idejie.android.aoc.adapter.SearchListAdapter;
+import com.idejie.android.aoc.bean.LineData;
 import com.idejie.android.aoc.bean.SearchList;
 import com.idejie.android.aoc.dialog.CityDialog;
 import com.idejie.android.aoc.dialog.MyDialog;
@@ -79,7 +80,7 @@ public class SearchFragment extends LazyFragment implements View.OnClickListener
     String url="http://api.map.baidu.com/geocoder/v2/";
     private int regionId;
     private ArrayList<SearchList> priceArray;
-    private ArrayList<PriceModel> yesterdayArray;
+    private ArrayList<SearchList> yesterdayArray;
     private List<SortModel> sortObjects;
     private String apiUrl="http://192.168.1.114:3001/api";
 
@@ -171,7 +172,7 @@ public class SearchFragment extends LazyFragment implements View.OnClickListener
         cityText.setOnClickListener(this);
         listView= (ListView) view.findViewById(R.id.listView);
         priceArray=new ArrayList<SearchList>();
-        yesterdayArray=new ArrayList<PriceModel>();
+        yesterdayArray=new ArrayList<SearchList>();
         han = new Handler() {
             public void handleMessage(Message msg) {
                 // TODO Auto-generated method stub
@@ -232,7 +233,6 @@ public class SearchFragment extends LazyFragment implements View.OnClickListener
             case R.id.textCity:
                 MyDialog dialog=new MyDialog(context,hanDialog);
                 dialog.show();
-
                 break;
         }
     }
@@ -285,16 +285,14 @@ public class SearchFragment extends LazyFragment implements View.OnClickListener
         }));
     }
 
-    private String getTend(PriceModel priceModel) {
+    private String getTend(SearchList searchList) {
         String tend="-";
         for(int i=0;i<yesterdayArray.size();i++){
-            if (priceModel.getSortId()==yesterdayArray.get(i).getSortId()){
-                tend= String.valueOf((priceModel.getPrice()-yesterdayArray.get(i).getPrice())*100/priceModel.getPrice()).substring(0,4)+"%";
-                if (priceModel.getPrice()-yesterdayArray.get(i).getPrice()<0){
-                    tend= String.valueOf((priceModel.getPrice()-yesterdayArray.get(i).getPrice())*100/priceModel.getPrice()).substring(0,5)+"%";
+            if (searchList.getSort().equals(yesterdayArray.get(i).getSort())){
+                tend= String.valueOf(((int)searchList.getPrice()-yesterdayArray.get(i).getPrice())*100/searchList.getPrice())+"%";
+                if ((searchList.getPrice()-yesterdayArray.get(i).getPrice())<0){
+                    tend= String.valueOf((searchList.getPrice()-yesterdayArray.get(i).getPrice())*100/searchList.getPrice())+"%";
                 }
-
-                break;
             }
         }
         return tend;
@@ -308,26 +306,59 @@ public class SearchFragment extends LazyFragment implements View.OnClickListener
         date=calendar.getTime(); //这个时间就是日期往后推一天的结果
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         String dateString = formatter.format(date);
+        int price2=0;
+        int number2=0;
+        String lastDate2="";
+        Log.d("test",".....110");
         for (int i=0;i<objects.size();i++){
             if (objects.get(i).getRegionId()==regionId&&dateString.equals(objects.get(i).getPriceDate().substring(0,10))){
-                yesterdayArray.add(objects.get(i));
+                if (objects.get(i).getPriceDate().substring(0,10).equals(lastDate2)){
+                    number2++;
+                    price2= (int) (price2+objects.get(i).getPrice());
+                }else {
+                    number2++;
+                    price2= (int) (price2+objects.get(i).getPrice());
+                    yesterdayArray.add(new SearchList(price2/number2,getSort(objects.get(i).getSortId())));
+                    lastDate2=objects.get(i).getPriceDate().substring(0,10);
+                    number2=0;
+                    price2=0;
+                }
+
             }
         }
+        Log.d("test",".....111");
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");//设置日期格式
         final String dateNow=df.format(new Date());
-        SearchList searchDateHead = new SearchList("品种","价格","涨跌","地区");
         priceArray.clear();
-        priceArray.add(searchDateHead);
+        int price=0;
+        int number=0;
+        String lastDate="";
+        Log.d("test",".....112");
         for (int i=0;i<objects.size();i++){
-            Log.d("test","....date..."+dateNow);
-            Log.d("test","....dateO..."+objects.get(i).getPriceDate().substring(0,10));
+            Log.d("test",".....113");
             if (objects.get(i).getRegionId()==regionId&&objects.get(i).getPriceDate().substring(0,10).equals(dateNow)) {
-                SearchList searchDate = new SearchList();
-                searchDate.setArea(cityText.getText().toString());
-                searchDate.setPrice(String.valueOf(objects.get(i).getPrice())+"元/kg");
-                searchDate.setTend(getTend(objects.get(i)));
-                searchDate.setSort(getSort(objects.get(i).getSortId()));
-                priceArray.add(searchDate);
+
+                if (objects.get(i).getPriceDate().substring(0,10).equals(lastDate)){
+                    Log.d("test",".....114");
+                    number++;
+                    price= (int) (price+objects.get(i).getPrice());
+                }else {
+                    number++;
+                    price= (int) (price+objects.get(i).getPrice());
+                    lastDate=objects.get(i).getPriceDate().substring(0,10);
+                    SearchList searchDate = new SearchList();
+                    searchDate.setArea(cityText.getText().toString());
+                    searchDate.setPrice(price/number);
+                    Log.d("test",".....1151");
+                    searchDate.setTend(getTend(new SearchList(price/number,getSort(objects.get(i).getSortId()))));
+                    Log.d("test",".....1152");
+                    searchDate.setSort(getSort(objects.get(i).getSortId()));
+                    priceArray.add(searchDate);
+                    Log.d("test",".....115");
+                    number=0;
+                    price=0;
+                }
+
             }
         }
         SearchListAdapter adapter=new SearchListAdapter(context,R.layout.item_search_list,priceArray);

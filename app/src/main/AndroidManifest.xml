@@ -55,9 +55,10 @@
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".activity.MainActivity"
-            android:label="@string/title_activity_main"
-            android:theme="@style/AppTheme.NoActionBar" />
+        android:name=".activity.MainActivity"
+        android:label="@string/title_activity_main"
+        android:theme="@style/AppTheme.NoActionBar" />
+
         <activity android:name=".activity.TendencyActivity" />
         <activity
             android:name=".activity.LoginActivity"
@@ -68,7 +69,8 @@
         <activity
             android:name=".activity.SettingsActivity"
             android:label="@string/title_activity_settings" />
-        <activity android:name=".activity.MyPriceActivity" />
+        <activity android:name=".activity.MyPriceActivity" >
+            </activity>
         <activity android:name=".activity.MyCommentActivity" />
         <activity android:name=".activity.MallActivity" />
         <activity android:name=".activity.TuiActivity" />

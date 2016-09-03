@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+<head>
+    <meta charset="utf-8">
+</head>
+<body style="height: 100%; margin: 0">
+<div id="container" style="height: 100%"></div>
+<script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/echarts-all-3.js"></script>
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/dataTool.min.js"></script>
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/china.js"></script>
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/world.js"></script>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=ZUONbpqGBsYGXNIYHicvbAbM"></script>
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/bmap.min.js"></script>
+
+
+<script type="text/javascript">
+    var dom = document.getElementById("container");
+    var myChart = echarts.init(dom);
+    var url=location.href;
+    var myURL = parseURL(url);
+    alert(myURL.params.city);
+    function parseURL(url) {
+        var a = document.createElement('a');
+        a.href = url;
+        return {
+            source: url,
+            protocol: a.protocol.replace(':', ''),
+            host: a.hostname,
+            port: a.port,
+            query: a.search,
+            params: (function () {
+                var ret = {},
+                        seg = a.search.replace(/^\?/, '').split('&'),
+                        len = seg.length, i = 0, s;
+                for (; i < len; i++) {
+                    if (!seg[i]) {
+                        continue;
+                    }
+                    s = seg[i].split('=');
+                    ret[s[0]] = s[1];
+                }
+                return ret;
+            })(),
+            file: (a.pathname.match(/\/([^\/?#]+)$/i) || [, ''])[1],
+            hash: a.hash.replace('#', ''),
+            path: a.pathname.replace(/^([^\/])/, '/$1'),
+            relative: (a.href.match(/tps?:\/\/[^\/]+(.+)/) || [, ''])[1],
+            segments: a.pathname.replace(/^\//, '').split('/')
+        };
+    }
+
+    var app = {};
+    option = null;
+    app.title = '34 省切换查看';
+    var provinces = ['shanghai', 'hebei','shanxi','neimenggu','liaoning','jilin','heilongjiang','jiangsu','zhejiang','anhui','fujian','jiangxi','shandong','henan','hubei','hunan','guangdong','guangxi','hainan','sichuan','guizhou','yunnan','xizang','shanxi1','gansu','qinghai','ningxia','xinjiang', 'beijing', 'tianjin', 'chongqing', 'xianggang', 'aomen'];
+
+    function showProvince() {
+        var name = myURL.params.city;
+        // myChart.showLoading();
+        $.get('province/' + name + '.json', function (geoJson) {
+
+            // myChart.hideLoading();
+
+            echarts.registerMap(name, geoJson);
+
+            myChart.setOption(option = {
+                backgroundColor: '#404a59',
+                title: {
+                    text: name,
+                    left: 'center',
+                    textStyle: {
+                        color: '#fff'
+                    }
+                },
+                series: [
+                    {
+                        type: 'map',
+                        mapType: name,
+                        label: {
+                            emphasis: {
+                                textStyle: {
+                                    color: '#fff'
+                                }
+                            }
+                        },
+                        itemStyle: {
+                            normal: {
+                                borderColor: '#389BB7',
+                                areaColor: '#fff',
+                            },
+                            emphasis: {
+                                areaColor: '#389BB7',
+                                borderWidth: 0
+                            }
+                        },
+                        animation: false
+                        // animationDurationUpdate: 1000,
+                        // animationEasingUpdate: 'quinticInOut'
+                    }
+                ]
+            });
+        });
+    }
+
+    var currentIdx = 0;
+
+    showProvince();
+
+    // Draw icon
+    var zr = myChart.getZr();
+    zr.remove(app.iconGroup);
+
+    var icon0 = new echarts.graphic.Circle({
+        shape: { r: 20 },
+        style: {
+            text: '<',
+            fill: '#eee'
+        },
+        position: [50, zr.getHeight() / 2]
+    });
+    var icon1 = new echarts.graphic.Circle({
+        shape: { r: 20 },
+        style: {
+            text: '>',
+            fill: '#eee'
+        },
+        position: [zr.getWidth() - 50, zr.getHeight() / 2]
+    });
+    var group = new echarts.graphic.Group();
+    group.add(icon0);
+    group.add(icon1);
+    zr.add(group);
+
+    icon0.on('click', function () {
+        currentIdx -= 1;
+        if (currentIdx < 0) {
+            currentIdx += provinces.length;
+        }
+        showProvince();
+    });
+    icon1.on('click', function () {
+        currentIdx = (currentIdx + 1) % provinces.length;
+        showProvince();
+    });
+    ;
+    if (option && typeof option === "object") {
+        myChart.setOption(option, true);
+    }
+</script>
+</body>
+</html>

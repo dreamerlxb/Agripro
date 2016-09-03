@@ -5,12 +5,18 @@ package com.idejie.android.aoc.bean;
  */
 
 public class SearchList {
-    private String sort,price,tend,area;
+    private String sort,tend,area;
+    private int price;
 
     public SearchList() {
     }
 
-    public SearchList(String sort, String price, String tend, String area) {
+    public SearchList(int price, String sort) {
+        this.price = price;
+        this.sort = sort;
+    }
+
+    public SearchList(String sort, int price, String tend, String area) {
         this.sort = sort;
         this.price = price;
         this.tend = tend;
@@ -25,11 +31,11 @@ public class SearchList {
         this.sort = sort;
     }
 
-    public String getPrice() {
+    public int getPrice() {
         return price;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(int price) {
         this.price = price;
     }
 
