@@ -39,7 +39,10 @@ public class MyLoadListAdapter extends ArrayAdapter<MyUploadList> {
             viewHolder=new ViewHolder();
             viewHolder.textSort=(TextView) view.findViewById(R.id.text_sort_grade);
             viewHolder.textPrice=(TextView)view.findViewById(R.id.text_price);
-            viewHolder.textArea=(TextView)view.findViewById(R.id.text_area);
+            viewHolder.textArea=(TextView)view.findViewById(R.id.text_region);
+            viewHolder.textAmount= (TextView) view.findViewById(R.id.text_amount);
+            viewHolder.textMarketName= (TextView) view.findViewById(R.id.text_market_name);
+            viewHolder.textUpDate= (TextView) view.findViewById(R.id.text_up_time);
             view.setTag(viewHolder);
         }else{
             view=convertView;

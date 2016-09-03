@@ -75,7 +75,7 @@
             android:layout_height="35dp"/>
 
         <TextView
-            android:id="@+id/up_time"
+            android:id="@+id/text_up_time"
             android:gravity="center"
             android:textSize="@dimen/item_size"
             android:layout_weight="1"
