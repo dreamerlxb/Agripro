@@ -69,7 +69,8 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
     private List<SortModel> objectArray;
     private List<GradeModel> gradeArray;
     private int regionId,sortId,gradeId;
-    private String apiUrl="http://192.168.1.114:3001/api";
+    private String apiUrl="http://211.87.227.214:3001/api";
+//    private String apiUrl="http://192.168.1.114:3001/api";
     /**
      * 初始化操作
      */
@@ -370,6 +371,7 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
             @Override
             public void onImageClick(int position, View imageView) {
                 /**实现点击事件*/
+
             }
             @Override
             public void displayImage(String imageURL, ImageView imageView) {

@@ -82,8 +82,8 @@ public class SearchFragment extends LazyFragment implements View.OnClickListener
     private ArrayList<SearchList> priceArray;
     private ArrayList<SearchList> yesterdayArray;
     private List<SortModel> sortObjects;
-    private String apiUrl="http://192.168.1.114:3001/api";
-
+//    private String apiUrl="http://192.168.1.114:3001/api";
+private String apiUrl="http://211.87.227.214:3001/api";
     /**
      * 初始化操作
      */

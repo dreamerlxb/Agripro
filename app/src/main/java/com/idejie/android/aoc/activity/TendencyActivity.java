@@ -75,8 +75,8 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
     private int regionId,sortId,gradeId;
     private List<SortModel> objectArray;
     private List<GradeModel> gradeArray;
-//    private String apiUrl="http://211.87.227.214:3001/api";
-    private String apiUrl="http://192.168.1.114:3001/api";
+    private String apiUrl="http://211.87.227.214:3001/api";
+//    private String apiUrl="http://192.168.1.114:3001/api";
     private ListView listView;
     private TendListAdapter tendListAdapter;
     private ArrayList<TendList> priceArray;
