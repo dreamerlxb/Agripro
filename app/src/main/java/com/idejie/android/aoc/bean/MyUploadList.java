@@ -6,22 +6,20 @@ package com.idejie.android.aoc.bean;
 
 public class MyUploadList {
     private String sort;
-    private String amount;
+    private int amount;
     private String marketName;
     private String area;
-
-    public String getUpDate() {
-        return upDate;
-    }
-
-    public void setUpDate(String upDate) {
-        this.upDate = upDate;
-    }
-
     private String upDate;
     private int price;
 
-
+    public MyUploadList(String sort, int amount, String marketName, String area, String upDate, int price) {
+        this.sort = sort;
+        this.amount = amount;
+        this.marketName = marketName;
+        this.area = area;
+        this.upDate = upDate;
+        this.price = price;
+    }
 
     public String getSort() {
         return sort;
@@ -31,19 +29,11 @@ public class MyUploadList {
         this.sort = sort;
     }
 
-    public int getPrice() {
-        return price;
-    }
-
-    public void setPrice(int price) {
-        this.price = price;
-    }
-
-    public String getAmount() {
+    public int getAmount() {
         return amount;
     }
 
-    public void setAmount(String amount) {
+    public void setAmount(int amount) {
         this.amount = amount;
     }
 
@@ -61,5 +51,21 @@ public class MyUploadList {
 
     public void setArea(String area) {
         this.area = area;
+    }
+
+    public String getUpDate() {
+        return upDate;
+    }
+
+    public void setUpDate(String upDate) {
+        this.upDate = upDate;
+    }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
     }
 }

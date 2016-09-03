@@ -8,12 +8,12 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.idejie.android.aoc.R;
 import com.idejie.android.aoc.bean.MyUploadList;
-import com.idejie.android.aoc.bean.SearchList;
 
 import java.util.List;
 
@@ -49,15 +49,18 @@ public class MyLoadListAdapter extends ArrayAdapter<MyUploadList> {
             viewHolder=(ViewHolder) view.getTag();
         }
         viewHolder.textSort.setText(myUploadList.getSort());
-        viewHolder.textPrice.setText(myUploadList.getPrice()+"");
+        viewHolder.textPrice.setText(myUploadList.getPrice()+"元/kg");
         viewHolder.textArea.setText(myUploadList.getArea());
-
+        viewHolder.textUpDate.setText(myUploadList.getUpDate());
+        viewHolder.textMarketName.setText(myUploadList.getMarketName());
+        viewHolder.textAmount.setText(myUploadList.getAmount()+"kg");
         return view;
     }
 
 
     class ViewHolder{
-        TextView textSort,textPrice,textAmount,textUpDate,textMarketName,textArea;
+        TextView textSort,textPrice,textArea,textUpDate,textMarketName,textAmount;
     }
+
 
 }

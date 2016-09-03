@@ -412,9 +412,6 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
                      listView.setAdapter(tendListAdapter);
                 }
 
-
-
-
             }
             @Override
             public void onError(Throwable t) {
