@@ -25,6 +25,7 @@ import com.google.gson.Gson;
 import com.idejie.android.aoc.adapter.SearchListAdapter;
 import com.idejie.android.aoc.adapter.TendListAdapter;
 import com.idejie.android.aoc.bean.LineData;
+import com.idejie.android.aoc.bean.MapData;
 import com.idejie.android.aoc.bean.SearchList;
 import com.idejie.android.aoc.bean.TendList;
 import com.idejie.android.aoc.dialog.CityTDialog;
@@ -43,6 +44,7 @@ import com.idejie.android.aoc.repository.PriceRepository;
 import com.idejie.android.aoc.repository.RegionRepository;
 import com.idejie.android.aoc.repository.SortRepository;
 import com.idejie.android.aoc.tools.LineTableDate;
+import com.idejie.android.aoc.tools.MapTableDate;
 import com.strongloop.android.loopback.RestAdapter;
 import com.strongloop.android.loopback.callbacks.JsonArrayParser;
 import com.strongloop.android.loopback.callbacks.ListCallback;
@@ -78,6 +80,7 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
     private ListView listView;
     private TendListAdapter tendListAdapter;
     private ArrayList<TendList> priceArray;
+    private List<RegionModel> regionObjects;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,6 +91,7 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
     }
 
     private void init() {
+        getProvince();
         priceArray=new ArrayList<TendList>();
         listView= (ListView) findViewById(R.id.listView);
         textProvince= (TextView) findViewById(R.id.province);
@@ -243,18 +247,22 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
                 }
                 break;
             case R.id.btn_map:
+                Log.d("test","getProvinceName(1)...."+getProvinceName(1,regionObjects));
                 if (isReady()){
+                    if (!textTimeS.getText().toString().equals("开始")){
+                        textTimeO.setText(textTimeS.getText().toString());
+                    }
                     listClear();
                     LinearLayout.LayoutParams linearParams2 =(LinearLayout.LayoutParams)
                             chartWeb.getLayoutParams(); //取控件textView当前的布局参数
                     linearParams2.height = ((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 260, getResources().getDisplayMetrics()));
                     chartWeb.setLayoutParams(linearParams2);
-                    chartWeb.loadUrl("file:///android_asset/test5.html");
                     btnLine.setBackgroundResource(R.drawable.border_grey);
                     btnGraph.setBackgroundResource(R.drawable.border_grey);
                     btnMap.setBackgroundResource(R.drawable.border_green);
                     chartWeb.setBackgroundResource(R.color.white);
                     ifMap=true;
+                    getPriceMap();
                 }else {
                     Toast.makeText(TendencyActivity.this,"请填写必要参数",Toast.LENGTH_SHORT).show();
                 }
@@ -284,6 +292,21 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
                 break;
         }
 
+    }
+
+    private String getProvinceName(int id, List<RegionModel> regionObjects) {
+        String province="山东";
+        for (int i=0;i<regionObjects.size();i++){
+            if ((int)regionObjects.get(i).getId()==id){
+                province=regionObjects.get(i).getProvince();
+                if (province.contains("省")|province.contains("市")){
+                    province=province.substring(0,province.length()-1);
+                }
+                break;
+            }
+
+        }
+        return province;
     }
 
     private boolean isReady() {
@@ -541,6 +564,87 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
         }));
     }
 
+    private void getPriceMap() {
+        RestAdapter adapter = new RestAdapter(getApplicationContext(),apiUrl);
+        adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
+        PriceRepository productRepository = adapter.createRepository(PriceRepository.class);
+        Map<String, Object> params = new HashMap<String, Object>();
+        Map<String, Object> filterMap = new HashMap<String, Object>();
+        filterMap.put("include","sort");
+        params.put("filter",filterMap);
+        productRepository. invokeStaticMethod("all", params, new JsonArrayParser<PriceModel>(productRepository,new ListCallback<PriceModel>() {
+            @Override
+            public void onSuccess(List<PriceModel> objects) {
+                List<MapData> mlist = new ArrayList<MapData>();
+                for(int i=0;i<objects.size();i++){
+                    PriceModel priceModel=objects.get(i);
+                    if (priceModel.getSortId() ==sortId&&priceModel.getGradeId()==gradeId){
+                        if (textTimeS.getText().toString().equals("开始")&&textTimeO.getText().toString().equals("结束")){
+                            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                            if (dateFormat.format(new Date()).equals(priceModel.getPriceDate().substring(0,10))){
+                                mlist.add(new MapData(getProvinceName(priceModel.getSortId(),regionObjects), (int) priceModel.getPrice()));
+                            }
+
+                        }else if (!textTimeS.getText().toString().equals("开始")&&!textTimeO.getText().toString().equals("结束")){
+                            //比较时间
+                            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                            try {
+                                Date dateTimeS = dateFormat.parse(textTimeS.getText().toString());
+                                Date dateTimeO = dateFormat.parse(textTimeO.getText().toString());
+                                Date dateTime=dateFormat.parse(priceModel.getPriceDate());
+                                int t1 = dateTimeS.compareTo(dateTime);
+                                int t2 = dateTimeO.compareTo(dateTime);
+                                if (t1<=0&&t2>=0){
+                                    Log.d("test","22111");
+                                    mlist.add(new MapData(getProvinceName(priceModel.getRegionId(),regionObjects), (int) priceModel.getPrice()));
+                                }
+                        } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                        }else {
+                            Toast.makeText(TendencyActivity.this,"请填写完整时间信息",Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                }
+                Log.d("test","2211");
+                //对list去重
+                for (int i=0;i<mlist.size();i++){
+                    MapData mapData=mlist.get(i);
+                    int numberBySort=1;
+                    int priceBySort=mapData.getValue();
+                    Log.d("test","i...."+i);
+                    for (int j=i+1;j<mlist.size();j++){
+                        Log.d("test","mlist.size()...."+mlist.size());
+                        Log.d("test","j...."+j);
+                        MapData mapData2=mlist.get(j);
+                        if (mapData2.getName().equals(mapData.getName())){
+                            priceBySort=priceBySort+mapData2.getValue();
+                            numberBySort++;
+                            mlist.remove(j);
+                            j--;
+                        }
+                    }
+                    mapData.setValue(priceBySort/numberBySort);
+                }
+
+                Log.d("test","221");
+                chartWeb.loadUrl("file:///android_asset/test5.html");
+                //关联数据
+                Gson gson = new Gson();
+                String data  = gson.toJson(mlist);
+                chartWeb.addJavascriptInterface(new MapTableDate(TendencyActivity.this,data,"2"),"mapDate");
+
+
+
+            }
+            @Override
+            public void onError(Throwable t) {
+                Log.d("test","Throwable..Obj..."+t.toString());
+            }
+        }));
+    }
+
     private void listInit() {
         TendList tendList=new TendList("地区","品种",
                 "等级","价格","日期");
@@ -637,6 +741,23 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
 
 
         });
+    }
+    private void getProvince() {
+        RestAdapter adapter = new RestAdapter(getApplicationContext(),apiUrl);
+        adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
+        RegionRepository regionRepository = adapter.createRepository(RegionRepository.class);
+        regionRepository.findAll(new ListCallback<RegionModel>() {
+            @Override
+            public void onSuccess(List<RegionModel> objects) {
+                regionObjects=objects;
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                Log.d("test","t...."+t.toString());
+            }
+        });
+
     }
 
     public static String getTime(Date date) {
