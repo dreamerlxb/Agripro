@@ -164,13 +164,9 @@ public class SecondLayerFragment extends LazyFragment implements SwipeRefreshLay
             @Override
             public void onSuccess(List<NewsModel> objects) {
                 initData(objects);
-//                Toast.makeText(getContext(),"标题:"+objects.get(0).getTitle()+"\n摘要:"+objects.get(0).getSummary()+"\n内容:"+objects.get(0).getContent()+"\n图片ID:"+objects.get(0).getImageId()+"\n标签id:"+objects.get(0).getTagId(),Toast.LENGTH_LONG).show();
-//                Log.d("aoc=======","==="+objects.get(0).toString());
-//                swipeRefreshLayout.setRefreshing(false);
                 RecyclerView recyclerView= (RecyclerView) findViewById(R.id.YaowenList);
                 recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                 recyclerView.setAdapter(new HomeAdapter());
-//                swipeRefreshLayout.setRefreshing(false);
             }
 
             @Override
