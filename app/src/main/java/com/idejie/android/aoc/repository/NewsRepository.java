@@ -10,7 +10,7 @@ import com.strongloop.android.loopback.ModelRepository;
 public class NewsRepository extends ModelRepository<NewsModel> {
 
     public NewsRepository() {
-        super("news",NewsModel.class);
+        super("new",NewsModel.class);
     }
 
 }

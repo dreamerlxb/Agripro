@@ -114,4 +114,6 @@
     <string name="title_activity_verify">找回密码</string>
     <string name="title_activity_modify_psword">找回密码</string>
     <string name="title_activity_modify_success">找回密码</string>
+    <string name="zan">%d赞</string>
+    <string name="comment">%d评</string>
 </resources>

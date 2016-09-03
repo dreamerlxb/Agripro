@@ -1,14 +1,21 @@
 package com.idejie.android.aoc.fragment.tab;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.idejie.android.aoc.activity.NewsDetailActivity;
+import com.idejie.android.aoc.adapter.YaowenRecyclerViewAdapter;
 import com.idejie.android.aoc.model.NewsModel;
 import com.idejie.android.aoc.R;
 import com.idejie.android.aoc.repository.NewsRepository;
@@ -18,16 +25,20 @@ import com.idejie.android.library.view.indicator.IndicatorViewPager;
 import com.strongloop.android.loopback.RestAdapter;
 import com.strongloop.android.loopback.callbacks.ListCallback;
 import com.strongloop.android.loopback.callbacks.ObjectCallback;
+import com.strongloop.android.remoting.adapters.Adapter;
 import com.youth.banner.Banner;
 import com.youth.banner.BannerConfig;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
  * Created by shandongdaxue on 16/8/8.
  */
-public class SecondLayerFragment extends LazyFragment {
+public class SecondLayerFragment extends LazyFragment implements SwipeRefreshLayout.OnRefreshListener {
     public static final String INTENT_STRING_TABNAME = "intent_String_tabName";
     public static final String INTENT_INT_POSITION = "intent_int_position";
     public static final String URL_API = "http://192.168.1.114:3001/api/";
@@ -36,7 +47,9 @@ public class SecondLayerFragment extends LazyFragment {
     private int position;
     private BannerComponent bannerComponent;
     private SwipeRefreshLayout swipeRefreshLayout;
-
+    private OnListFragmentInteractionListener mListener;
+    public  RecyclerView recyclerView;
+    public List<String> mTitle;
     @Override
     protected void onCreateViewLazy(Bundle savedInstanceState) {
         super.onCreateViewLazy(savedInstanceState);
@@ -58,6 +71,9 @@ public class SecondLayerFragment extends LazyFragment {
         }
 
     }
+    public interface OnListFragmentInteractionListener {
+        void onYaowenListItemClick(NewsModel news);
+    }
     private void startYujing() {
         setContentView(R.layout.fragment_tabmain_yujing);
         String[] images= getResources().getStringArray(R.array.url4);
@@ -71,8 +87,13 @@ public class SecondLayerFragment extends LazyFragment {
             @Override
             public void OnBannerClick(View view, int position) {
                 Toast.makeText(getApplicationContext(),"你点击了："+position,Toast.LENGTH_LONG).show();
+//                queryYaowen(true);
             }
         });
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
+//        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
+//        swipeRefreshLayout.setOnRefreshListener(this);
+//        queryYaowen(true);
     }
 
     private void startZhangwang() {
@@ -107,7 +128,7 @@ public class SecondLayerFragment extends LazyFragment {
                 Toast.makeText(getApplicationContext(),"你点击了："+position,Toast.LENGTH_LONG).show();
             }
         });
-        getData();
+//        getData();
     }
 
     private void startYaowen() {
@@ -119,12 +140,47 @@ public class SecondLayerFragment extends LazyFragment {
         //记得设置标题列表哦
         banner.setBannerTitle(titles);
         banner.setImages(images);
+        queryYaowen(true);
         banner.setOnBannerClickListener(new Banner.OnBannerClickListener() {//设置点击事件
             @Override
             public void OnBannerClick(View view, int position) {
                 Toast.makeText(getApplicationContext(),"你点击了："+position,Toast.LENGTH_LONG).show();
+                swipeRefreshLayout= (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout1);
+//                queryYaowen(true);
             }
         });
+
+    }
+
+    private void queryYaowen(boolean b) {
+        if (!CommonUtil.checkNetState(getActivity())){
+            swipeRefreshLayout.setRefreshing(false);
+            Toast.makeText(getContext(),"请检查网络连接",Toast.LENGTH_LONG).show();
+        }
+        RestAdapter adapter = new RestAdapter(getApplicationContext(), "http://211.87.227.214:3001/api");
+        adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
+        NewsRepository newRepo=adapter.createRepository(NewsRepository.class);
+        newRepo.findAll(new ListCallback<NewsModel>() {
+            @Override
+            public void onSuccess(List<NewsModel> objects) {
+                initData(objects);
+                RecyclerView recyclerView= (RecyclerView) findViewById(R.id.YaowenList);
+                recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                recyclerView.setAdapter(new HomeAdapter());
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                Toast.makeText(getContext(),"失败了"+t,Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+    public void onYaowenListItemClick(NewsModel news){
+        Intent intent =new Intent(getContext(),NewsDetailActivity.class);
+        Bundle bundle=new Bundle();
+        bundle.putString("id",news.getId().toString());
+        intent.putExtras(bundle);
+        startActivityForResult(intent,1);
     }
 
     private int[] images = {R.mipmap.welcome1, R.mipmap.welcome2, R.mipmap.welcome3, R.mipmap.welcome4};
@@ -151,10 +207,6 @@ public class SecondLayerFragment extends LazyFragment {
             return convertView;
         }
 
-//        @Override
-//        public int getItemPosition(Object object) {
-//            return RecyclingPagerAdapter.POSITION_NONE;
-//        }
 
         @Override
         public int getCount() {
@@ -167,36 +219,68 @@ public class SecondLayerFragment extends LazyFragment {
         super.onAttach(context);
     }
 
-
-    public void getData() {
-        RestAdapter adapter = new RestAdapter(getApplicationContext(),URL_API);
-        Toast.makeText(getApplicationContext(),""+adapter,Toast.LENGTH_LONG).show();
-        adapter.setAccessToken(TOKEN);
-        NewsRepository newsRepository =adapter.createRepository(NewsRepository.class);
-        newsRepository.findById(0, new ObjectCallback<NewsModel>() {
-            @Override
-            public void onSuccess(NewsModel object) {
-                Log.d("news test","============"+object.toString());
-            }
-
-            @Override
-            public void onError(Throwable t) {
-                Log.d("news test","============"+t.toString());
-            }
-        });
-        newsRepository.findAll(new ListCallback<NewsModel>() {
+    protected void initData(List<NewsModel> obj)
+    {
+        mTitle = new ArrayList<String>();
+        RestAdapter adapter = new RestAdapter(getApplicationContext(), "http://211.87.227.214:3001/api");
+        adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
+        NewsRepository newRepo=adapter.createRepository(NewsRepository.class);
+        newRepo.findAll(new ListCallback<NewsModel>() {
             @Override
             public void onSuccess(List<NewsModel> objects) {
-                Log.d("news test all","============"+objects.toString());
-
+                for (int i=0;i<objects.size();i++){
+                    mTitle.add(objects.get(i).getTitle());
+                }
             }
-
             @Override
             public void onError(Throwable t) {
-                Log.d("news test all","============"+t.toString());
+
             }
         });
+        for (int i=0;i<obj.size();i++){
+            mTitle.add(obj.get(i).getTitle());
+        }
+
+    }
+    @Override
+    public void onRefresh() {
+        queryYaowen(true);
+    }
+    class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.MyViewHolder>
+    {
+
+        @Override
+        public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
+        {
+            MyViewHolder holder = new MyViewHolder(LayoutInflater.from(getContext()).inflate(R.layout.fragment_news_yaowen, parent,
+                    false));
+            return holder;
+        }
+
+        @Override
+        public void onBindViewHolder(MyViewHolder holder, int position)
+        {
+            holder.tv.setText(mTitle.get(position));
+        }
+
+        @Override
+        public int getItemCount()
+        {
+            return mTitle.size();
+        }
+
+        class MyViewHolder extends RecyclerView.ViewHolder
+        {
+
+            TextView tv;
+
+            public MyViewHolder(View view)
+            {
+                super(view);
+                tv = (TextView) view.findViewById(R.id.tv_item_title);
+            }
+        }
     }
 
-
 }
+

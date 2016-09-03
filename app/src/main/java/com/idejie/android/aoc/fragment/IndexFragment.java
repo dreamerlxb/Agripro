@@ -167,8 +167,8 @@ public class IndexFragment extends LazyFragment  {
         public Fragment getFragmentForPage(int position) {
             SecondLayerFragment mainFragment = new SecondLayerFragment();
             Bundle bundle = new Bundle();
-            bundle.putString(SecondLayerFragment.INTENT_STRING_TABNAME, tabName);
-            bundle.putInt(SecondLayerFragment.INTENT_INT_POSITION, position);
+            bundle.putString("tabName", tabName);
+            bundle.putInt("position", position);
             mainFragment.setArguments(bundle);
             return mainFragment;
         }

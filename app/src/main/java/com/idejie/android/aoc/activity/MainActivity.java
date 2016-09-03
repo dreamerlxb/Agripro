@@ -17,19 +17,23 @@ import com.idejie.android.aoc.fragment.MeFragment;
 import com.idejie.android.aoc.fragment.IndexFragment;
 import com.idejie.android.aoc.fragment.SearchFragment;
 import com.idejie.android.aoc.fragment.UploadFragment;
+import com.idejie.android.aoc.fragment.tab.SecondLayerFragment;
+import com.idejie.android.aoc.model.NewsModel;
 import com.idejie.android.library.view.indicator.FixedIndicatorView;
 import com.idejie.android.library.view.indicator.IndicatorViewPager;
 import com.idejie.android.library.view.indicator.transition.OnTransitionTextListener;
 import com.idejie.android.library.view.viewpager.SViewPager;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SecondLayerFragment.OnListFragmentInteractionListener{
     private IndicatorViewPager indicatorViewPager;
     private FixedIndicatorView indicator;
+    private SecondLayerFragment secondLayerFragment;
 
     @Override
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
+        secondLayerFragment =new SecondLayerFragment();
         setContentView(R.layout.activity_main);
         SViewPager viewPager = (SViewPager) findViewById(R.id.tabmain_viewPager);
         indicator = (FixedIndicatorView) findViewById(R.id.tabmain_indicator);
@@ -46,6 +50,11 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setCanScroll(false);
         // 设置viewpager保留界面不重新加载的页面数量
         viewPager.setOffscreenPageLimit(4);
+    }
+
+    @Override
+    public void onYaowenListItemClick(NewsModel news) {
+        secondLayerFragment.onYaowenListItemClick(news);
     }
 
 

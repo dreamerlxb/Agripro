@@ -85,7 +85,8 @@
         <activity
             android:name=".ModifySuccessActivity"
             android:label="@string/title_activity_modify_success" />
-        <activity android:name=".activity.GuanzhuActivity"></activity>
+        <activity android:name=".activity.GuanzhuActivity" />
+        <activity android:name=".activity.NewsDetailActivity"></activity>
     </application>
 
 </manifest>

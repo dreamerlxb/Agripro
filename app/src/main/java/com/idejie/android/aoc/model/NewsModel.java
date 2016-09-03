@@ -1,5 +1,8 @@
 package com.idejie.android.aoc.model;
 
+import android.media.Image;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.widget.ListView;
 
 import com.strongloop.android.loopback.Model;
@@ -9,7 +12,7 @@ import com.strongloop.android.loopback.Model;
  * Created by shandongdaxue on 16/8/17.
  */
 
-public class NewsModel extends Model {
+public class NewsModel extends Model  {
     public static final String URL="http:192.168.1.110:3001/api";
     private ListView list;
     public String title;
@@ -23,6 +26,43 @@ public class NewsModel extends Model {
     public Object tagId;
     public Object imageId;
 
+
+    public ImageModel getImage() {
+        return image;
+    }
+
+    public void setImage(ImageModel image) {
+        this.image = image;
+    }
+
+    public UserModel getUser() {
+        return user;
+    }
+
+    public void setUser(UserModel user) {
+        this.user = user;
+    }
+
+    public CategoryModel getCategory() {
+        return category;
+    }
+
+    public void setCategory(CategoryModel category) {
+        this.category = category;
+    }
+
+    public TagModel getTag() {
+        return tag;
+    }
+
+    public void setTag(TagModel tag) {
+        this.tag = tag;
+    }
+
+    public ImageModel image;
+    public UserModel user;
+    public CategoryModel category;
+    public TagModel tag;
 
     public String getTitle() {
         return title;
