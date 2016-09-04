@@ -49,7 +49,7 @@ public class HomeAdapter extends RecyclerView.Adapter {
         holders.position = i;
         NewsModel news = list.get(i);
         holder.title.setText(news.getTitle());
-//        holder.a.setText(person.getAge() + "岁");
+        holder.a.setText(person.getAge() + "岁");
     }
 
     @Override
