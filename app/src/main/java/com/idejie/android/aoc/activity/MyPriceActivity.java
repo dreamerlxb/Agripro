@@ -42,7 +42,7 @@ import java.util.Map;
 public class MyPriceActivity extends Activity implements View.OnClickListener {
 
 //    private String apiUrl="http://192.168.1.114:3001/api";
-private String apiUrl="http://211.87.227.214:3001/api";
+    private String apiUrl="http://211.87.227.214:3001/api";
     private ImageView btnBack;
     private ArrayList<MyUploadList> mlist;
     private int myId;
