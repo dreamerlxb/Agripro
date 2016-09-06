@@ -256,6 +256,7 @@ public class SecondLayerFragment extends LazyFragment implements SwipeRefreshLay
             mTag.add(obj.get(i).getTagId().toString());
 //            mZan.add(obj.get(i).get);
 //            mComment.add(obj.get(i).getTitle());
+
             mTime.add(obj.get(i).getLastUpdated());
             mId.add(obj.get(i).getId().toString());
         }
