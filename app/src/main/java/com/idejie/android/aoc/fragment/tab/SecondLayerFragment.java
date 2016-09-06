@@ -334,6 +334,7 @@ public class SecondLayerFragment extends LazyFragment implements SwipeRefreshLay
             @Override
             public void onClick(View view) {
                 Toast.makeText(getApplicationContext(),"+"+((TextView)view.findViewById(R.id.newsID)).getText(),Toast.LENGTH_LONG).show();
+
             }
         }
 
