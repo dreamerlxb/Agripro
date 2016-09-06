@@ -10,23 +10,21 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.idejie.android.aoc.activity.NewsDetailActivity;
-import com.idejie.android.aoc.adapter.HomeAdapter;
 import com.idejie.android.aoc.model.NewsModel;
 import com.idejie.android.aoc.R;
 import com.idejie.android.aoc.repository.NewsRepository;
 import com.idejie.android.library.fragment.LazyFragment;
-import com.idejie.android.library.view.indicator.BannerComponent;
 import com.idejie.android.library.view.indicator.IndicatorViewPager;
 import com.strongloop.android.loopback.RestAdapter;
 import com.strongloop.android.loopback.callbacks.ListCallback;
 import com.youth.banner.Banner;
 import com.youth.banner.BannerConfig;
+import com.youth.banner.listener.OnBannerClickListener;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -98,12 +96,12 @@ public class SecondLayerFragment extends LazyFragment implements SwipeRefreshLay
         //记得设置标题列表哦
         banner.setBannerTitle(titles);
         banner.setImages(images);
-        banner.setOnBannerClickListener(new Banner.OnBannerClickListener() {//设置点击事件
-            @Override
-            public void OnBannerClick(View view, int position) {
-                Toast.makeText(getApplicationContext(),"你点击了："+position,Toast.LENGTH_LONG).show();
-            }
-        });
+//        banner.setOnBannerClickListener(new Banner.OnBannerClickListener() {//设置点击事件
+//            @Override
+//            public void OnBannerClick(View view, int position) {
+//                Toast.makeText(getApplicationContext(),"你点击了："+position,Toast.LENGTH_LONG).show();
+//            }
+//        });
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
 
     }
@@ -117,12 +115,18 @@ public class SecondLayerFragment extends LazyFragment implements SwipeRefreshLay
         //记得设置标题列表哦
         banner.setBannerTitle(titles);
         banner.setImages(images);
-        banner.setOnBannerClickListener(new Banner.OnBannerClickListener() {//设置点击事件
+        banner.setOnBannerClickListener(new OnBannerClickListener() {
             @Override
-            public void OnBannerClick(View view, int position) {
-                Toast.makeText(getApplicationContext(),"你点击了："+position,Toast.LENGTH_LONG).show();
+            public void OnBannerClick(int position) {
+//
             }
         });
+//        banner.setOnBannerClickListener(new Banner.OnBannerClickListener() {//设置点击事件
+//            @Override
+//            public void OnBannerClick(View view, int position) {
+//                Toast.makeText(getApplicationContext(),"你点击了："+position,Toast.LENGTH_LONG).show();
+//            }
+//        });
     }
 
     private void startJiance() {
@@ -134,12 +138,12 @@ public class SecondLayerFragment extends LazyFragment implements SwipeRefreshLay
         //记得设置标题列表哦
         banner.setBannerTitle(titles);
         banner.setImages(images);
-        banner.setOnBannerClickListener(new Banner.OnBannerClickListener() {//设置点击事件
-            @Override
-            public void OnBannerClick(View view, int position) {
-                Toast.makeText(getApplicationContext(),"你点击了："+position,Toast.LENGTH_LONG).show();
-            }
-        });
+//        banner.setOnBannerClickListener(new Banner.OnBannerClickListener() {//设置点击事件
+//            @Override
+//            public void OnBannerClick(View view, int position) {
+//                Toast.makeText(getApplicationContext(),"你点击了："+position,Toast.LENGTH_LONG).show();
+//            }
+//        });
 //        getData();
     }
 
@@ -153,12 +157,18 @@ public class SecondLayerFragment extends LazyFragment implements SwipeRefreshLay
         banner.setBannerTitle(titles);
         banner.setImages(images);
         queryYaowen(true);
-        banner.setOnBannerClickListener(new Banner.OnBannerClickListener() {//设置点击事件
+//        banner.setOnBannerClickListener(new Banner.OnBannerClickListener() {//设置点击事件
+//            @Override
+//            public void OnBannerClick(View view, int position) {
+//                Toast.makeText(getApplicationContext(),"你点击了："+position,Toast.LENGTH_LONG).show();
+//                swipeRefreshLayout= (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout1);
+////                queryYaowen(true);
+//            }
+//        });
+        banner.setOnBannerClickListener(new OnBannerClickListener() {
             @Override
-            public void OnBannerClick(View view, int position) {
+            public void OnBannerClick(int position) {
                 Toast.makeText(getApplicationContext(),"你点击了："+position,Toast.LENGTH_LONG).show();
-                swipeRefreshLayout= (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout1);
-//                queryYaowen(true);
             }
         });
 
@@ -253,79 +263,81 @@ public class SecondLayerFragment extends LazyFragment implements SwipeRefreshLay
     public void onRefresh() {
         queryYaowen(true);
     }
-//    class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.MyViewHolder>
-//    {
-//
-//        @Override
-//        public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
-//        {
-//            MyViewHolder holder = new MyViewHolder(LayoutInflater.from(getContext()).inflate(R.layout.fragment_news_yaowen, parent,
-//                    false));
-//            return holder;
-//        }
-//
-//        @Override
-//        public void onBindViewHolder(MyViewHolder holder, int position)
-//        {
-//            holder.tv_title.setText(mTitle.get(position));
-//            switch (mTag.get(position)){
-//                case "1":
-//                    holder.tv_tag.setText("新闻");
-//                    break;
-//                case "2":
-//                    holder.tv_tag.setText("行情");
-//                    break;
-//                case "3":
-//                    holder.tv_tag.setText("报告");
-//                    break;
-//                case "4":
-//                    holder.tv_tag.setText("视频");
-//                    break;
-//            }
-////            holder.tv_tag.setText(mTag.get(position));
-////            holder.tv_comment.setText(mComment.get(position));
-////            holder.tv_zan.setText(mZan.get(position));
-//            DateFormat format =new SimpleDateFormat("yyyy-MM-dd");
-////            String date =mTime.get(position).replace("Z","UTC");
-//            try {
-//                Date timeNews =format.parse(mTime.get(position));
-//                holder.tv_time.setText(format.format(timeNews));
-//            } catch (ParseException e) {
-//                e.printStackTrace();
-//            }
-//
-//        }
-//
-//        @Override
-//        public int getItemCount()
-//        {
-//            return mTitle.size();
-//        }
-//
-//        class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
-//        {
-//
-//            TextView tv_title,tv_tag,tv_zan,tv_comment,tv_time;
-//            private MyItemClickListener mListener;
-//            public MyViewHolder(View view)
-//            {
-//                super(view);
-//                tv_title = (TextView) view.findViewById(R.id.tv_item_title);
-//                tv_tag= (TextView) view.findViewById(R.id.tv_item_tag);
-//                tv_zan= (TextView) view.findViewById(R.id.tv_item_zan);
-//                tv_comment= (TextView) view.findViewById(R.id.tv_item_comment);
-//                tv_time= (TextView) view.findViewById(R.id.tv_item_time);
-//                view.setOnClickListener(this);
-//
-//            }
-//
-//            @Override
-//            public void onClick(View view) {
-//                Toast.makeText(getApplicationContext(),"+"+mId.get(0),Toast.LENGTH_LONG).show();
-//            }
-//        }
-//
-//    }
+    class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.MyViewHolder>
+    {
+
+        @Override
+        public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
+        {
+            MyViewHolder holder = new MyViewHolder(LayoutInflater.from(getContext()).inflate(R.layout.fragment_news_yaowen, parent,
+                    false));
+            return holder;
+        }
+
+        @Override
+        public void onBindViewHolder(MyViewHolder holder, int position)
+        {
+            holder.tv_title.setText(mTitle.get(position));
+            holder.newsID.setText(mId.get(position));
+            switch (mTag.get(position)){
+                case "1":
+                    holder.tv_tag.setText("新闻");
+                    break;
+                case "2":
+                    holder.tv_tag.setText("行情");
+                    break;
+                case "3":
+                    holder.tv_tag.setText("报告");
+                    break;
+                case "4":
+                    holder.tv_tag.setText("视频");
+                    break;
+            }
+//            holder.tv_tag.setText(mTag.get(position));
+//            holder.tv_comment.setText(mComment.get(position));
+//            holder.tv_zan.setText(mZan.get(position));
+            DateFormat format =new SimpleDateFormat("yyyy-MM-dd");
+//            String date =mTime.get(position).replace("Z","UTC");
+            try {
+                Date timeNews =format.parse(mTime.get(position));
+                holder.tv_time.setText(format.format(timeNews));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        @Override
+        public int getItemCount()
+        {
+            return mTitle.size();
+        }
+
+        class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
+        {
+
+            TextView tv_title,tv_tag,tv_zan,tv_comment,tv_time,newsID;
+            private MyItemClickListener mListener;
+            public MyViewHolder(View view)
+            {
+                super(view);
+                tv_title = (TextView) view.findViewById(R.id.tv_item_title);
+                tv_tag= (TextView) view.findViewById(R.id.tv_item_tag);
+                tv_zan= (TextView) view.findViewById(R.id.tv_item_zan);
+                tv_comment= (TextView) view.findViewById(R.id.tv_item_comment);
+                tv_time= (TextView) view.findViewById(R.id.tv_item_time);
+                newsID= (TextView) view.findViewById(R.id.newsID);
+                view.setOnClickListener(this);
+
+            }
+
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getApplicationContext(),"+"+((TextView)view.findViewById(R.id.newsID)).getText(),Toast.LENGTH_LONG).show();
+            }
+        }
+
+    }
 
 
 }

@@ -86,6 +86,16 @@
                 android:layout_marginRight="31dp"
                 android:layout_marginEnd="31dp" />
 
+            <TextView
+                android:text="News ID"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_toLeftOf="@+id/tv_item_time"
+                android:layout_toStartOf="@+id/tv_item_time"
+                android:visibility="invisible"
+                android:id="@+id/newsID" />
+
         </RelativeLayout>
     </RelativeLayout>
 
