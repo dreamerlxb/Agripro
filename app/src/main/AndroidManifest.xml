@@ -77,16 +77,18 @@
             android:name=".activity.BackUpActivity"
             android:label="@string/title_activity_back_up" />
         <activity
-            android:name=".VerifyActivity"
+            android:name=".activity.VerifyActivity"
             android:label="@string/title_activity_verify" />
         <activity
-            android:name=".ModifyPswordActivity"
+            android:name=".activity.ModifyPswordActivity"
             android:label="@string/title_activity_modify_psword" />
         <activity
-            android:name=".ModifySuccessActivity"
+            android:name=".activity.ModifySuccessActivity"
             android:label="@string/title_activity_modify_success" />
         <activity android:name=".activity.GuanzhuActivity" />
-        <activity android:name=".activity.NewsDetailActivity"></activity>
+        <activity
+            android:name=".activity.NewsDetailActivity"
+            android:hardwareAccelerated="true" ></activity>
     </application>
 
 </manifest>

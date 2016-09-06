@@ -33,6 +33,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static com.idejie.android.aoc.activity.NewsDetailActivity.EXTRA;
+
 
 /**
  * Created by shandongdaxue on 16/8/8.
@@ -334,7 +336,10 @@ public class SecondLayerFragment extends LazyFragment implements SwipeRefreshLay
             @Override
             public void onClick(View view) {
                 Toast.makeText(getApplicationContext(),"+"+((TextView)view.findViewById(R.id.newsID)).getText(),Toast.LENGTH_LONG).show();
-
+                Intent intent =new Intent();
+                intent.putExtra(EXTRA,""+((TextView)view.findViewById(R.id.newsID)).getText());
+                intent.setClass(getContext(),NewsDetailActivity.class);
+                startActivity(intent);
             }
         }
 
