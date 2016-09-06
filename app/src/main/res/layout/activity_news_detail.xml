@@ -41,5 +41,10 @@
         android:layout_marginStart="0dp"
         android:layerType="hardware"
         android:id="@+id/Content" />
+    <include
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/list_comment"
+        />
 
 </RelativeLayout>
