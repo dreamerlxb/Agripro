@@ -41,4 +41,5 @@
         android:layout_marginStart="0dp"
         android:layerType="hardware"
         android:id="@+id/Content" />
+
 </RelativeLayout>

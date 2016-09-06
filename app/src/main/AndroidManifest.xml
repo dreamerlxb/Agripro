@@ -88,7 +88,8 @@
         <activity android:name=".activity.GuanzhuActivity" />
         <activity
             android:name=".activity.NewsDetailActivity"
-            android:hardwareAccelerated="true" ></activity>
+            android:hardwareAccelerated="true"
+            android:theme="@style/AppTheme.NoActionBar" ></activity>
     </application>
 
 </manifest>

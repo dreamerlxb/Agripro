@@ -6,6 +6,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.idejie.android.aoc.R;
 import com.idejie.android.aoc.model.NewsModel;
@@ -20,6 +21,7 @@ import java.util.Date;
 
 public class NewsDetailActivity extends AppCompatActivity {
     public final static String EXTRA="EXTRA";
+    public final static String URL_NEWS="http://211.87.227.214:3001/#/index/news/";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,7 +35,7 @@ public class NewsDetailActivity extends AppCompatActivity {
             public void onSuccess(NewsModel object) {
                 TextView tv_title = (TextView) findViewById(R.id.tv_detail_title);
                 tv_title.setText(object.getTitle());
-                DateFormat format =new SimpleDateFormat("yyyy-MM-dd H:m:s");
+                DateFormat format =new SimpleDateFormat("yyyy-MM-dd");
                 try {
                     Date timeNews =format.parse(object.getLastUpdated());
                     TextView tv_time = (TextView) findViewById(R.id.tv_detail_time);
@@ -52,7 +54,7 @@ public class NewsDetailActivity extends AppCompatActivity {
 
             @Override
             public void onError(Throwable t) {
-
+                Toast.makeText(getApplicationContext(),"连接失败,请检查网络",Toast.LENGTH_LONG).show();
             }
         });
     }
