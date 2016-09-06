@@ -13,10 +13,11 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <com.jorge.circlelibrary.ImageCycleView
-                android:layout_height="200dp"
-                android:layout_width="fill_parent"
-                android:id="@+id/cycleView"/>
+
+            <com.youth.banner.Banner
+                android:id="@+id/main_banner"
+                android:layout_width="match_parent"
+                android:layout_height="300px" />
 
             <LinearLayout
                 android:layout_marginTop="3dp"

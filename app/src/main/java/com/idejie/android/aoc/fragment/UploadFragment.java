@@ -39,6 +39,9 @@ import com.jorge.circlelibrary.ImageCycleView;
 import com.strongloop.android.loopback.RestAdapter;
 import com.strongloop.android.loopback.callbacks.ListCallback;
 import com.strongloop.android.loopback.callbacks.VoidCallback;
+import com.youth.banner.Banner;
+import com.youth.banner.BannerConfig;
+import com.youth.banner.listener.OnBannerClickListener;
 
 
 import java.text.SimpleDateFormat;
@@ -69,6 +72,7 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
     private List<SortModel> objectArray;
     private List<GradeModel> gradeArray;
     private int regionId,sortId,gradeId;
+    private Banner banner;
     private String apiUrl="http://211.87.227.214:3001/api";
 //    private String apiUrl="http://192.168.1.114:3001/api";
     /**
@@ -97,7 +101,7 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
 
     private void init() {
         //初始化广告栏
-        initCycleView();
+        initBanner();
         //初始化各个控件
         lineProvince= (LinearLayout) view.findViewById(R.id.line_1);
         lineProvince.setOnClickListener(this);
@@ -167,6 +171,27 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
 
     }
 
+    private void initBanner() {
+        String[] images= getResources().getStringArray(R.array.url2);
+        String[] titles= getResources().getStringArray(R.array.title2);
+        banner = (Banner) view.findViewById(R.id.main_banner);
+        //设置间隔
+        banner.setDelayTime(3000);
+        //banner加点
+        banner.setBannerStyle(BannerConfig.CIRCLE_INDICATOR_TITLE_INSIDE);
+        //记得设置标题列表哦
+        banner.setBannerTitle(titles);
+        //添加图片
+        banner.setImages(images);
+        //bannerde图片的点击事件
+        banner.setOnBannerClickListener(new OnBannerClickListener() {
+            @Override
+            public void OnBannerClick(int position) {
+                Toast.makeText(getApplicationContext(),"你点击了："+position,Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
     private void getCityId() {
         RestAdapter adapter = new RestAdapter(activity.getApplicationContext(),apiUrl);
         adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
@@ -194,22 +219,7 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
 
     }
 
-    private void initCycleView() {
-        /** 找到轮播控件*/
-        imageCycleView= (ImageCycleView) view.findViewById(R.id.cycleView);
-        /**装在数据的集合  文字描述*/
-        ArrayList<String> imageDescList=new ArrayList<>();
-        /**装在数据的集合  图片地址*/
-        ArrayList<String> urlList=new ArrayList<>();
-        /**添加数据*/
-        urlList.add("http://fashion.taiwan.cn/list/201503/W020150306794691543155.jpg");
-        urlList.add("http://img.leha.com/Editor/2014-12-27/549e2d1be0d6d.jpg");
-        urlList.add("http://img2.imgtn.bdimg.com/it/u=3909488552,1950939040&fm=21&gp=0.jpg");
-        imageDescList.add("图片1");
-        imageDescList.add("图片2");
-        imageDescList.add("图片3");
-        initCarsuelView(imageDescList, urlList);
-    }
+
 
 
 
@@ -363,41 +373,7 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
 
     }
 
-    /**初始化轮播图的关键方法*/
-    public void initCarsuelView(ArrayList<String> imageDescList, ArrayList<String>urlList) {
-        LinearLayout.LayoutParams cParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, getScreenHeight(activity) * 3 / 10);
-        imageCycleView.setLayoutParams(cParams);
-        ImageCycleView.ImageCycleViewListener mAdCycleViewListener = new ImageCycleView.ImageCycleViewListener() {
-            @Override
-            public void onImageClick(int position, View imageView) {
-                /**实现点击事件*/
 
-            }
-            @Override
-            public void displayImage(String imageURL, ImageView imageView) {
-                /**在此方法中，显示图片，可以用自己的图片加载库，也可以用本demo中的（Imageloader）*/
-//                ImageLoaderHelper imageLoaderHelper=new ImageLoaderHelper();
-//                imageLoaderHelper.loadImage(imageURL, imageView);
-                ImageLoaderHelper.getInstance(getApplicationContext()).loadImage(imageURL, imageView);
-            }
-        };
-        /**设置数据*/
-        imageCycleView.setImageResources(imageDescList,urlList, mAdCycleViewListener);
-        imageCycleView.startImageCycle();
-    }
-    /**
-     * 得到屏幕的高度
-     * @param context
-     * @return
-     */
-    public static int getScreenHeight(Context context){
-        if (null == context) {
-            return 0;
-        }
-        DisplayMetrics dm = new DisplayMetrics();
-        dm = context.getApplicationContext().getResources().getDisplayMetrics();
-        return dm.heightPixels;
-    }
 
 
 
