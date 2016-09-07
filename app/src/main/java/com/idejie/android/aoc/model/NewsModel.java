@@ -35,13 +35,8 @@ public class NewsModel extends Model  {
         this.image = image;
     }
 
-    public UserModel getUser() {
-        return user;
-    }
 
-    public void setUser(UserModel user) {
-        this.user = user;
-    }
+
 
     public CategoryModel getCategory() {
         return category;
@@ -60,7 +55,6 @@ public class NewsModel extends Model  {
     }
 
     public ImageModel image;
-    public UserModel user;
     public CategoryModel category;
     public TagModel tag;
 

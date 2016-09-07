@@ -19,6 +19,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -33,6 +34,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.idejie.android.aoc.R;
+import com.idejie.android.aoc.bean.UserId;
+import com.idejie.android.aoc.repository.UserRepository;
+import com.strongloop.android.loopback.RestAdapter;
+import com.strongloop.android.loopback.User;
+import com.strongloop.android.loopback.callbacks.VoidCallback;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -56,11 +62,13 @@ public class SignupActivity extends AppCompatActivity implements LoaderCallbacks
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
-    private UserLoginTask mAuthTask = null;
+
 
     // UI references.
     private AutoCompleteTextView mEmailView;
+    private String apiUrl="http://211.87.227.214:3001/api";
     private EditText mPasswordView;
+    private EditText editCode;
     private View mProgressView;
     private View mLoginFormView;
 
@@ -69,9 +77,10 @@ public class SignupActivity extends AppCompatActivity implements LoaderCallbacks
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
         // Set up the login form.
+        Log.d("test1","UserId.id..."+ UserId.id);
         mEmailView = (AutoCompleteTextView) findViewById(R.id.signupPhone);
         populateAutoComplete();
-
+        editCode= (EditText) findViewById(R.id.code);
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -146,9 +155,6 @@ public class SignupActivity extends AppCompatActivity implements LoaderCallbacks
      * errors are presented and no actual login attempt is made.
      */
     private void attemptLogin() {
-        if (mAuthTask != null) {
-            return;
-        }
 
         // Reset errors.
         mEmailView.setError(null);
@@ -157,6 +163,7 @@ public class SignupActivity extends AppCompatActivity implements LoaderCallbacks
         // Store values at the time of the login attempt.
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
+        String code = editCode.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
@@ -173,10 +180,6 @@ public class SignupActivity extends AppCompatActivity implements LoaderCallbacks
             mEmailView.setError(getString(R.string.error_field_required));
             focusView = mEmailView;
             cancel = true;
-        } else if (!isEmailValid(email)) {
-            mEmailView.setError(getString(R.string.error_invalid_email));
-            focusView = mEmailView;
-            cancel = true;
         }
 
         if (cancel) {
@@ -187,8 +190,24 @@ public class SignupActivity extends AppCompatActivity implements LoaderCallbacks
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute((Void) null);
+            //在这里写
+            RestAdapter restAdapter = new RestAdapter(getApplicationContext(),apiUrl);
+            restAdapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
+            UserRepository userRepo = restAdapter.createRepository(UserRepository.class);
+            User user = userRepo.createUser("name@example.com", "password");
+            user.save(new VoidCallback() {
+                @Override
+                public void onSuccess() {
+                    Log.d("test","注册成功");
+                }
+
+                @Override
+                public void onError(Throwable t) {
+
+                }
+            });
+            showProgress(false);
+
         }
     }
 
@@ -292,61 +311,6 @@ public class SignupActivity extends AppCompatActivity implements LoaderCallbacks
         int IS_PRIMARY = 1;
     }
 
-    /**
-     * Represents an asynchronous login/registration task used to authenticate
-     * the user.
-     */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
-        private final String mEmail;
-        private final String mPassword;
-
-        UserLoginTask(String email, String password) {
-            mEmail = email;
-            mPassword = password;
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
-
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
-            }
-
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
-                }
-            }
-
-            // TODO: register the new account here.
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean success) {
-            mAuthTask = null;
-            showProgress(false);
-
-            if (success) {
-                finish();
-            } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-            mAuthTask = null;
-            showProgress(false);
-        }
-    }
 }
 

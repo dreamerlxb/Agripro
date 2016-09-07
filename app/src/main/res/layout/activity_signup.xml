@@ -70,7 +70,6 @@
                         android:id="@+id/button"
                         android:layout_weight="1.23"
                         android:elevation="0dp"
-                        android:background="?android:attr/textColorHighlight"
                         android:textColor="@android:color/holo_green_dark" />
                 </LinearLayout>
 
