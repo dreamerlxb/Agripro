@@ -4,6 +4,8 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.pm.PackageManager;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -29,6 +31,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,16 +39,21 @@ import java.util.List;
 import com.idejie.android.aoc.R;
 import com.idejie.android.aoc.bean.UserId;
 import com.idejie.android.aoc.repository.UserRepository;
+import com.idejie.android.aoc.tools.AutoString;
+import com.idejie.android.aoc.tools.NetThread;
 import com.strongloop.android.loopback.RestAdapter;
 import com.strongloop.android.loopback.User;
 import com.strongloop.android.loopback.callbacks.VoidCallback;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
 /**
  * A login screen that offers login via email/password.
  */
-public class SignupActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
+public class SignupActivity extends AppCompatActivity implements LoaderCallbacks<Cursor>, OnClickListener {
 
     /**
      * Id to identity READ_CONTACTS permission request.
@@ -63,14 +71,17 @@ public class SignupActivity extends AppCompatActivity implements LoaderCallbacks
      * Keep track of the login task to ensure we can cancel it if requested.
      */
 
-
     // UI references.
     private AutoCompleteTextView mEmailView;
     private String apiUrl="http://211.87.227.214:3001/api";
-    private EditText mPasswordView;
+    private String SMSUrl="http://211.87.227.214:3001/api/users/sendSMS";
+    private String signUpUrl="http://211.87.227.214:3001/api/users/createUser";
+    private EditText mPasswordView,mPasswordRepeat;
     private EditText editCode;
     private View mProgressView;
     private View mLoginFormView;
+    private Button codeBtn;
+    private Handler han,hanSignUp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,10 +89,13 @@ public class SignupActivity extends AppCompatActivity implements LoaderCallbacks
         setContentView(R.layout.activity_signup);
         // Set up the login form.
         Log.d("test1","UserId.id..."+ UserId.id);
+        codeBtn= (Button) findViewById(R.id.button);
+        codeBtn.setOnClickListener(this);
         mEmailView = (AutoCompleteTextView) findViewById(R.id.signupPhone);
         populateAutoComplete();
         editCode= (EditText) findViewById(R.id.code);
         mPasswordView = (EditText) findViewById(R.id.password);
+        mPasswordRepeat = (EditText) findViewById(R.id.password2);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
@@ -92,6 +106,62 @@ public class SignupActivity extends AppCompatActivity implements LoaderCallbacks
                 return false;
             }
         });
+        //短信后的回调
+        han = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                // TODO Auto-generated method stub
+                int x=msg.what;
+                String Jsmess = (String) msg.obj;
+                super.handleMessage(msg);
+
+
+                JSONObject temp = null;
+                try {
+                    temp = new JSONObject(Jsmess);
+                    //得到数据
+                    int statusCode=temp.getInt("statusCode");
+                    Log.d("test","statusCode...."+statusCode);
+                    if (statusCode==200){
+                        Toast.makeText(SignupActivity.this, "发送成功", Toast.LENGTH_SHORT).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
+
+
+            }
+        };
+        //注册后的回调
+        hanSignUp = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                // TODO Auto-generated method stub
+                int x=msg.what;
+                String Jsmess = (String) msg.obj;
+                super.handleMessage(msg);
+
+
+                JSONObject temp = null;
+                try {
+                    temp = new JSONObject(Jsmess);
+                    //得到数据
+                    int statusCode=temp.getInt("statusCode");
+                    Log.d("test","statusCode...."+statusCode);
+                    if (statusCode==200){
+                        Toast.makeText(SignupActivity.this, "发送成功", Toast.LENGTH_SHORT).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
+
+
+            }
+        };
 
         Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
@@ -181,6 +251,9 @@ public class SignupActivity extends AppCompatActivity implements LoaderCallbacks
             focusView = mEmailView;
             cancel = true;
         }
+        if (!mPasswordView.getText().toString().equals(mPasswordRepeat.getText().toString())){
+            Toast.makeText(SignupActivity.this,"两次密码不同",Toast.LENGTH_SHORT).show();
+        }
 
         if (cancel) {
             // There was an error; don't attempt login and focus the first
@@ -191,21 +264,14 @@ public class SignupActivity extends AppCompatActivity implements LoaderCallbacks
             // perform the user login attempt.
             showProgress(true);
             //在这里写
-            RestAdapter restAdapter = new RestAdapter(getApplicationContext(),apiUrl);
-            restAdapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
-            UserRepository userRepo = restAdapter.createRepository(UserRepository.class);
-            User user = userRepo.createUser("name@example.com", "password");
-            user.save(new VoidCallback() {
-                @Override
-                public void onSuccess() {
-                    Log.d("test","注册成功");
-                }
-
-                @Override
-                public void onError(Throwable t) {
-
-                }
-            });
+            AutoString autoString=new AutoString("access_token","4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
+            autoString.addToResult("name",mEmailView.getText().toString());
+            autoString.addToResult("zoneCode","86");
+            autoString.addToResult("mobileNumber",mEmailView.getText().toString());
+            autoString.addToResult("password",mPasswordView.getText().toString());
+            autoString.addToResult("code",editCode.getText().toString());
+            NetThread netThread=new NetThread(hanSignUp,signUpUrl,autoString.getResult());
+            netThread.start();
             showProgress(false);
 
         }
@@ -298,6 +364,19 @@ public class SignupActivity extends AppCompatActivity implements LoaderCallbacks
                         android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
 
         mEmailView.setAdapter(adapter);
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.button:
+                AutoString autoString=new AutoString("access_token","4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
+                autoString.addToResult("zoneCode","86");
+                autoString.addToResult("mobileNumber",mEmailView.getText().toString());
+                NetThread netThread=new NetThread(han,SMSUrl,autoString.getResult());
+                netThread.start();
+                break;
+        }
     }
 
 
