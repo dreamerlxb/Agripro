@@ -150,12 +150,13 @@ public class SignupActivity extends AppCompatActivity implements LoaderCallbacks
                     //得到数据
                     String user=temp.getString("user");
                     JSONObject temp1 = new JSONObject(user);
-                    String phone=temp.getString("mobileNumber");
+                    String phone=temp1.getString("mobileNumber");
                     if (phone.equals(mEmailView.getText().toString())){
                         Toast.makeText(SignupActivity.this, "注册成功", Toast.LENGTH_SHORT).show();
                         finish();
 
                     }
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
