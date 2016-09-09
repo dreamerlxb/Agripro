@@ -20,6 +20,7 @@ import com.idejie.android.aoc.R;
 import com.idejie.android.aoc.adapter.MyLoadListAdapter;
 import com.idejie.android.aoc.bean.LineData;
 import com.idejie.android.aoc.bean.MyUploadList;
+import com.idejie.android.aoc.bean.UserId;
 import com.idejie.android.aoc.dialog.SortTDialog;
 import com.idejie.android.aoc.model.PriceModel;
 import com.idejie.android.aoc.model.RegionModel;
@@ -62,7 +63,7 @@ public class MyPriceActivity extends Activity implements View.OnClickListener {
     private void init() {
         priceArray=new ArrayList<PriceModel>();
         //我的Id应该是直接获取的
-        myId=28;
+        myId= Integer.parseInt(UserId.id);
         btnBack= (ImageView) findViewById(R.id.back);
         btnBack.setOnClickListener(this);
         listView= (ListView) findViewById(R.id.listView);

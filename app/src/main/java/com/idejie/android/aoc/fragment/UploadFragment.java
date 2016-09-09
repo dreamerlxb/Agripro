@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.idejie.android.aoc.R;
+import com.idejie.android.aoc.bean.UserId;
 import com.idejie.android.aoc.dialog.CityDialog;
 import com.idejie.android.aoc.dialog.GradeDialog;
 import com.idejie.android.aoc.dialog.MyDialog;
@@ -336,7 +337,7 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
             params.put("price", Integer.parseInt(editPrice.getText().toString()));
             params.put("turnover",Integer.parseInt(editAmount.getText().toString()) );
             params.put("marketName", editMarketName.getText().toString());
-            params.put("userId", 28);
+            params.put("userId", UserId.id);
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
             params.put("priceDate",df.format(new Date()));
             PriceModel price = productRepository.createObject(params );

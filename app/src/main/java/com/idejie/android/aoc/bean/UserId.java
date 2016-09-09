@@ -5,5 +5,5 @@ package com.idejie.android.aoc.bean;
  */
 
 public class UserId {
-    public static String id="0";
+    public static String id="28";
 }
