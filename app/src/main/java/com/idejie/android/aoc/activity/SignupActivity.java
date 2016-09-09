@@ -123,7 +123,7 @@ public class SignupActivity extends AppCompatActivity implements LoaderCallbacks
                     int statusCode=temp.getInt("statusCode");
                     Log.d("test","statusCode...."+statusCode);
                     if (statusCode==200){
-                        Toast.makeText(SignupActivity.this, "发送成功", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SignupActivity.this, "验证码已发送", Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

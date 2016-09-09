@@ -4,6 +4,8 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.pm.PackageManager;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -19,6 +21,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -28,18 +31,29 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.idejie.android.aoc.R;
+import com.idejie.android.aoc.bean.UserId;
+import com.idejie.android.aoc.repository.UserRepository;
+import com.idejie.android.aoc.tools.AutoString;
+import com.idejie.android.aoc.tools.NetThread;
+import com.strongloop.android.loopback.RestAdapter;
+import com.strongloop.android.loopback.User;
+import com.strongloop.android.loopback.callbacks.VoidCallback;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
 /**
  * A login screen that offers login via email/password.
  */
-public class BackUpActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
+public class BackUpActivity extends AppCompatActivity implements LoaderCallbacks<Cursor>, OnClickListener {
 
     /**
      * Id to identity READ_CONTACTS permission request.
@@ -56,23 +70,32 @@ public class BackUpActivity extends AppCompatActivity implements LoaderCallbacks
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
-    private UserLoginTask mAuthTask = null;
 
     // UI references.
     private AutoCompleteTextView mEmailView;
-    private EditText mPasswordView;
+    private String apiUrl="http://211.87.227.214:3001/api";
+    private String SMSUrl="http://211.87.227.214:3001/api/users/sendSMS";
+    private String signUpUrl="http://211.87.227.214:3001/api/users/resetPwdBySMS";
+    private EditText mPasswordView,mPasswordRepeat;
+    private EditText editCode;
     private View mProgressView;
     private View mLoginFormView;
+    private Button codeBtn;
+    private Handler han,hanSignUp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_back_up);
         // Set up the login form.
-        mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
+        Log.d("test1","UserId.id..."+ UserId.id);
+        codeBtn= (Button) findViewById(R.id.button);
+        codeBtn.setOnClickListener(this);
+        mEmailView = (AutoCompleteTextView) findViewById(R.id.signupPhone);
         populateAutoComplete();
-
+        editCode= (EditText) findViewById(R.id.code);
         mPasswordView = (EditText) findViewById(R.id.password);
+        mPasswordRepeat = (EditText) findViewById(R.id.password2);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
@@ -83,6 +106,64 @@ public class BackUpActivity extends AppCompatActivity implements LoaderCallbacks
                 return false;
             }
         });
+        //短信后的回调
+        han = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                // TODO Auto-generated method stub
+                int x=msg.what;
+                String Jsmess = (String) msg.obj;
+                super.handleMessage(msg);
+                JSONObject temp = null;
+                try {
+                    temp = new JSONObject(Jsmess);
+                    //得到数据
+                    int statusCode=temp.getInt("statusCode");
+                    Log.d("test","statusCode...."+statusCode);
+                    if (statusCode==200){
+                        Toast.makeText(BackUpActivity.this, "验证码已发送", Toast.LENGTH_SHORT).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
+
+
+            }
+        };
+        //注册后的回调
+        hanSignUp = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                // TODO Auto-generated method stub
+                int x=msg.what;
+                String Jsmess = (String) msg.obj;
+                super.handleMessage(msg);
+
+
+                JSONObject temp = null;
+                try {
+                    temp = new JSONObject(Jsmess);
+                    //得到数据
+                    String user=temp.getString("user");
+                    JSONObject temp1 = new JSONObject(user);
+                    String phone=temp1.getString("mobileNumber");
+                    if (phone.equals(mEmailView.getText().toString())){
+                        Toast.makeText(BackUpActivity.this, "密码更改成功,请重新登陆", Toast.LENGTH_SHORT).show();
+                        finish();
+
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
+
+
+            }
+        };
 
         Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
@@ -146,9 +227,6 @@ public class BackUpActivity extends AppCompatActivity implements LoaderCallbacks
      * errors are presented and no actual login attempt is made.
      */
     private void attemptLogin() {
-        if (mAuthTask != null) {
-            return;
-        }
 
         // Reset errors.
         mEmailView.setError(null);
@@ -157,6 +235,7 @@ public class BackUpActivity extends AppCompatActivity implements LoaderCallbacks
         // Store values at the time of the login attempt.
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
+        String code = editCode.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
@@ -173,10 +252,9 @@ public class BackUpActivity extends AppCompatActivity implements LoaderCallbacks
             mEmailView.setError(getString(R.string.error_field_required));
             focusView = mEmailView;
             cancel = true;
-        } else if (!isEmailValid(email)) {
-            mEmailView.setError(getString(R.string.error_invalid_email));
-            focusView = mEmailView;
-            cancel = true;
+        }
+        if (!mPasswordView.getText().toString().equals(mPasswordRepeat.getText().toString())){
+            Toast.makeText(BackUpActivity.this,"两次密码不同",Toast.LENGTH_SHORT).show();
         }
 
         if (cancel) {
@@ -187,8 +265,16 @@ public class BackUpActivity extends AppCompatActivity implements LoaderCallbacks
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute((Void) null);
+            //在这里写
+            AutoString autoString=new AutoString("access_token","4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
+            autoString.addToResult("zoneCode","86");
+            autoString.addToResult("mobileNumber",mEmailView.getText().toString());
+            autoString.addToResult("password",mPasswordView.getText().toString());
+            autoString.addToResult("code",editCode.getText().toString());
+            NetThread netThread=new NetThread(hanSignUp,signUpUrl,autoString.getResult());
+            netThread.start();
+            showProgress(false);
+
         }
     }
 
@@ -281,6 +367,19 @@ public class BackUpActivity extends AppCompatActivity implements LoaderCallbacks
         mEmailView.setAdapter(adapter);
     }
 
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.button:
+                AutoString autoString=new AutoString("access_token","4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
+                autoString.addToResult("zoneCode","86");
+                autoString.addToResult("mobileNumber",mEmailView.getText().toString());
+                NetThread netThread=new NetThread(han,SMSUrl,autoString.getResult());
+                netThread.start();
+                break;
+        }
+    }
+
 
     private interface ProfileQuery {
         String[] PROJECTION = {
@@ -292,61 +391,6 @@ public class BackUpActivity extends AppCompatActivity implements LoaderCallbacks
         int IS_PRIMARY = 1;
     }
 
-    /**
-     * Represents an asynchronous login/registration task used to authenticate
-     * the user.
-     */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
-        private final String mEmail;
-        private final String mPassword;
-
-        UserLoginTask(String email, String password) {
-            mEmail = email;
-            mPassword = password;
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
-
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
-            }
-
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
-                }
-            }
-
-            // TODO: register the new account here.
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean success) {
-            mAuthTask = null;
-            showProgress(false);
-
-            if (success) {
-                finish();
-            } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-            mAuthTask = null;
-            showProgress(false);
-        }
-    }
 }
 
