@@ -338,6 +338,7 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
             params.put("turnover",Integer.parseInt(editAmount.getText().toString()) );
             params.put("marketName", editMarketName.getText().toString());
             params.put("userId", UserId.id);
+
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
             params.put("priceDate",df.format(new Date()));
             PriceModel price = productRepository.createObject(params );
