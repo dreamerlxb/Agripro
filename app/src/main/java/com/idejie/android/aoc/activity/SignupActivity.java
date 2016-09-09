@@ -154,6 +154,7 @@ public class SignupActivity extends AppCompatActivity implements LoaderCallbacks
                     if (phone.equals(mEmailView.getText().toString())){
                         Toast.makeText(SignupActivity.this, "注册成功", Toast.LENGTH_SHORT).show();
                         finish();
+
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
