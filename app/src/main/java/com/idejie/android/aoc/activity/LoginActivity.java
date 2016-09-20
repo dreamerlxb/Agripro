@@ -125,6 +125,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         temp = new JSONObject(Jsmess);
                         //得到数据
                         String id = temp.getString("userId");
+                        //这边要收到其他数据并且保存,然后用在设置昵称等地方
                         Log.d("test1","id..."+id);
                         UserId.id=id;
                         Toast.makeText(LoginActivity.this, "登陆成功", Toast.LENGTH_SHORT).show();

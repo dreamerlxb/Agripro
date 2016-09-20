@@ -38,6 +38,8 @@ import com.idejie.android.aoc.tools.ImageLoaderHelper;
 import com.idejie.android.library.fragment.LazyFragment;
 import com.jorge.circlelibrary.ImageCycleView;
 import com.strongloop.android.loopback.RestAdapter;
+import com.strongloop.android.loopback.User;
+import com.strongloop.android.loopback.UserRepository;
 import com.strongloop.android.loopback.callbacks.ListCallback;
 import com.strongloop.android.loopback.callbacks.VoidCallback;
 import com.youth.banner.Banner;
@@ -242,12 +244,17 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
                 if (i>=2){
                     Toast.makeText(context,"您今天上传次数已到达上限:0/2",Toast.LENGTH_SHORT).show();
                 }else {
-                    //储存账号密码
-                    SharedPreferences.Editor editor=context.getSharedPreferences("LoadNumber",MODE_PRIVATE).edit();
-                    editor.putString("date",df.format(new Date()).substring(0,10));
-                    editor.putInt("number",i+1);
-                    editor.commit();
-                    upLoad();
+                    if (UserId.id.equals("0")){
+                        Toast.makeText(context,"请登录后再上传",Toast.LENGTH_SHORT).show();
+                    }else {
+                        //储存上限
+                        SharedPreferences.Editor editor=context.getSharedPreferences("LoadNumber",MODE_PRIVATE).edit();
+                        editor.putString("date",df.format(new Date()).substring(0,10));
+                        editor.putInt("number",i+1);
+                        editor.commit();
+                        upLoad();
+                    }
+
                 }
 //                beEmpty();//用于上传成功得到返回值以后再用
                 break;
@@ -340,13 +347,14 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
             params.put("userId", UserId.id);
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
             params.put("priceDate",df.format(new Date()));
-            PriceModel price = productRepository.createObject(params );
+            PriceModel price = productRepository.createObject(params);
             price.save(new VoidCallback() {
                 @Override
                 public void onSuccess() {
                     // Pencil now exists on the server!
                     Toast.makeText(context,"上传成功",Toast.LENGTH_SHORT).show();
                     btnUpload.setBackgroundResource(R.drawable.border_grey);
+                    addScore();
                     beEmpty();
                 }
 
@@ -360,6 +368,12 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
                 }
             });
         }
+
+    }
+
+
+    private void addScore() {
+
 
     }
 
