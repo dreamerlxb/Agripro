@@ -2,6 +2,7 @@ package com.idejie.android.aoc.fragment;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -20,6 +21,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.idejie.android.aoc.R;
+import com.idejie.android.aoc.activity.LoginActivity;
+import com.idejie.android.aoc.activity.MainActivity;
 import com.idejie.android.aoc.application.UserApplication;
 import com.idejie.android.aoc.bean.UserId;
 import com.idejie.android.aoc.dialog.CityDialog;
@@ -31,10 +34,12 @@ import com.idejie.android.aoc.model.GradeModel;
 import com.idejie.android.aoc.model.PriceModel;
 import com.idejie.android.aoc.model.RegionModel;
 import com.idejie.android.aoc.model.SortModel;
+import com.idejie.android.aoc.model.UserModel;
 import com.idejie.android.aoc.repository.GradeRepository;
 import com.idejie.android.aoc.repository.PriceRepository;
 import com.idejie.android.aoc.repository.RegionRepository;
 import com.idejie.android.aoc.repository.SortRepository;
+import com.idejie.android.aoc.repository.UserModelRepository;
 import com.idejie.android.aoc.tools.ImageLoaderHelper;
 import com.idejie.android.library.fragment.LazyFragment;
 import com.jorge.circlelibrary.ImageCycleView;
@@ -42,6 +47,7 @@ import com.strongloop.android.loopback.RestAdapter;
 import com.strongloop.android.loopback.User;
 import com.strongloop.android.loopback.UserRepository;
 import com.strongloop.android.loopback.callbacks.ListCallback;
+import com.strongloop.android.loopback.callbacks.ObjectCallback;
 import com.strongloop.android.loopback.callbacks.VoidCallback;
 import com.youth.banner.Banner;
 import com.youth.banner.BannerConfig;
@@ -55,6 +61,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static android.content.Context.LOCATION_SERVICE;
 import static android.content.Context.MODE_PRIVATE;
 
 /**
@@ -345,9 +352,14 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
             params.put("sortId", sortId);
             params.put("gradeId", gradeId);
             params.put("price", Integer.parseInt(editPrice.getText().toString()));
-            params.put("turnover",Integer.parseInt(editAmount.getText().toString()) );
+            Log.d("test",editAmount.getText().toString());
+            if (editAmount.getText().toString().equals("")){
+                params.put("turnover",0);
+            }else {
+                params.put("turnover",Integer.parseInt(editAmount.getText().toString()) );
+            }
             params.put("marketName", editMarketName.getText().toString());
-            params.put("userId", userApplication.getId());
+            params.put("userId",Integer.parseInt(userApplication.getId()));
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
             params.put("priceDate",df.format(new Date()));
             PriceModel price = productRepository.createObject(params);
@@ -376,6 +388,35 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
 
 
     private void addScore() {
+        RestAdapter adapter = new RestAdapter(getApplicationContext(), apiUrl);
+        adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
+        final UserModelRepository userRepository = adapter.createRepository(UserModelRepository.class);
+        Log.d("test","..........................1");
+        userRepository.findById(userApplication.getId(), new ObjectCallback<UserModel>() {
+            @Override
+            public void onSuccess(UserModel object) {
+                object.setScore(Integer.parseInt(object.getScore().toString())+1);
+                object.save(new VoidCallback() {
+                    @Override
+                    public void onSuccess() {
+                        Log.d("test","..........................2");
+                        Log.d("test","成功+1");
+                        Toast.makeText(activity, "积分+1", Toast.LENGTH_SHORT).show();
+                        userApplication.setScore(Integer.parseInt(userApplication.getScore())+1+"");
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                Toast.makeText(activity, "登陆失败", Toast.LENGTH_SHORT).show();
+            }
+        });
 
 
     }
