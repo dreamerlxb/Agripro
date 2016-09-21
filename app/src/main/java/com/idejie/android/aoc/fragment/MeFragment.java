@@ -20,6 +20,7 @@ import com.idejie.android.aoc.activity.MyCommentActivity;
 import com.idejie.android.aoc.activity.MyPriceActivity;
 import com.idejie.android.aoc.activity.SettingsActivity;
 import com.idejie.android.aoc.activity.TuiActivity;
+import com.idejie.android.aoc.application.UserApplication;
 import com.idejie.android.library.fragment.LazyFragment;
 import com.idejie.android.library.view.indicator.IndicatorViewPager;
 
@@ -34,14 +35,27 @@ public class MeFragment extends LazyFragment implements View.OnClickListener{
     private String tabName;
     private int index;
     private Activity activity;
+    private UserApplication userApplication;
     private Context context;
     private View view;
     private static Boolean isExit = false;
+    private String name;
+    private String score;
+    private int imageId;
+    private TextView textName,textScore;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = getActivity();
         activity = getActivity();
+        userApplication= (UserApplication) activity.getApplication();
+        getDate();
+    }
+
+    private void getDate() {
+        name=userApplication.getName();
+        imageId=userApplication.getImageId();
+        score=userApplication.getScore();
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -56,6 +70,10 @@ public class MeFragment extends LazyFragment implements View.OnClickListener{
     private void init() {
         TextView tvLogin= (TextView) view.findViewById(R.id.tv_login);
         tvLogin.setOnClickListener(this);
+        textName= (TextView) view.findViewById(R.id.tv_nickName);
+        textScore= (TextView) view.findViewById(R.id.tv_score);
+        textName.setText("昵称   "+name);
+        textScore.setText("积分   "+score);
 
         RelativeLayout layoutGuanzhu = (RelativeLayout) view.findViewById(R.id.layout_me_guanzhu);
         layoutGuanzhu.setOnClickListener(this);

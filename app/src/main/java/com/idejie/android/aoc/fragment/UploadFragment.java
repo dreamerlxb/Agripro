@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.idejie.android.aoc.R;
+import com.idejie.android.aoc.application.UserApplication;
 import com.idejie.android.aoc.bean.UserId;
 import com.idejie.android.aoc.dialog.CityDialog;
 import com.idejie.android.aoc.dialog.GradeDialog;
@@ -77,6 +78,7 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
     private int regionId,sortId,gradeId;
     private Banner banner;
     private String apiUrl="http://211.87.227.214:3001/api";
+    private UserApplication userApplication;
 //    private String apiUrl="http://192.168.1.114:3001/api";
     /**
      * 初始化操作
@@ -87,6 +89,7 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
         super.onCreate(savedInstanceState);
         context = getActivity();
         activity = getActivity();
+        userApplication= (UserApplication) activity.getApplication();
 
     }
 
@@ -244,7 +247,7 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
                 if (i>=2){
                     Toast.makeText(context,"您今天上传次数已到达上限:0/2",Toast.LENGTH_SHORT).show();
                 }else {
-                    if (UserId.id.equals("0")){
+                    if (userApplication.getId().equals("0")){
                         Toast.makeText(context,"请登录后再上传",Toast.LENGTH_SHORT).show();
                     }else {
                         //储存上限
@@ -344,7 +347,7 @@ public class UploadFragment extends LazyFragment implements View.OnClickListener
             params.put("price", Integer.parseInt(editPrice.getText().toString()));
             params.put("turnover",Integer.parseInt(editAmount.getText().toString()) );
             params.put("marketName", editMarketName.getText().toString());
-            params.put("userId", UserId.id);
+            params.put("userId", userApplication.getId());
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
             params.put("priceDate",df.format(new Date()));
             PriceModel price = productRepository.createObject(params);

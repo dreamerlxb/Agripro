@@ -3,6 +3,7 @@ package com.idejie.android.aoc.activity;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.Application;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Handler;
@@ -16,7 +17,6 @@ import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 
 import android.os.Build;
 import android.os.Bundle;
@@ -40,8 +40,11 @@ import java.util.List;
 import java.util.Objects;
 
 import com.idejie.android.aoc.R;
+import com.idejie.android.aoc.application.UserApplication;
 import com.idejie.android.aoc.bean.UserId;
 import com.idejie.android.aoc.model.RegionModel;
+import com.idejie.android.aoc.model.UserModel;
+import com.idejie.android.aoc.repository.UserModelRepository;
 import com.idejie.android.aoc.repository.UserRepository;
 import com.idejie.android.aoc.tools.AutoString;
 import com.idejie.android.aoc.tools.NetThread;
@@ -50,6 +53,7 @@ import com.strongloop.android.loopback.AccessToken;
 import com.strongloop.android.loopback.RestAdapter;
 import com.strongloop.android.loopback.User;
 import com.strongloop.android.loopback.callbacks.ListCallback;
+import com.strongloop.android.loopback.callbacks.ObjectCallback;
 import com.strongloop.android.remoting.JsonUtil;
 import com.strongloop.android.remoting.adapters.Adapter;
 
@@ -81,6 +85,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     // UI references.
     private AutoCompleteTextView mEmailView;
+    private UserApplication userApplication;
     private EditText mPasswordView;
     private EditText editCode;
     private View mProgressView;
@@ -88,13 +93,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private TextView tvSignup,tvBackup;
     private String apiUrl="http://211.87.227.214:3001/api";
     private String apiUrl2="http://211.87.227.214:3001/api/users/login";
-
+    private String myId="0";
     private Handler han;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        userApplication= (UserApplication) getApplication();
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.phone);
         populateAutoComplete();
@@ -127,11 +133,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         String id = temp.getString("userId");
                         //这边要收到其他数据并且保存,然后用在设置昵称等地方
                         Log.d("test1","id..."+id);
-                        UserId.id=id;
-                        Toast.makeText(LoginActivity.this, "登陆成功", Toast.LENGTH_SHORT).show();
-                        Intent intent=new Intent(LoginActivity.this,MainActivity.class);
-                        startActivity(intent);
-                        finish();
+//                        UserId.id=id;
+                        myId=id;
+                        findOtherDate();
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -154,6 +159,35 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         tvBackup.setOnClickListener(this);
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+    }
+
+    private void findOtherDate() {
+        RestAdapter adapter = new RestAdapter(getApplicationContext(), apiUrl);
+        adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
+        final UserModelRepository userRepository = adapter.createRepository(UserModelRepository.class);
+        Log.d("test","a");
+        userRepository.findById(myId, new ObjectCallback<UserModel>() {
+            @Override
+            public void onSuccess(UserModel object) {
+                Log.d("test","object.toString()..."+object.toString());
+                Log.d("test","object.getName()..."+object.getName());
+                Log.d("test","object.getScore()..."+object.getScore().toString());
+                Log.d("test","object.getImageId()..."+object.getImageId());
+                userApplication.setScore(object.getScore().toString());
+                userApplication.setImageId(object.getImageId());
+                userApplication.setName(object.getName());
+                userApplication.setId(myId);
+                Toast.makeText(LoginActivity.this, "登陆成功", Toast.LENGTH_SHORT).show();
+                Intent intent=new Intent(LoginActivity.this,MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                Toast.makeText(LoginActivity.this, "登陆失败", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 

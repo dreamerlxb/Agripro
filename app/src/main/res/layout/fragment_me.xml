@@ -60,7 +60,7 @@
             android:text="积分:20000000"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/t"
+            android:id="@+id/tv_score"
             android:layout_marginBottom="29dp"
             android:layout_alignParentBottom="true"
             android:layout_alignLeft="@+id/tv_nickName"
