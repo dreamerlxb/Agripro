@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--使用layer-list可以将多个drawable按照顺序层叠在一起显示-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape>
+            <solid android:color="#c7c5c5"/>
+        </shape>
+    </item>
+    <item android:bottom="1dp">
+        <shape>
+            <solid android:color="#ffffff"/>
+        </shape>
+    </item>
+</layer-list>

@@ -16,6 +16,8 @@ public class SortModel extends Model {
     private String subName;
     private String description;
 
+    private int sortId;
+
     public String getName() {
         return name;
     }
@@ -40,5 +42,11 @@ public class SortModel extends Model {
         this.description = description;
     }
 
+    public int getSortId() {
+        return sortId;
+    }
 
+    public void setSortId(int sortId) {
+        this.sortId = sortId;
+    }
 }

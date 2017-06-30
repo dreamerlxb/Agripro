@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/line"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_alignParentTop="true"
+    android:layout_alignParentLeft="true"
+    android:layout_alignParentStart="true"
+    android:paddingBottom="30dp"
+    android:paddingEnd="15dp"
+    android:paddingLeft="15dp"
+    android:paddingRight="15dp"
+    android:paddingStart="15dp"
+    android:paddingTop="20dp">
+
+    <TextView
+        android:text="山东"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/province_txt"
+        android:padding="5dp"
+        android:background="@drawable/price_grade_title"
+        android:layout_marginLeft="5dp"
+        android:layout_marginStart="5dp"
+        android:textColor="@color/white" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:text="请选择您所在地区:"
+        android:textColor="@color/colorPrimary"/>
+
+    <com.zhy.view.flowlayout.TagFlowLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/city_flow_layout"
+        app:max_select="1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    </com.zhy.view.flowlayout.TagFlowLayout>
+
+</LinearLayout>

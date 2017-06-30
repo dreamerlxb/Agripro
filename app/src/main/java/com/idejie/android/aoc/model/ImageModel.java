@@ -4,10 +4,13 @@ import android.content.Context;
 
 import com.strongloop.android.loopback.Model;
 
+import java.io.Serializable;
+import java.util.Date;
+
 /**
  * Created by shandongdaxue on 16/8/17.
  */
-public class ImageModel extends Model {
+public class ImageModel extends Model implements Serializable{
     public String mimeType;
     public String key;
     public String name;
@@ -17,10 +20,11 @@ public class ImageModel extends Model {
     public int size;
     public int height;
     public int width;
-    public String created;
-    public String lastUpdated;
-    public Object id;
-    public Object userId;
+    public Date created;
+    public Date lastUpdated;
+    public int userId;
+
+    private int imageId;
 
     public String getMimeType() {
         return mimeType;
@@ -94,40 +98,35 @@ public class ImageModel extends Model {
         this.width = width;
     }
 
-    public String getCreated() {
+    public Date getCreated() {
         return created;
     }
 
-    public void setCreated(String created) {
+    public void setCreated(Date created) {
         this.created = created;
     }
 
-    public String getLastUpdated() {
+    public Date getLastUpdated() {
         return lastUpdated;
     }
 
-    public void setLastUpdated(String lastUpdated) {
+    public void setLastUpdated(Date lastUpdated) {
         this.lastUpdated = lastUpdated;
     }
 
-    @Override
-    public Object getId() {
-        return id;
-    }
-
-    public void setId(Object id) {
-        this.id = id;
-    }
-
-    public Object getUserId() {
+    public int getUserId() {
         return userId;
     }
 
-    public void setUserId(Object userId) {
+    public void setUserId(int userId) {
         this.userId = userId;
     }
 
-    public String getFileUrl(Context context) {
-        return context.toString();
+    public int getImageId() {
+        return imageId;
+    }
+
+    public void setImageId(int imageId) {
+        this.imageId = imageId;
     }
 }

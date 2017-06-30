@@ -1,50 +1,142 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_news_detail"
+    tools:context="com.idejie.android.aoc.activity.NewsDetailActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.idejie.android.aoc.activity.NewsDetailActivity">
+    android:orientation="vertical">
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@color/colorPrimary">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@mipmap/ic_action_back"
+            android:id="@+id/back_img"
+            android:background="@color/transparent"
+            android:padding="5dp"
+            android:layout_gravity="left|center_vertical"
+            tools:ignore="ContentDescription"
+            android:tint="@color/white" />
 
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
 
-    <TextView
-        android:text=""
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:id="@+id/tv_detail_title"
-        android:textSize="18sp"
-        android:textStyle="normal|bold" />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@android:drawable/ic_menu_share"
+            android:id="@+id/share_img"
+            android:background="@color/transparent"
+            android:layout_gravity="right|center_vertical"
+            tools:ignore="ContentDescription"
+            android:padding="5dp"
+            android:tint="@color/white"
+            android:visibility="visible" />
+    </LinearLayout>
 
-    <TextView
-        android:text=""
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tv_detail_title"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:id="@+id/tv_detail_time" />
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/activity_news_detail"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:layout_weight="1">
 
-    <WebView
+        <TextView
+            android:text="标题"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tv_detail_title"
+            android:textSize="18sp"
+            android:textStyle="normal|bold" />
+
+        <TextView
+            android:text="2012-12-12 12:12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tv_detail_time" />
+
+        <WebView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layerType="hardware"
+            android:id="@+id/Content"
+            android:background="@color/white" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tv_detail_time"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginLeft="0dp"
-        android:layout_marginStart="0dp"
-        android:layerType="hardware"
-        android:id="@+id/Content" />
-    <include
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        layout="@layout/list_comment"
-        />
+        android:layout_gravity="bottom"
+        android:padding="5dp">
 
-</RelativeLayout>
+        <TextView
+            android:text="我来评几句..."
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:id="@+id/comment_txt"
+            android:elevation="24dp"
+            android:background="@color/tab_main_text_1"
+            android:layout_gravity="center_vertical"
+            android:paddingEnd="5dp"
+            android:paddingBottom="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="5dp"
+            android:padding="5dp"
+            android:layout_weight="1"
+            android:gravity="left|center" />
+
+        <com.idejie.android.aoc.widget.LeftDrawableButton
+            android:drawableLeft="@mipmap/icon_comment"
+            android:drawableStart="@mipmap/icon_comment"
+            android:background="@android:color/transparent"
+            android:layout_height="30dp"
+            android:layout_gravity="center_vertical|center"
+            android:layout_width="wrap_content"
+            android:id="@+id/comment_btn"
+            android:drawablePadding="3dp"
+            android:textSize="12sp"
+            tools:text="3" />
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:id="@+id/like_btn"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingEnd="5dp"
+            android:paddingStart="5dp"
+            android:contentDescription=""
+            android:layout_gravity="center_vertical"
+            tools:ignore="ContentDescription"
+            app:srcCompat="@drawable/ic_favorite_24dp"
+            android:background="@color/transparent"/>
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:id="@+id/favorite_btn"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingEnd="5dp"
+            android:paddingStart="5dp"
+            android:layout_gravity="center_vertical"
+            android:contentDescription=""
+            tools:ignore="ContentDescription"
+            app:srcCompat="@drawable/ic_like_24dp"
+            android:background="@color/transparent" />
+    </LinearLayout>
+
+</LinearLayout>

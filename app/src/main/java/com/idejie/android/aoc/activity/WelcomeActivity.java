@@ -2,6 +2,7 @@ package com.idejie.android.aoc.activity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -13,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.idejie.android.aoc.component.MyUser;
 import com.idejie.android.aoc.R;
 
 import java.util.ArrayList;
@@ -26,18 +26,10 @@ public class WelcomeActivity extends AppCompatActivity {
     ArrayList<View> viewList;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //判断用户名，是否进入滑动欢迎页
-        String username = (String) MyUser.getObjectByKey(this, "username");
-        if (!TextUtils.isEmpty(username)) {
-            Intent intent = new Intent(WelcomeActivity.this, MainActivity.class);
-            startActivity(intent);
-            finish();
-            return;
-        }
 
         setContentView(R.layout.activity_welcome);
         LinearLayout layout = (LinearLayout) findViewById(R.id.viewGroup);
@@ -92,7 +84,7 @@ public class WelcomeActivity extends AppCompatActivity {
                 return viewList.get(position);
             }
         };
-        viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
             @Override
             public void onPageSelected(int arg0) {

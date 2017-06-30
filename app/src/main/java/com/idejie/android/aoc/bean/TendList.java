@@ -15,6 +15,9 @@ public class TendList {
         this.date = date;
     }
 
+    public TendList() {
+    }
+
     public String getArea() {
         return area;
     }

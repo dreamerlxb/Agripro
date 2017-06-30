@@ -8,29 +8,13 @@ import android.webkit.JavascriptInterface;
  */
 
 public class MapTableDate {
-    private String x;
-    private String y;
-    private Context mContext;
+    private String mapData;
 
-    public MapTableDate(Context context, String x, String y) {
-        this.x = x;
-        this.y = y;
-        mContext=context;
+    public MapTableDate(String x) {
+        this.mapData = x;
     }
     @JavascriptInterface
-    public String getX() {
-        return x;
-    }
-    @JavascriptInterface
-    public void setX(String x) {
-        this.x = x;
-    }
-    @JavascriptInterface
-    public String getY() {
-        return y;
-    }
-    @JavascriptInterface
-    public void setY(String y) {
-        this.y = y;
+    public String getMapData() {
+        return mapData;
     }
 }

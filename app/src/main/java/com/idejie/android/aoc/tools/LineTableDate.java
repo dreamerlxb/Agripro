@@ -8,29 +8,14 @@ import android.webkit.JavascriptInterface;
  */
 
 public class LineTableDate {
-    private String x;
-    private String y;
-    private Context mContext;
+    private String lineData;
 
-    public LineTableDate(Context context, String x, String y) {
-        this.x = x;
-        this.y = y;
-        mContext=context;
+    public LineTableDate(String x) {
+        this.lineData = x;
     }
+
     @JavascriptInterface
-    public String getX() {
-        return x;
-    }
-    @JavascriptInterface
-    public void setX(String x) {
-        this.x = x;
-    }
-    @JavascriptInterface
-    public String getY() {
-        return y;
-    }
-    @JavascriptInterface
-    public void setY(String y) {
-        this.y = y;
+    public String getLineData() {
+        return lineData;
     }
 }

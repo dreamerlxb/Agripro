@@ -67,7 +67,7 @@ public class NetThread extends Thread{
             {
                 result+=line;
             }
-            Log.d("test","result"+"................."+result);
+            Log.d("======Net thread=====","result"+"................."+result);
             if(result.equals("1")){
                 Message mess=new Message();
                 mess.what=1;
@@ -83,13 +83,12 @@ public class NetThread extends Thread{
 
         } catch (Exception e) {
             // TODO Auto-generated catch block
+            Log.i("===== Net Exception ==", e.toString());
             e.printStackTrace();
         }finally {
             if (connection!=null){
                 connection.disconnect();
             }
         }
-
     }
-
 }

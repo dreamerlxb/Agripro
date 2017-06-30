@@ -1,13 +1,15 @@
 package com.idejie.android.aoc.activity;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
+import android.util.ArrayMap;
 import android.util.Log;
-import android.util.TypedValue;
-import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
@@ -22,183 +24,228 @@ import android.widget.Toast;
 
 import com.bigkoo.pickerview.TimePickerView;
 import com.google.gson.Gson;
-import com.idejie.android.aoc.adapter.SearchListAdapter;
-import com.idejie.android.aoc.adapter.TendListAdapter;
+import com.google.gson.GsonBuilder;
+import com.idejie.android.aoc.adapter.TendencyListAdapter;
 import com.idejie.android.aoc.bean.LineData;
 import com.idejie.android.aoc.bean.MapData;
-import com.idejie.android.aoc.bean.SearchList;
-import com.idejie.android.aoc.bean.TendList;
-import com.idejie.android.aoc.dialog.CityTDialog;
 import com.idejie.android.aoc.dialog.GradeDialog;
-import com.idejie.android.aoc.dialog.GradeTDialog;
-import com.idejie.android.aoc.dialog.MyTDialog;
-import com.idejie.android.aoc.dialog.SortDetailTDialog;
-import com.idejie.android.aoc.dialog.SortTDialog;
+import com.idejie.android.aoc.dialog.ProvinceTDialog;
+import com.idejie.android.aoc.dialog.SortDialog;
+import com.idejie.android.aoc.fragment.tab.CommonUtil;
 import com.idejie.android.aoc.model.GradeModel;
 import com.idejie.android.aoc.model.PriceModel;
 import com.idejie.android.aoc.R;
 import com.idejie.android.aoc.model.RegionModel;
 import com.idejie.android.aoc.model.SortModel;
-import com.idejie.android.aoc.repository.GradeRepository;
 import com.idejie.android.aoc.repository.PriceRepository;
 import com.idejie.android.aoc.repository.RegionRepository;
 import com.idejie.android.aoc.repository.SortRepository;
 import com.idejie.android.aoc.tools.LineTableDate;
 import com.idejie.android.aoc.tools.MapTableDate;
-import com.strongloop.android.loopback.RestAdapter;
+import com.idejie.android.aoc.widget.ListScrollView;
 import com.strongloop.android.loopback.callbacks.JsonArrayParser;
 import com.strongloop.android.loopback.callbacks.ListCallback;
+import com.strongloop.android.remoting.adapters.Adapter;
 
-import java.text.DateFormat;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 public class TendencyActivity extends Activity implements View.OnClickListener {
 
+    private ListScrollView scrollView;
     private WebView chartWeb;
-    private Button btnLine,btnGraph,btnMap;
-    private LinearLayout lin4,lin5;
-    private LinearLayout lineProvince,lineType,lineRank;
-    private TimePickerView pvTime;
-    private TextView textTimeS,textTimeO,textProvince,textType,textRank;
-    private Boolean ifMap=false;
+    private Button btnLine, btnGraph, btnMap;
+
+    private TimePickerView pvStartTime;
+    private TimePickerView pvEndTime;
+
+    private TextView textTimeS, textTimeO, textProvince, textType, textRank;
+    private Boolean ifMap = false;
     private ImageView imageBack;
-    private List<PriceModel> informations;
-    private Handler hanDialog,hanCityDialog,hanSortDialog,hanDetailDialog,hanGradeDialog;
-    private int regionId,sortId,gradeId;
-    private List<SortModel> objectArray;
-    private List<GradeModel> gradeArray;
-    private String apiUrl="http://211.87.227.214:3001/api";
-//    private String apiUrl="http://192.168.1.114:3001/api";
+    private List<PriceModel> priceModelList;
+    private Handler hanProvinceDialog, hanSortDialog, hanGradeDialog;
+
     private ListView listView;
-    private TendListAdapter tendListAdapter;
-    private ArrayList<TendList> priceArray;
-    private List<RegionModel> regionObjects;
+    private View listViewHeader;
+    private View emptyView;
+    private TendencyListAdapter tendListAdapter;
+
+    private RegionModel selectedRegion;
+    private SortModel selectedSort;
+    private GradeModel selectedGrade;
+    private Date startDate;
+    private Date endDate;
+
+    private Dialog loadingDialog;
+
+    private List<LineData> lineDataList;
+    private List<MapData> mapDataList;
+
+    private android.support.v4.util.ArrayMap<String, List<RegionModel>> chinaMap;
+    private Map<String, List<SortModel>> sortMap;
+
+    SimpleDateFormat dateFormat;
+    private int defaultRegionId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tendency);
-        init();
-        //折线图初始化
-        getInitPriceLine();
+
+        dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        defaultRegionId = getIntent().getIntExtra("defaultRegionId", 1);
+        initViews();
+        initWeb();
+        initHandles();
     }
 
-    private void init() {
-        getProvince();
-        priceArray=new ArrayList<TendList>();
-        listView= (ListView) findViewById(R.id.listView);
-        textProvince= (TextView) findViewById(R.id.province);
-        textType= (TextView) findViewById(R.id.type);
-        textRank= (TextView) findViewById(R.id.rank);
-        textTimeS= (TextView) findViewById(R.id.text_timeS);
-        textTimeO= (TextView) findViewById(R.id.text_timeO);
-        chartWeb= (WebView) findViewById(R.id.chart_webView);
-        btnLine= (Button) findViewById(R.id.btn_line);
-        btnLine.setOnClickListener(this);
-        btnGraph= (Button) findViewById(R.id.btn_graph);
-        btnGraph.setOnClickListener(this);
-        btnMap= (Button) findViewById(R.id.btn_map);
-        btnMap.setOnClickListener(this);
-        lineProvince= (LinearLayout) findViewById(R.id.line_1);
-        lineProvince.setOnClickListener(this);
-        lineType= (LinearLayout) findViewById(R.id.line_2);
-        lineType.setOnClickListener(this);
-        lineRank= (LinearLayout) findViewById(R.id.line_3);
-        lineRank.setOnClickListener(this);
-        lin4= (LinearLayout) findViewById(R.id.line_4);
-        lin4.setOnClickListener(this);
-        lin5= (LinearLayout) findViewById(R.id.line_5);
-        lin5.setOnClickListener(this);
-        imageBack= (ImageView) findViewById(R.id.back);
-        imageBack.setOnClickListener(this);
-        initWeb();
-        hanDialog = new Handler() {
-            public void handleMessage(Message msg) {
-                // TODO Auto-generated method stub
-                if (msg.what==1){
-                    String Jsmess = (String) msg.obj;
-                    textProvince.setText(Jsmess);
-                    getCityId();
-                }else {
-                    CityTDialog dialog=new CityTDialog(TendencyActivity.this,hanCityDialog, (Integer) msg.obj);
-                    dialog.show();
-                }
+    private void initViews() {
 
+        scrollView = (ListScrollView) findViewById(R.id.scrollView);
+        scrollView.scrollTo(0, 0);
+        listView = (ListView) findViewById(R.id.listView);
+        listViewHeader = getLayoutInflater().inflate(R.layout.tendency_list_header, null);
+        emptyView = findViewById(R.id.list_no_data);
+        listView.addHeaderView(listViewHeader);
+        listView.setEmptyView(emptyView);
+
+        scrollView.setListView(listView);
+
+        textProvince = (TextView) findViewById(R.id.province);//省市
+        textProvince.setOnClickListener(this);
+
+        textType = (TextView) findViewById(R.id.type);//品种
+        textType.setOnClickListener(this);
+
+        textRank = (TextView) findViewById(R.id.rank);//级别
+        textRank.setOnClickListener(this);
+
+        textTimeS = (TextView) findViewById(R.id.text_timeS); //开始时间
+        textTimeS.setOnClickListener(this);
+
+        textTimeO = (TextView) findViewById(R.id.text_timeO); //结束时间
+        textTimeO.setOnClickListener(this);
+
+        chartWeb = (WebView) findViewById(R.id.chart_webView); //显示折线图
+
+        btnLine = (Button) findViewById(R.id.btn_line); //点击折线图
+        btnLine.setOnClickListener(this);
+        btnLine.setBackgroundResource(R.drawable.border_green);
+
+        btnGraph = (Button) findViewById(R.id.btn_graph); //点击表格
+        btnGraph.setOnClickListener(this);
+
+        btnMap = (Button) findViewById(R.id.btn_map); //点击地图
+        btnMap.setOnClickListener(this);
+
+        imageBack = (ImageView) findViewById(R.id.back);
+        imageBack.setOnClickListener(this);
+
+        initPriceLine();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        chartWeb.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        chartWeb.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (chartWeb != null) {
+            ViewGroup parent = (ViewGroup) chartWeb.getParent();
+            if (parent != null) {
+                parent.removeView(chartWeb);
             }
-        };
-        hanCityDialog = new Handler() {
+            chartWeb.removeAllViews();
+            chartWeb.destroy();
+        }
+    }
+
+    private void initHandles() {
+        //选择省份或者直辖市
+        hanProvinceDialog = new Handler() {
             public void handleMessage(Message msg) {
-                // TODO Auto-generated method stub
-                String Jsmess = (String) msg.obj;
-                textProvince.setText(Jsmess);
-                getCityId();
+                selectedRegion = (RegionModel) msg.obj;
+                if (selectedRegion.getCity() != null) {
+                    textProvince.setText(selectedRegion.getCity());
+                } else {
+                    textProvince.setText(selectedRegion.getProvince());
+                }
             }
         };
+
         hanSortDialog = new Handler() {
             public void handleMessage(Message msg) {
-                // TODO Auto-generated method stub
-                String Jsmess = (String) msg.obj;
-                SortDetailTDialog detailDialog=new SortDetailTDialog(TendencyActivity.this,hanDetailDialog,objectArray,Jsmess);
-                detailDialog.show();
-            }
-        };
-        hanDetailDialog = new Handler() {
-            public void handleMessage(Message msg) {
-                // TODO Auto-generated method stub
-                String Jsmess = (String) msg.obj;
-                sortId=msg.what;
-                textType.setText(Jsmess);
+
+                selectedSort = (SortModel) msg.obj;
+                textType.setText(selectedSort.getSubName());
             }
         };
 
         hanGradeDialog = new Handler() {
             public void handleMessage(Message msg) {
-                // TODO Auto-generated method stub
-                gradeId=msg.what;
-                String Jsmess = (String) msg.obj;
-                textRank.setText(Jsmess);
-
+                if (msg.obj == null) {
+                    selectedGrade = null;
+                    textRank.setText(selectedSort.getSubName());
+                } else {
+                    selectedGrade = (GradeModel) msg.obj;
+                    textRank.setText(selectedGrade.getName());
+                }
             }
         };
-
-
-
     }
 
-
     private void initWeb() {
-        btnLine.setBackgroundResource(R.drawable.border_green);
         //进行webwiev的一堆设置
         //开启本地文件读取（默认为true，不设置也可以）
-        chartWeb.getSettings().setAllowFileAccess(true);
+        WebSettings webSettings = chartWeb.getSettings();
+        webSettings.setAllowFileAccess(true);
         //设置编码
-        chartWeb.getSettings().setDefaultTextEncodingName("utf-8");
+        webSettings.setDefaultTextEncodingName("utf-8");
         // 设置可以支持缩放
-        chartWeb.getSettings().setSupportZoom(true);
-        chartWeb.getSettings().setBuiltInZoomControls(true);
+        webSettings.setSupportZoom(true);
+        webSettings.setBuiltInZoomControls(true);
+
+        //自适应屏幕
+//        webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
+        webSettings.setUseWideViewPort(true);//将图片调整到适合webview的大小
+        webSettings.setLoadWithOverviewMode(true);// 缩放至屏幕的大小
+        webSettings.setJavaScriptCanOpenWindowsAutomatically(true); //支持通过JS打开新窗口
+        //开启脚本支持
+        webSettings.setJavaScriptEnabled(true);
+        //不显示webview缩放按钮
+        webSettings.setDisplayZoomControls(false);
+
         // 清除浏览器缓存
         chartWeb.clearCache(true);
-        //自适应屏幕
-        chartWeb.getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
-        chartWeb.getSettings().setLoadWithOverviewMode(true);
-        //开启脚本支持
-        chartWeb.getSettings().setJavaScriptEnabled(true);
-        //不显示webview缩放按钮
-        chartWeb.getSettings().setDisplayZoomControls(false);
+
         //在当前页面打开链接了
         chartWeb.setWebViewClient(new WebViewClient() {
+            @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 view.loadUrl(url);
                 return true;
             }
         });
+
         //js加上这个就好啦！
         chartWeb.setWebChromeClient(new WebChromeClient() {
             @Override
@@ -206,570 +253,539 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
                 return super.onJsAlert(view, url, message, result);
             }
         });
-        chartWeb.loadUrl("file:///android_asset/test4.html");
     }
-
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
-            case R.id.btn_line:
-                if(isReady()){
-                    LinearLayout.LayoutParams linearParams =(LinearLayout.LayoutParams)
-                            chartWeb.getLayoutParams(); //取控件textView当前的布局参数
-                    linearParams.height = ((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 260, getResources().getDisplayMetrics()));
-                    chartWeb.setLayoutParams(linearParams);
-                    getPriceLine();
+        switch (view.getId()) {
+            case R.id.btn_line: //折线图 WebView
+                if (isReady()) {
+                    listView.setVisibility(View.GONE);
+                    chartWeb.setVisibility(View.VISIBLE);
+//                    chartWeb.loadUrl("file:///android_asset/loading.html");
                     //变色
                     btnLine.setBackgroundResource(R.drawable.border_green);
                     btnGraph.setBackgroundResource(R.drawable.border_grey);
                     btnMap.setBackgroundResource(R.drawable.border_grey);
-                    listClear();
-                    ifMap=false;
-                }else {
-                    Toast.makeText(TendencyActivity.this,"请填写必要参数",Toast.LENGTH_SHORT).show();
+
+                    ifMap = false;
+                    initPriceLine();
+                } else {
+                    Toast.makeText(TendencyActivity.this, "请填写必要参数", Toast.LENGTH_SHORT).show();
                 }
                 break;
-            case R.id.btn_graph:
-                if (isReady()){
+            case R.id.btn_graph: //表格  listView
+                if (isReady()) {
                     btnLine.setBackgroundResource(R.drawable.border_grey);
                     btnGraph.setBackgroundResource(R.drawable.border_green);
                     btnMap.setBackgroundResource(R.drawable.border_grey);
-                    ifMap=false;
-                    LinearLayout.LayoutParams linearParams1 =(LinearLayout.LayoutParams)
-                            chartWeb.getLayoutParams(); //取控件textView当前的布局参数
-                    linearParams1.height = 1;// 控件的高强制设成20
+                    ifMap = false;
 
-                    chartWeb.setLayoutParams(linearParams1);
-                    getPrice();
-                }else {
-                    Toast.makeText(TendencyActivity.this,"请填写必要参数",Toast.LENGTH_SHORT).show();
+                    listView.setVisibility(View.VISIBLE);
+                    chartWeb.setVisibility(View.GONE);
+
+                    initListData();
+                } else {
+                    Toast.makeText(TendencyActivity.this, "请填写上述必要参数", Toast.LENGTH_SHORT).show();
                 }
                 break;
-            case R.id.btn_map:
-                Log.d("test","getProvinceName(1)...."+getProvinceName(1,regionObjects));
-                if (isReady()){
-                    if (!textTimeS.getText().toString().equals("开始")){
-                        textTimeO.setText(textTimeS.getText().toString());
-                    }
-                    listClear();
-                    LinearLayout.LayoutParams linearParams2 =(LinearLayout.LayoutParams)
-                            chartWeb.getLayoutParams(); //取控件textView当前的布局参数
-                    linearParams2.height = ((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 260, getResources().getDisplayMetrics()));
-                    chartWeb.setLayoutParams(linearParams2);
-                    btnLine.setBackgroundResource(R.drawable.border_grey);
-                    btnGraph.setBackgroundResource(R.drawable.border_grey);
-                    btnMap.setBackgroundResource(R.drawable.border_green);
-                    chartWeb.setBackgroundResource(R.color.white);
-                    ifMap=true;
-                    getPriceMap();
-                }else {
-                    Toast.makeText(TendencyActivity.this,"请填写必要参数",Toast.LENGTH_SHORT).show();
+            case R.id.btn_map: //地图
+                if (selectedSort == null || selectedGrade == null) {
+                    Toast.makeText(TendencyActivity.this, "请填写必要参数", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                listView.setVisibility(View.GONE);
+                chartWeb.setVisibility(View.VISIBLE);
+
+                btnLine.setBackgroundResource(R.drawable.border_grey);
+                btnGraph.setBackgroundResource(R.drawable.border_grey);
+                btnMap.setBackgroundResource(R.drawable.border_green);
+//                chartWeb.setBackgroundResource(R.color.white);
+                ifMap = true;
+
+                initPriceMap();
+                break;
+            case R.id.province: //省的选取
+                if (chinaMap == null) {
+                    chinaMap = new android.support.v4.util.ArrayMap<>();
+                    getRegionInfo();
+                } else {
+                    ProvinceTDialog dialog = new ProvinceTDialog(TendencyActivity.this, hanProvinceDialog, chinaMap);
+                    dialog.show();
                 }
                 break;
-            case R.id.line_1:
-                MyTDialog dialog=new MyTDialog(TendencyActivity.this,hanDialog);
-                dialog.show();
-                break;
-            case R.id.line_2:
-                getSort();
-                break;
-            case R.id.line_3:
-                if (textType.getText().equals("品种")){
-                    Toast.makeText(TendencyActivity.this,"请先选好品种",Toast.LENGTH_SHORT).show();
-                }else {
-                    getRank();
+            case R.id.type://获取"品种"
+                if (sortMap == null) {
+                    sortMap = new HashMap<>();
+                    getSorts();
+                } else {
+                    SortDialog sortDialog = new SortDialog(this, hanSortDialog, sortMap);
+                    sortDialog.show();
                 }
                 break;
-            case R.id.line_4:
-                showTimeChoose(0);
+            case R.id.rank: //等级
+                if (selectedSort == null) {
+                    Toast.makeText(TendencyActivity.this, "请先选好品种", Toast.LENGTH_SHORT).show();
+                } else {
+                    GradeDialog gradeDialog = new GradeDialog(TendencyActivity.this, hanGradeDialog, selectedSort);
+                    gradeDialog.show();
+                }
                 break;
-            case R.id.line_5:
-                showTimeChoose(1);
+            case R.id.text_timeS:
+                showStartTime();
+                break;
+            case R.id.text_timeO:
+                if (startDate == null) {
+                    Toast.makeText(TendencyActivity.this, "请先选择开始时间", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                showEndTime();
                 break;
             case R.id.back:
                 finish();
                 break;
         }
-
     }
 
-    private String getProvinceName(int id, List<RegionModel> regionObjects) {
-        String province="山东";
-        for (int i=0;i<regionObjects.size();i++){
-            if ((int)regionObjects.get(i).getId()==id){
-                province=regionObjects.get(i).getProvince();
-                if (province.contains("省")|province.contains("市")){
-                    province=province.substring(0,province.length()-1);
-                }
-                break;
-            }
-
-        }
-        return province;
-    }
-
+    //判断所有的必要数据都不为空
     private boolean isReady() {
-        Boolean ifReady=false;
-        if (!textProvince.getText().toString().equals("省市")&&!textType.getText().toString().equals("品种")&&!textRank.getText().toString().equals("等级")){
-            ifReady=true;
+        Boolean ifReady = false;
+        if (!TextUtils.isEmpty(textProvince.getText()) && !TextUtils.isEmpty(textType.getText()) && !TextUtils.isEmpty(textRank.getText())) {
+            ifReady = true;
         }
-
         return ifReady;
     }
 
-    private void getCityId() {
-        RestAdapter adapter = new RestAdapter(getApplicationContext(),apiUrl);
-        adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
-        RegionRepository regionRepository = adapter.createRepository(RegionRepository.class);
+    /**
+     * 初始化列表信息
+     */
+    private void initListData() {
+        if (endDate == null) {
+            endDate = new Date();
+        }
+        if (startDate == null) {
+            startDate = new Date(endDate.getTime() - 7 * 24 * 60 * 60 * 1000); //默认是一周内的信息
+        }
+        Map<String, Object> params = new HashMap<String, Object>();
+        Map<String, Object> filterMap = new HashMap<String, Object>();
+        Map<String, Object> where = new HashMap<String, Object>();
+        Map<String, Object> priceDate = new HashMap<String, Object>();
+
+        priceDate.put("lt", endDate);
+        priceDate.put("gte", startDate);
+
+        where.put("priceDate", priceDate);
+        where.put("regionId", selectedRegion.getId());
+        where.put("sortId", selectedSort.getId());
+
+        if (selectedGrade != null) {
+            where.put("gradeId", selectedGrade.getId());
+        }
+
+        filterMap.put("where", where);
+
+        List<Object> list = new ArrayList<>();
+
+        list.add("sort");
+        list.add("grade");
+        list.add("region");
+
+        filterMap.put("include", list);
+
+        filterMap.put("order", "priceDate"); //按priceDate排序
+
+        Gson gson1 = new Gson();
+        String filterStr = gson1.toJson(filterMap);
+
+        params.put("filter", filterStr);
+
+        PriceRepository priceRepository = PriceRepository.getInstance(this, null);
+        priceRepository.invokeStaticMethod("all", params, new Adapter.JsonArrayCallback() {
+            @Override
+            public void onSuccess(JSONArray response) {
+                Log.i("Tendency", response.toString());
+                int len = response.length();
+                if (len > 0) {
+                    Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create();
+                    List<PriceModel> priceModels = new ArrayList<PriceModel>(len);
+
+                    for (int i = 0; i < len; i++) {
+                        JSONObject jsonObject = response.optJSONObject(i);
+                        PriceModel priceModel = gson.fromJson(jsonObject.toString(), PriceModel.class);
+                        priceModels.add(priceModel);
+                    }
+                    tendListAdapter = new TendencyListAdapter(TendencyActivity.this, priceModels);
+                    listView.setAdapter(tendListAdapter);
+                } else {
+                    listView.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                Log.i("Tendency Error", t.toString());
+            }
+        });
+    }
+
+    /**
+     * 获取所有的地区
+     * 根据省、直辖市、自治区分配
+     */
+    private void getRegionInfo() {
+        showLoadingDialog();
+        RegionRepository regionRepository = RegionRepository.getInstance(this, null);
+
         regionRepository.findAll(new ListCallback<RegionModel>() {
             @Override
             public void onSuccess(List<RegionModel> objects) {
-                for (int i=0;i<objects.size();i++){
-                    if(textProvince.getText().toString().equals(objects.get(i).getCity())){
-                        regionId= (int) objects.get(i).getId();
-                    }
-                    else if(objects.get(i).getProvince().equals(textProvince.getText().toString())){
-                        regionId= (int) objects.get(i).getId();
+                loadingDialog.dismiss();
+
+                for (int i = 0; i < objects.size(); i++) {
+                    RegionModel regionModel = objects.get(i);
+                    List<RegionModel> list = chinaMap.get(regionModel.getProvince());
+                    if (list == null) {
+                        list = new ArrayList<RegionModel>();
+                        list.add(regionModel);
+                        chinaMap.put(regionModel.getProvince(), list);
+                    } else {
+                        list.add(regionModel);
                     }
                 }
+
+                ProvinceTDialog dialog = new ProvinceTDialog(TendencyActivity.this, hanProvinceDialog, chinaMap);
+                dialog.show();
             }
 
             @Override
             public void onError(Throwable t) {
-                Log.d("test","t...."+t.toString());
+                loadingDialog.dismiss();
             }
         });
-
     }
 
-    private void getPrice() {
-        RestAdapter adapter = new RestAdapter(getApplicationContext(),apiUrl);
-        adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
-        PriceRepository productRepository = adapter.createRepository(PriceRepository.class);
-        Map<String, Object> params = new HashMap<String, Object>();
-        final Map<String, Object> filterMap = new HashMap<String, Object>();
-        filterMap.put("include","sort");
-        params.put("filter",filterMap);
-        productRepository. invokeStaticMethod("all", params, new JsonArrayParser<PriceModel>(productRepository,new ListCallback<PriceModel>() {
-            @Override
-            public void onSuccess(List<PriceModel> objects) {
-                //listview清空
-                listClear();
-                listInit();
-                int number=0;
-                int price=0;
-                String lastDate="";
-                 for(int i=0;i<objects.size();i++){
-                    PriceModel priceModel=objects.get(i);
-                    if (priceModel.getRegionId()==regionId&&priceModel.getSortId()
-                            ==sortId&&priceModel.getGradeId()==gradeId){
-                        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                        if (textTimeS.getText().toString().equals("开始")&&textTimeO.getText().toString().equals("结束")){
+    /**
+     * 获取所有的品种信息
+     */
+    private void getSorts() {
+        showLoadingDialog();
+        SortRepository sortRepository = SortRepository.getInstance(this, null);
 
-                            Log.d("test",dateFormat.format(new Date())+"........"+priceModel.getPriceDate().substring(0,10));
-                            if (dateFormat.format(new Date()).equals(priceModel.getPriceDate().substring(0,10))){
-                                    TendList tendList=new TendList(textProvince.getText().toString(),textType.getText().toString(),
-                                            textRank.getText().toString(),priceModel.getPrice()+"",priceModel.getPriceDate().substring(0,10));
-                                    priceArray.add(tendList);
-                            }
-
-                        }else if (!textTimeS.getText().toString().equals("开始")&&!textTimeO.getText().toString().equals("结束")){
-                            //比较时间
-
-                            try {
-                                Date dateTimeS = dateFormat.parse(textTimeS.getText().toString());
-                                Date dateTimeO = dateFormat.parse(textTimeO.getText().toString());
-                                Date dateTime=dateFormat.parse(priceModel.getPriceDate());
-                                int t1 = dateTimeS.compareTo(dateTime);
-                                int t2 = dateTimeO.compareTo(dateTime);
-                                if (t1<=0&&t2>=0){
-                                    if (priceModel.getPriceDate().substring(0,10).equals(lastDate)){
-                                        //只添加最后一次上传的价格
-                                        number++;
-                                        price= (int) (price+priceModel.getPrice());
-                                    }else {
-                                        number++;
-                                        price= (int) (price+priceModel.getPrice());
-                                        TendList tendList=new TendList(textProvince.getText().toString(),textType.getText().toString(),
-                                                textRank.getText().toString(),price/number+"",priceModel.getPriceDate().substring(0,10));
-                                        priceArray.add(tendList);
-                                        lastDate=priceModel.getPriceDate().substring(0,10);
-                                        number=0;
-                                        price=0;
-                                    }
-
-                                }
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
-                        }else {
-                            Toast.makeText(TendencyActivity.this,"请填写完整时间信息",Toast.LENGTH_SHORT).show();
-                        }
-
-                    }
-                     tendListAdapter=new TendListAdapter(TendencyActivity.this,R.layout.item_tend_list,priceArray);
-                     listView.setAdapter(tendListAdapter);
-                }
-
-            }
-            @Override
-            public void onError(Throwable t) {
-                Log.d("test","Throwable..Obj..."+t.toString());
-            }
-        }));
-    }
-
-    private void getPriceLine() {
-        RestAdapter adapter = new RestAdapter(getApplicationContext(),apiUrl);
-        adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
-        PriceRepository productRepository = adapter.createRepository(PriceRepository.class);
-        Map<String, Object> params = new HashMap<String, Object>();
-        Map<String, Object> filterMap = new HashMap<String, Object>();
-        filterMap.put("include","sort");
-        params.put("filter",filterMap);
-        productRepository. invokeStaticMethod("all", params, new JsonArrayParser<PriceModel>(productRepository,new ListCallback<PriceModel>() {
-            @Override
-            public void onSuccess(List<PriceModel> objects) {
-                List<LineData> mlist = new ArrayList<LineData>();
-                String lastDate="";
-                int number=0;
-                int price=0;
-                for(int i=0;i<objects.size();i++){
-                    PriceModel priceModel=objects.get(i);
-                    if (priceModel.getRegionId()==regionId&&priceModel.getSortId()
-                            ==sortId&&priceModel.getGradeId()==gradeId){
-                        if (textTimeS.getText().toString().equals("开始")&&textTimeO.getText().toString().equals("结束")){
-                            if (priceModel.getPriceDate().substring(0,10).equals(lastDate)){
-                                //只添加第一次上传的价格
-                                number++;
-                                price= (int) (price+priceModel.getPrice());
-                            }else {
-                                //控制最近的七个
-                                if (mlist.size()==7){
-                                    //去掉最远的一个
-                                    mlist.remove(0);
-                                }
-                                number++;
-                                price= (int) (price+priceModel.getPrice());
-                                mlist.add(new LineData(price/number,priceModel.getPriceDate().substring(0,10)));
-                                lastDate=priceModel.getPriceDate().substring(0,10);
-                                number=0;
-                                price=0;
-                            }
-                        }else if (!textTimeS.getText().toString().equals("开始")&&!textTimeO.getText().toString().equals("结束")){
-                            //比较时间
-                            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                            try {
-                                Date dateTimeS = dateFormat.parse(textTimeS.getText().toString());
-                                Date dateTimeO = dateFormat.parse(textTimeO.getText().toString());
-                                Date dateTime=dateFormat.parse(priceModel.getPriceDate());
-                                int t1 = dateTimeS.compareTo(dateTime);
-                                int t2 = dateTimeO.compareTo(dateTime);
-                                if (t1<=0&&t2>=0){
-
-                                    if (priceModel.getPriceDate().substring(0,10).equals(lastDate)){
-                                        number++;
-                                        price= (int) (price+priceModel.getPrice());
-                                    }else {
-                                        number++;
-                                        price= (int) (price+priceModel.getPrice());
-                                        mlist.add(new LineData(price/number,priceModel.getPriceDate().substring(0,10)));
-                                        lastDate=priceModel.getPriceDate().substring(0,10);
-                                        number=0;
-                                        price=0;
-                                    }
-
-                                }
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
-                        }else {
-                            Toast.makeText(TendencyActivity.this,"请填写完整时间信息",Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                }
-                chartWeb.loadUrl("file:///android_asset/test4.html");
-                //关联数据
-                Gson gson = new Gson();
-                String data  = gson.toJson(mlist);
-                chartWeb.addJavascriptInterface(new LineTableDate(TendencyActivity.this,data,"2"),"lineDate");
-
-
-
-            }
-            @Override
-            public void onError(Throwable t) {
-                Log.d("test","Throwable..Obj..."+t.toString());
-            }
-        }));
-    }
-    private void getInitPriceLine() {
-        RestAdapter adapter = new RestAdapter(getApplicationContext(),apiUrl);
-        adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
-        PriceRepository productRepository = adapter.createRepository(PriceRepository.class);
-        Map<String, Object> params = new HashMap<String, Object>();
-        Map<String, Object> filterMap = new HashMap<String, Object>();
-        filterMap.put("include","sort");
-        params.put("filter",filterMap);
-        productRepository. invokeStaticMethod("all", params, new JsonArrayParser<PriceModel>(productRepository,new ListCallback<PriceModel>() {
-            @Override
-            public void onSuccess(List<PriceModel> objects) {
-                List<LineData> mlist = new ArrayList<LineData>();
-                String lastDate="";
-                int number=0;
-                int price=0;
-                for(int i=0;i<objects.size();i++){
-                    PriceModel priceModel=objects.get(i);
-                    if (priceModel.getRegionId()==1&&priceModel.getSortId()
-                            ==22&&priceModel.getGradeId()==2){
-                        if (textTimeS.getText().toString().equals("开始")&&textTimeO.getText().toString().equals("结束")){
-                            if (priceModel.getPriceDate().substring(0,10).equals(lastDate)){
-                                number++;
-                                price= (int) (price+priceModel.getPrice());
-                            }else {
-                                //控制最近的七个
-                                if (mlist.size()==7){
-                                    //去掉最远的一个
-                                    mlist.remove(0);
-                                }
-                                number++;
-                                price= (int) (price+priceModel.getPrice());
-                                mlist.add(new LineData(price/number,priceModel.getPriceDate().substring(0,10)));
-                                lastDate=priceModel.getPriceDate().substring(0,10);
-                                number=0;
-                                price=0;
-                            }
-                        }
-                    }
-
-                }
-                chartWeb.loadUrl("file:///android_asset/test4.html");
-                //关联数据
-                Gson gson = new Gson();
-                String data  = gson.toJson(mlist);
-                chartWeb.addJavascriptInterface(new LineTableDate(TendencyActivity.this,data,"2"),"lineDate");
-
-
-
-            }
-            @Override
-            public void onError(Throwable t) {
-                Log.d("test","Throwable..Obj..."+t.toString());
-            }
-        }));
-    }
-
-    private void getPriceMap() {
-        RestAdapter adapter = new RestAdapter(getApplicationContext(),apiUrl);
-        adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
-        PriceRepository productRepository = adapter.createRepository(PriceRepository.class);
-        Map<String, Object> params = new HashMap<String, Object>();
-        Map<String, Object> filterMap = new HashMap<String, Object>();
-        filterMap.put("include","sort");
-        params.put("filter",filterMap);
-        productRepository. invokeStaticMethod("all", params, new JsonArrayParser<PriceModel>(productRepository,new ListCallback<PriceModel>() {
-            @Override
-            public void onSuccess(List<PriceModel> objects) {
-                List<MapData> mlist = new ArrayList<MapData>();
-                for(int i=0;i<objects.size();i++){
-                    PriceModel priceModel=objects.get(i);
-                    if (priceModel.getSortId() ==sortId&&priceModel.getGradeId()==gradeId){
-                        if (textTimeS.getText().toString().equals("开始")&&textTimeO.getText().toString().equals("结束")){
-                            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                            if (dateFormat.format(new Date()).equals(priceModel.getPriceDate().substring(0,10))){
-                                mlist.add(new MapData(getProvinceName(priceModel.getSortId(),regionObjects), (int) priceModel.getPrice()));
-                            }
-
-                        }else if (!textTimeS.getText().toString().equals("开始")&&!textTimeO.getText().toString().equals("结束")){
-                            //比较时间
-                            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                            try {
-                                Date dateTimeS = dateFormat.parse(textTimeS.getText().toString());
-                                Date dateTimeO = dateFormat.parse(textTimeO.getText().toString());
-                                Date dateTime=dateFormat.parse(priceModel.getPriceDate());
-                                int t1 = dateTimeS.compareTo(dateTime);
-                                int t2 = dateTimeO.compareTo(dateTime);
-                                if (t1<=0&&t2>=0){
-                                    Log.d("test","22111");
-                                    mlist.add(new MapData(getProvinceName(priceModel.getRegionId(),regionObjects), (int) priceModel.getPrice()));
-                                }
-                        } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
-                        }else {
-                            Toast.makeText(TendencyActivity.this,"请填写完整时间信息",Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                }
-                Log.d("test","2211");
-                //对list去重
-                for (int i=0;i<mlist.size();i++){
-                    MapData mapData=mlist.get(i);
-                    int numberBySort=1;
-                    int priceBySort=mapData.getValue();
-                    Log.d("test","i...."+i);
-                    for (int j=i+1;j<mlist.size();j++){
-                        Log.d("test","mlist.size()...."+mlist.size());
-                        Log.d("test","j...."+j);
-                        MapData mapData2=mlist.get(j);
-                        if (mapData2.getName().equals(mapData.getName())){
-                            priceBySort=priceBySort+mapData2.getValue();
-                            numberBySort++;
-                            mlist.remove(j);
-                            j--;
-                        }
-                    }
-                    mapData.setValue(priceBySort/numberBySort);
-                }
-
-                Log.d("test","221");
-                chartWeb.loadUrl("file:///android_asset/test5.html");
-                //关联数据
-                Gson gson = new Gson();
-                String data  = gson.toJson(mlist);
-                chartWeb.addJavascriptInterface(new MapTableDate(TendencyActivity.this,data,"2"),"mapDate");
-
-
-
-            }
-            @Override
-            public void onError(Throwable t) {
-                Log.d("test","Throwable..Obj..."+t.toString());
-            }
-        }));
-    }
-
-    private void listInit() {
-        TendList tendList=new TendList("地区","品种",
-                "等级","价格","日期");
-        priceArray.add(tendList);
-    }
-
-    private void listClear() {
-        priceArray.clear();
-        tendListAdapter=new TendListAdapter(TendencyActivity.this,R.layout.item_tend_list,priceArray);
-        listView.setAdapter(tendListAdapter);
-
-    }
-
-
-    private void showTimeChoose(final int i) {
-        pvTime = new TimePickerView(this, TimePickerView.Type.YEAR_MONTH_DAY);
-        pvTime.setTime(new Date());
-        pvTime.setCyclic(false);
-        pvTime.setCancelable(true);
-        //时间选择后回调
-        pvTime.setOnTimeSelectListener(new TimePickerView.OnTimeSelectListener() {
-            @Override
-            public void onTimeSelect(Date date) {
-                Log.d("test","time...."+getTime(date));
-                if (ifMap){
-                    textTimeS.setText(getTime(date));
-                    textTimeO.setText(getTime(date));
-
-                }else {
-                    Log.d("test","。。。。。"+textTimeS.getText());
-                    if (i==0){
-                        textTimeS.setText(getTime(date));
-                    }else if(textTimeS.getText().equals("开始")){
-                        Toast.makeText(TendencyActivity.this,"请先输入起始时间",Toast.LENGTH_SHORT).show();
-                    }else {
-                        int thisTime=Integer.parseInt(getTime(date).substring(0,4)+getTime(date).substring(5,7)+getTime(date).substring(8,10));
-                        int lastTime=Integer.parseInt(textTimeS.getText().toString().substring(0,4)+textTimeS.getText().toString().substring(5,7)+textTimeS.getText().toString().substring(8,10));
-                        Log.d("test","this..."+thisTime);
-                        if (thisTime>=lastTime) {
-                            textTimeO.setText(getTime(date));
-                        }else {
-                            Toast.makeText(TendencyActivity.this,"请选择更大的时间",Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                }
-
-
-
-            }
-        });
-        pvTime.show();
-    }
-
-
-    private void getSort() {
-        RestAdapter adapter = new RestAdapter(getApplicationContext(), apiUrl);
-        adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
-        SortRepository sortRepository = adapter.createRepository(SortRepository.class);
         sortRepository.findAll(new ListCallback<SortModel>() {
             @Override
             public void onSuccess(List<SortModel> objects) {
-                objectArray=objects;
-                SortTDialog sortDialog=new SortTDialog(TendencyActivity.this,hanSortDialog,objects);
+                loadingDialog.dismiss();
+                for (int i = 0; i < objects.size(); i++) {
+                    SortModel sortModel = objects.get(i);
+                    if (sortMap.containsKey(sortModel.getName())) {
+                        List<SortModel> sortModels = sortMap.get(sortModel.getName());
+                        sortModels.add(sortModel);
+                    } else {
+                        List<SortModel> sortModels = new ArrayList<SortModel>();
+                        sortModels.add(sortModel);
+                        sortMap.put(sortModel.getName(), sortModels);
+                    }
+                }
+
+                SortDialog sortDialog = new SortDialog(TendencyActivity.this, hanSortDialog, sortMap);
                 sortDialog.show();
-
             }
 
             @Override
             public void onError(Throwable t) {
-                Log.d("test","Throwable..Objs..."+t.toString());
-            }
-
-        });
-    }
-
-
-    private void getRank() {
-        RestAdapter adapter = new RestAdapter(getApplicationContext(), apiUrl);
-        adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
-        GradeRepository gradeRepository = adapter.createRepository(GradeRepository.class);
-        Log.d("test","a");
-        gradeRepository.findAll(new ListCallback<GradeModel>() {
-            @Override
-            public void onSuccess(List<GradeModel> objects) {
-                gradeArray=objects;
-                GradeTDialog gradeDialog=new GradeTDialog(TendencyActivity.this,hanGradeDialog,objects,sortId,textType.getText().toString());
-                gradeDialog.show();
-            }
-
-            @Override
-            public void onError(Throwable t) {
-                Log.d("test","Throwable..Objs..."+t.toString());
-            }
-
-
-        });
-    }
-    private void getProvince() {
-        RestAdapter adapter = new RestAdapter(getApplicationContext(),apiUrl);
-        adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
-        RegionRepository regionRepository = adapter.createRepository(RegionRepository.class);
-        regionRepository.findAll(new ListCallback<RegionModel>() {
-            @Override
-            public void onSuccess(List<RegionModel> objects) {
-                regionObjects=objects;
-            }
-
-            @Override
-            public void onError(Throwable t) {
-                Log.d("test","t...."+t.toString());
+                loadingDialog.dismiss();
+                Log.d("TendencyActivity", "Throwable..Objs..." + t.toString());
             }
         });
-
     }
 
-    public static String getTime(Date date) {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        return format.format(date);
-    }
-
-    @Override
-    //设置回退 在页面内回退
-    //覆盖Activity类的onKeyDown(int keyCoder,KeyEvent event)方法
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if ((keyCode == KeyEvent.KEYCODE_BACK) && chartWeb.canGoBack()) {
-            chartWeb.goBack(); //goBack()表示返回WebView的上一页面
-            return true;
+    /* *
+     * http://211.87.227.214:3001/api/prices?filter[include]=sort&filter[include]=grade&filter[include]=region
+     * http://211.87.227.214:3001/api/prices?filter={"include":["sort","grade","region"],"where":{}}  △△△△△
+     * 过滤报价信息
+     * 初始化报价信息
+     * 默认情况选最近一周的本地信息
+     * */
+    private void initPriceLine() {
+        if (endDate == null) {
+            endDate = new Date();
         }
-        return super.onKeyDown(keyCode,event);
+        if (startDate == null) {
+            startDate = new Date(endDate.getTime() - 7 * 24 * 60 * 60 * 1000);
+        }
+
+        Log.i("开始时间", dateFormat.format(startDate));
+        Log.i("结束时间", dateFormat.format(endDate));
+
+        PriceRepository priceRepository = PriceRepository.getInstance(this, null);
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        Map<String, Object> filterMap = new HashMap<String, Object>();
+        Map<String, Object> where = new HashMap<String, Object>();
+        Map<String, Object> priceDate = new HashMap<String, Object>();
+        List<Object> includeList = new ArrayList<>();
+
+        priceDate.put("lt", endDate);
+        priceDate.put("gte", startDate);
+
+        where.put("priceDate", priceDate);
+        if (selectedRegion == null) {
+            where.put("regionId", defaultRegionId);
+        } else {
+            where.put("regionId", selectedRegion.getId());
+        }
+        if (selectedSort != null) { // 品种
+            where.put("sortId", selectedSort.getId());
+        } else {
+            Map<String, Object> sort = new HashMap<String, Object>();
+            Map<String, Object> scope = new HashMap<String, Object>();
+            Map<String, Object> sortWhere = new HashMap<String, Object>();
+            sortWhere.put("subName","生猪");
+            scope.put("where", sortWhere);
+            sort.put("relation", "sort");
+            sort.put("scope", scope);
+            includeList.add(sort);
+        }
+        if (selectedGrade != null) { // 等级
+            where.put("gradeId", selectedGrade.getId());
+        }
+
+        includeList.add("sort");
+        includeList.add("grade");
+        includeList.add("region");
+
+        filterMap.put("where", where);
+        filterMap.put("include", includeList);
+        filterMap.put("order", "priceDate"); //按priceDate排序
+
+        Gson gson = new Gson();
+        String filterStr = gson.toJson(filterMap);
+
+        params.put("filter", filterStr);
+
+        priceRepository.invokeStaticMethod("all", params, new Adapter.JsonArrayCallback() {
+            @Override
+            public void onSuccess(JSONArray response) {
+                Log.i("Tendency", response.toString());
+                int len = response.length();
+                if (len > 0) {
+                    Gson gson1 = CommonUtil.getGSON();
+                    priceModelList = new ArrayList<PriceModel>(len);
+                    String lastPriceDateStr = null;
+                    lineDataList = new ArrayList<LineData>();
+                    double sumPrice = 0;
+                    int num = 0;
+                    for (int i = 0; i < len; i++) {
+                        JSONObject jsonObject = response.optJSONObject(i);
+
+                        PriceModel priceModel = gson1.fromJson(jsonObject.toString(), PriceModel.class);
+                        priceModelList.add(priceModel);
+
+                        String priceDateStr = dateFormat.format(priceModel.getPriceDate());
+
+                        if (TextUtils.equals(lastPriceDateStr, priceDateStr)) {
+                            sumPrice += priceModel.getPrice();
+                            num += 1;
+                        } else {
+                            if (num > 0) {
+                                lineDataList.add(new LineData(sumPrice / num, lastPriceDateStr));
+                            }
+                            sumPrice = priceModel.getPrice();
+                            num = 1;
+                            lastPriceDateStr = priceDateStr;
+                        }
+
+                        if (i == len - 1) {
+                            lineDataList.add(new LineData(sumPrice / num, lastPriceDateStr));
+                        }
+                    }
+
+                    Log.i("price", lineDataList.toString());
+                    String data = gson1.toJson(lineDataList);
+                    Log.i("Json->Data", data);
+                    chartWeb.addJavascriptInterface(new LineTableDate(data), "lineData");
+                    chartWeb.loadUrl("file:///android_asset/lineChart.html");
+                }
+            }
+
+            @Override
+            public void onError(Throwable t) {
+//                chartWeb.loadUrl("file:///android_asset/noData.html");
+            }
+        });
+    }
+
+    /**
+     * 初始化地图信息
+     * <p>
+     * 以开始时间为准
+     */
+    private void initPriceMap() {
+        if (startDate == null) { //默认：2016-10-26 00:00:00 ~ 2016-10-27 00:00:00
+            String todayStr = dateFormat.format(new Date());
+            try {
+                startDate = new Date(dateFormat.parse(todayStr).getTime());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            endDate = new Date(startDate.getTime() + 24 * 60 * 60 * 1000);
+        } else { //
+            try {
+                startDate = dateFormat.parse(textTimeS.getText().toString());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            endDate = new Date(startDate.getTime() + 24 * 60 * 60 * 1000);
+        }
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        Map<String, Object> filterMap = new HashMap<String, Object>();
+        Map<String, Object> where = new HashMap<String, Object>();
+        Map<String, Object> priceDate = new HashMap<String, Object>();
+
+
+        priceDate.put("lt", endDate);
+        priceDate.put("gte", startDate);
+
+        where.put("priceDate", priceDate);
+        where.put("sortId", selectedSort.getId());
+        where.put("gradeId", selectedGrade.getId());
+
+        filterMap.put("where", where);
+
+        List<String> list = new ArrayList<>();
+        list.add("sort");
+        list.add("grade");
+        list.add("region");
+
+        filterMap.put("include", list);
+
+        filterMap.put("order", "regionId"); //按地区regionId排序
+
+        Gson gson1 = new Gson();
+        String filterStr = gson1.toJson(filterMap);
+
+        params.put("filter", filterStr);
+
+        PriceRepository priceRepository = PriceRepository.getInstance(this, null);
+        priceRepository.invokeStaticMethod("all", params, new Adapter.JsonArrayCallback() {
+            @Override
+            public void onSuccess(JSONArray response) {
+                int len = response.length();
+                if (len > 0) {
+                    Gson gson2 = CommonUtil.getGSON();
+                    priceModelList = new ArrayList<PriceModel>(len);
+                    int lastRegionId = -1; //用户记录上一次的信心
+                    RegionModel lastRegion = null;
+                    mapDataList = new ArrayList<MapData>();
+                    double sumPrice = 0;
+                    int num = 0;
+                    for (int i = 0; i < len; i++) {
+                        JSONObject jsonObject = response.optJSONObject(i);
+
+                        PriceModel priceModel = gson2.fromJson(jsonObject.toString(), PriceModel.class);
+                        priceModelList.add(priceModel);
+
+                        int regionId = priceModel.getRegionId();
+
+                        if (regionId == lastRegionId) {
+                            sumPrice += priceModel.getPrice();
+                            num += 1;
+                        } else {
+                            if (num > 0) {
+                                String str = lastRegion.getProvince().replace("省", "").replace("市", "");
+                                mapDataList.add(new MapData(str, sumPrice / num));
+                            }
+                            sumPrice = priceModel.getPrice();
+                            num = 1;
+                            lastRegionId = regionId;
+                            lastRegion = priceModel.getRegion();
+                        }
+
+                        if (i == len - 1) {
+                            String str = lastRegion.getProvince().replace("省", "").replace("市", "");
+                            mapDataList.add(new MapData(str, sumPrice / num));
+                        }
+                    }
+
+                    Log.i("price", mapDataList.toString());
+                    String data = gson2.toJson(mapDataList);
+                    Log.i("Json->Data", data);
+                    chartWeb.addJavascriptInterface(new MapTableDate(data), "mapData");
+                    chartWeb.loadUrl("file:///android_asset/mapChart.html");
+                }
+            }
+
+            @Override
+            public void onError(Throwable t) {
+//                chartWeb.loadUrl("file:///android_asset/noData.html");
+            }
+        });
+    }
+
+    private void showStartTime() {
+        if (pvStartTime == null) {
+            pvStartTime = new TimePickerView(this, TimePickerView.Type.YEAR_MONTH_DAY);
+//            pvStartTime.set
+            pvStartTime.setTime(new Date());
+            pvStartTime.setCyclic(false);
+            pvStartTime.setCancelable(true);
+            pvStartTime.setOnTimeSelectListener(new TimePickerView.OnTimeSelectListener() {
+                @Override
+                public void onTimeSelect(Date date) {
+                    startDate = date;
+                    String dateStr = dateFormat.format(date);
+                    textTimeS.setText(dateStr);
+                }
+            });
+        }
+        pvStartTime.show();
+    }
+
+    private void showEndTime() {
+        if (pvEndTime == null) {
+            pvEndTime = new TimePickerView(this, TimePickerView.Type.YEAR_MONTH_DAY);
+            pvEndTime.setTime(new Date());
+            pvEndTime.setCyclic(false);
+            pvEndTime.setCancelable(true);
+            pvEndTime.setOnTimeSelectListener(new TimePickerView.OnTimeSelectListener() {
+                @Override
+                public void onTimeSelect(Date date) {
+                    if (startDate.getTime() > date.getTime()) {
+                        Toast.makeText(TendencyActivity.this, "请选择更大的时间", Toast.LENGTH_SHORT).show();
+                    } else {
+                        endDate = date;
+                        String dateStr = dateFormat.format(date);
+                        textTimeO.setText(dateStr);
+                    }
+                }
+            });
+        }
+        pvEndTime.show();
+    }
+
+//    @Override
+//    //设置回退 在页面内回退
+//    //覆盖Activity类的onKeyDown(int keyCoder,KeyEvent event)方法
+//    public boolean onKeyDown(int keyCode, KeyEvent event) {
+//        if ((keyCode == KeyEvent.KEYCODE_BACK) && chartWeb.canGoBack()) {
+//            chartWeb.goBack(); //goBack()表示返回WebView的上一页面
+//            return true;
+//        }
+//        return super.onKeyDown(keyCode,event);
+//    }
+
+    private void showLoadingDialog() {
+        if (loadingDialog == null) {
+            View v2 = getLayoutInflater().inflate(R.layout.loading_dialog2, null);// 得到加载view
+            LinearLayout layout2 = (LinearLayout) v2.findViewById(R.id.dialog_view2);
+
+            loadingDialog = new Dialog(this, R.style.loading_dialog);
+            loadingDialog.setContentView(layout2, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT));
+        }
+
+        loadingDialog.show();
     }
 }

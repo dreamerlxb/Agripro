@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="135dp"
+    android:layout_height="wrap_content"
     android:background="#ffffff">
 
 <LinearLayout
@@ -9,83 +9,87 @@
     android:weightSum="3"
     android:background="#ffffff"
     android:layout_width="match_parent"
-    android:layout_height="50dp">
+    android:layout_height="wrap_content"
+    android:paddingBottom="5dp"
+    android:paddingEnd="10dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:paddingStart="10dp"
+    android:paddingTop="5dp">
     <TextView
         android:id="@+id/text_region"
-        android:gravity="center"
-        android:textSize="@dimen/item_size"
+        android:gravity="left|center"
+        android:textSize="14sp"
         android:layout_weight="1"
-        android:layout_width="0dp"
-        android:layout_height="50dp" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="山东聊城" />
     <TextView
         android:id="@+id/text_sort_grade"
-        android:gravity="center"
-        android:textSize="@dimen/item_size"
+        android:gravity="left|center"
+        android:textSize="14sp"
         android:layout_weight="1"
-        android:layout_width="0dp"
-        android:layout_height="50dp" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="生猪  外三元" />
     <TextView
         android:id="@+id/text_price"
-        android:gravity="center"
-        android:textSize="@dimen/item_size"
+        android:gravity="right|center"
+        android:textSize="14sp"
         android:layout_weight="1"
-        android:layout_width="0dp"
-        android:layout_height="50dp" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="20.8元/kg" />
 </LinearLayout>
 
     <LinearLayout
         android:orientation="horizontal"
-        android:weightSum="3"
         android:background="#ffffff"
         android:layout_width="match_parent"
-        android:layout_height="50dp">
+        android:layout_height="wrap_content"
+        android:paddingEnd="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingStart="10dp"
+        android:weightSum="3">
         <TextView
             android:id="@+id/text_amount"
-            android:gravity="center"
-            android:textSize="@dimen/item_size"
+            android:textSize="14sp"
             android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="50dp" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2kg"
+            android:gravity="left|center" />
+
         <TextView
             android:id="@+id/text_market_name"
-            android:gravity="center"
-            android:textSize="@dimen/item_size"
+            android:gravity="left|center"
+            android:textSize="14sp"
             android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="50dp" />
-        <TextView
-            android:gravity="center"
-            android:textSize="@dimen/item_size"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="50dp" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="大集" />
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
     </LinearLayout>
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:weightSum="3"
-        android:background="#ffffff"
+    <TextView
+        android:id="@+id/text_up_time"
+        android:gravity="right|center"
+        android:textSize="12sp"
+        android:layout_weight="1"
         android:layout_width="match_parent"
-        android:layout_height="35dp">
-        <TextView
-            android:gravity="center"
-            android:textSize="@dimen/item_size"
-            android:layout_weight="2"
-            android:layout_width="0dp"
-            android:layout_height="35dp"/>
-
-        <TextView
-            android:id="@+id/text_up_time"
-            android:gravity="center"
-            android:textSize="@dimen/item_size"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="35dp" />
-    </LinearLayout>
-
-
-
-
-
+        android:layout_height="0dp"
+        android:text="2012-12-12 12:12:12"
+        android:paddingBottom="5dp"
+        android:paddingEnd="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingStart="10dp"
+        android:paddingTop="5dp" />
 
 </LinearLayout>

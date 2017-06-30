@@ -1,462 +1,501 @@
 package com.idejie.android.aoc.fragment;
 
-import android.Manifest;
-import android.app.Activity;
-import android.content.Context;
+import android.app.Dialog;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.app.ActivityCompat;
+import android.support.annotation.Nullable;
+import android.support.v4.util.ArrayMap;
+import android.text.TextUtils;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.common.collect.ImmutableMap;
+import com.amap.api.location.AMapLocation;
+import com.amap.api.location.AMapLocationClient;
+import com.amap.api.location.AMapLocationClientOption;
+import com.amap.api.location.AMapLocationListener;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.idejie.android.aoc.R;
 import com.idejie.android.aoc.activity.TendencyActivity;
-import com.idejie.android.aoc.adapter.SearchListAdapter;
-import com.idejie.android.aoc.bean.LineData;
-import com.idejie.android.aoc.bean.SearchList;
-import com.idejie.android.aoc.dialog.CityDialog;
-import com.idejie.android.aoc.dialog.MyDialog;
+import com.idejie.android.aoc.adapter.RiseAndFallListAdapter;
+import com.idejie.android.aoc.bean.RiseAndFallBean;
+
+import com.idejie.android.aoc.dialog.ProvinceTDialog;
 import com.idejie.android.aoc.model.PriceModel;
 import com.idejie.android.aoc.model.RegionModel;
-import com.idejie.android.aoc.model.SortModel;
 import com.idejie.android.aoc.repository.PriceRepository;
 import com.idejie.android.aoc.repository.RegionRepository;
-import com.idejie.android.aoc.repository.SortRepository;
-import com.idejie.android.aoc.tools.Areas;
-import com.idejie.android.aoc.tools.AutoString;
-import com.idejie.android.aoc.tools.NetThread;
-import com.idejie.android.library.fragment.LazyFragment;
-import com.idejie.android.library.view.indicator.IndicatorViewPager;
-import com.strongloop.android.loopback.RestAdapter;
-import com.strongloop.android.loopback.callbacks.JsonArrayParser;
-import com.strongloop.android.loopback.callbacks.ListCallback;
-import com.strongloop.android.loopback.callbacks.VoidCallback;
 
-import org.json.JSONException;
+import com.idejie.android.library.fragment.LazyFragment;
+import com.strongloop.android.loopback.callbacks.ListCallback;
+import com.strongloop.android.remoting.adapters.Adapter;
+
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.Inflater;
 
 /**
  * Created by shandongdaxue on 16/8/10.
  */
-public class SearchFragment extends LazyFragment implements View.OnClickListener {
-    private IndicatorViewPager indicatorViewPager;
-    private LayoutInflater inflate;
+public class SearchFragment extends LazyFragment implements View.OnClickListener,AMapLocationListener{
+
     public static final String INTENT_STRING_TABNAME = "intent_String_tabname";
     public static final String INTENT_INT_INDEX = "intent_int_index";
-    private String tabName;
-    private int index;
-    private Handler hanDialog,hanCityDialog;
-    private Button tendBtn;
-    private TextView cityText;
-    private Context context;
-    private Activity activity;
-    private View view;
-    private String lat,lon;
-    private Handler han;
+
+    private RegionModel locationRegion;
     private ListView listView;
-    String url="http://api.map.baidu.com/geocoder/v2/";
-    private int regionId;
-    private ArrayList<SearchList> priceArray;
-    private ArrayList<SearchList> yesterdayArray;
-    private List<SortModel> sortObjects;
-//    private String apiUrl="http://192.168.1.114:3001/api";
-private String apiUrl="http://211.87.227.214:3001/api";
+    private View emptyView;
+    private RiseAndFallListAdapter listViewAdapter;
+    private TextView regionTxt;
+    private Button tendBtn;
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    private List<PriceModel> todayPriceList = new ArrayList<PriceModel>();
+    private List<PriceModel> yesterdayPriceList = new ArrayList<PriceModel>();
+    private boolean loc = false;
+    private AMapLocationClientOption locationClientOption;
+    private AMapLocationClient locationClient;
+    private Handler hanProvinceDialog;
+    private Dialog loadingDialog;
+    private ArrayMap<String, List<RegionModel>> chinaMap;
     /**
      * 初始化操作
      */
 
     public void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
-        context = getActivity();
-        activity = getActivity();
-
     }
 
-    /**
-     * 界面初始化
-     */
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        super.onCreateView(inflater, container, savedInstanceState);
-        view = inflater.inflate(R.layout.fragment_search, container,
-                false);
-        init();
-        getGPSLocation();
-        return view;
+    private void initLocationClient(){
+        locationClient = new AMapLocationClient(getContext());
+        locationClient.setLocationListener(this);
+
+        locationClientOption = new AMapLocationClientOption();
+        locationClientOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
+
+        locationClientOption.setInterval(2000);//设置定位间隔,单位毫秒,默认为2000ms，最低1000ms。
+
+        //获取最近3s内精度最高的一次定位结果：
+        //设置setOnceLocationLatest(boolean b)接口为true，启动定位时SDK会返回最近3s内精度最高的一次定位结果。如果设置其为true，setOnceLocation(boolean b)接口也会被设置为true，反之不会，默认为false。
+        locationClientOption.setOnceLocationLatest(true);
+
+        locationClientOption.setNeedAddress(true); //设置是否返回地址信息（默认返回地址信息）
+
+        locationClient.setLocationOption(locationClientOption);
     }
 
-    /**
-     * 获取当前经纬度
-     */
-    private void getGPSLocation() {
-        String provider;
-        LocationManager locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
-        //获取所有位置提供器
-        List<String> providerList = locationManager.getProviders(true);
-        if (providerList.contains(LocationManager.GPS_PROVIDER)) {
-            provider = LocationManager.GPS_PROVIDER;
-        } else if (providerList.contains(LocationManager.NETWORK_PROVIDER)) {
-            provider = LocationManager.NETWORK_PROVIDER;
-        } else {
-            Toast.makeText(activity, "No location provider", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        //检查Permission
-        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        Location location = locationManager.getLastKnownLocation(provider);
-        if(location != null){
-            Log.d("test","4");
-            lat = String.valueOf(location.getLatitude());
-            lon = String.valueOf(location.getLongitude());
-            AutoString autoString=new AutoString("ak","Lza9At4WibEALZnxBxANUFvUmuplUqGB");
-            autoString.addToResult("callback","renderReverse");
-            autoString.addToResult("location",lat+","+lon);
-            autoString.addToResult("output","json");
-            autoString.addToResult("pois","1");
-            String params=autoString.getResult();
-            Log.d("test","params"+params);
-            //网络连接接口
-            NetThread nt=new NetThread(han,url,params);
-            nt.start();
-            Log.d("test","Lat:"+lat+";Lon="+lon);
-        }else{
-            Log.d("test","5");
-            LocationListener locationListener = new LocationListener(){
-                public void onLocationChanged(Location location) {}
-                public void onStatusChanged(String provider, int status, Bundle extras) {}
-                public void onProviderEnabled(String provider) {}
-                public void onProviderDisabled(String provider) {}
-            };
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,1000, 0, locationListener);
-            location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            if(location != null){
-                lat = String.valueOf(location.getLatitude());
-                lon = String.valueOf(location.getLongitude());
-            }
-        }
-    }
+    @Override
+    protected void onCreateViewLazy(Bundle savedInstanceState) {
+        super.onCreateViewLazy(savedInstanceState);
+        Log.d("SearchFragment","onCreateViewLazy");
+        setContentView(R.layout.fragment_search);
 
-
-
-    private void init() {
-        getSortObjects();
-        tendBtn = (Button) view.findViewById(R.id.btn_tendency);
+        tendBtn = (Button) findViewById(R.id.btn_tendency);
         tendBtn.setOnClickListener(this);
-        cityText = (TextView) view.findViewById(R.id.textCity);
-        cityText.setOnClickListener(this);
-        listView= (ListView) view.findViewById(R.id.listView);
-        priceArray=new ArrayList<SearchList>();
-        yesterdayArray=new ArrayList<SearchList>();
-        han = new Handler() {
+        regionTxt = (TextView) findViewById(R.id.location_txt);
+        regionTxt.setOnClickListener(this);
+        listView= (ListView) findViewById(R.id.listView);
+
+        emptyView = findViewById(R.id.list_no_data);
+        listView.setEmptyView(emptyView);
+
+        initLocationClient();
+
+        hanProvinceDialog = new Handler() {
             public void handleMessage(Message msg) {
-                // TODO Auto-generated method stub
-                String Jsmess = (String) msg.obj;
-                Log.d("test","location........"+Jsmess);
-                //获取JSON对象
-                JSONObject temp = null;
-                try {
-                    temp = new JSONObject(Jsmess);
-                    //得到数据
-                    String Js2 = temp.getString("result");
-                    JSONObject temp2 = new JSONObject(Js2);
-                    String Js3=temp2.getString("addressComponent");
-                    JSONObject temp3 = new JSONObject(Js3);
-                    String city=temp3.getString("city");
-                    Log.d("test","city........"+city);
-                    cityText.setText(city);
-                    getCityId();
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                locationRegion = (RegionModel) msg.obj;
+                if (locationRegion.getCity() != null) {
+                    regionTxt.setText(locationRegion.getCity());
+                } else {
+                    regionTxt.setText(locationRegion.getProvince());
                 }
+                initListData();
             }
         };
-        hanDialog = new Handler() {
-            public void handleMessage(Message msg) {
-                // TODO Auto-generated method stub
-                if (msg.what==1){
-                    String Jsmess = (String) msg.obj;
-                    cityText.setText(Jsmess);
-                    getCityId();
-                }else {
-                    CityDialog dialog=new CityDialog(context,hanCityDialog, (Integer) msg.obj);
-                    dialog.show();
-                }
-
-            }
-        };
-        hanCityDialog = new Handler() {
-            public void handleMessage(Message msg) {
-                // TODO Auto-generated method stub
-                    String Jsmess = (String) msg.obj;
-                    cityText.setText(Jsmess);
-                    getCityId();
-
-            }
-        };
-
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+    }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.btn_tendency:
-                Intent intent=new Intent(activity, TendencyActivity.class);
+                Intent intent=new Intent(getContext(), TendencyActivity.class);
+                if (locationRegion == null){
+                    intent.putExtra("defaultRegionId", 1);
+                } else {
+                    Double id = (Double) locationRegion.getId();
+                    intent.putExtra("defaultRegionId", id.intValue());
+                }
                 startActivity(intent);
                 break;
-            case R.id.textCity:
-                MyDialog dialog=new MyDialog(context,hanDialog);
-                dialog.show();
+            case R.id.location_txt:
+                if (chinaMap == null) {
+                    view.setEnabled(false);
+                    chinaMap = new ArrayMap<>();
+                    getRegionInfo();
+                } else {
+                    ProvinceTDialog dialog = new ProvinceTDialog(getContext(), hanProvinceDialog, chinaMap);
+                    dialog.show();
+                }
                 break;
         }
     }
+    //获取选择的城市的Id
+    private void getCityId(String city,String provinceName) {
+        RegionRepository regionRepository = RegionRepository.getInstance(getContext(),null);
+        Map<String,Object> params = new HashMap<>();
+        Map<String,Object> filter = new HashMap<>();
+        Map<String,Object> where = new HashMap<>();
 
-    private void getCityId() {
-        RestAdapter adapter = new RestAdapter(activity.getApplicationContext(),apiUrl);
-        adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
-        RegionRepository regionRepository = adapter.createRepository(RegionRepository.class);
-        regionRepository.findAll(new ListCallback<RegionModel>() {
+        if (TextUtils.isEmpty(provinceName)) { //说明是直辖市，港澳台，自治区
+            where.put("province",city);
+        } else {
+            where.put("province",provinceName);//说明是普通省市
+            where.put("city",city);
+        }
+
+        filter.put("where",where);
+        params.put("filter",filter);
+        regionRepository.invokeStaticMethod("all", params, new Adapter.JsonArrayCallback() {
             @Override
-            public void onSuccess(List<RegionModel> objects) {
-                for (int i=0;i<objects.size();i++){
-                    if(cityText.getText().toString().equals(objects.get(i).getCity())){
-                        regionId= (int) objects.get(i).getId();
-                    } else if(objects.get(i).getProvince().equals(cityText.getText().toString())){
-                    regionId= (int) objects.get(i).getId();
+            public void onSuccess(JSONArray response) {
+                if (response.length()>0){
+                    JSONObject jsonObject = response.optJSONObject(0);
+                    Gson gson = new Gson();
+                    locationRegion = gson.fromJson(jsonObject.toString(),RegionModel.class);
+                    Log.i("locationRegion",locationRegion.toString());
+                    initListData();
                 }
-                }
-                getPrice();
             }
-
             @Override
             public void onError(Throwable t) {
-                Log.d("test","t...."+t.toString());
+                Log.i("locationRegion",t.toString());
             }
         });
-
     }
 
-    private void getPrice() {
-        RestAdapter adapter = new RestAdapter(getApplicationContext(),apiUrl);
-        adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
-        PriceRepository productRepository = adapter.createRepository(PriceRepository.class);
+    /**
+     * 初始化列表信息
+     * 同一个地区的同一品种的涨跌（只与前一天比较）
+     * */
+    private void initListData(){
+        Date startDate = null;
+        Date endDate = new Date(); //此时此刻
+        final String nowStr = dateFormat.format(endDate); // "2016-10-19";//
+        try {
+            Date today = dateFormat.parse(nowStr); // 今天的 00:00:00
+            startDate = new Date(today.getTime() - 24*60*60*1000); //开始时间为起那一天的00:00:00
+
+            Log.d("today",dateFormat.format(today));
+            Log.d("startDate",dateFormat.format(startDate));
+            Log.d("endDate",dateFormat.format(endDate));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
         Map<String, Object> params = new HashMap<String, Object>();
         Map<String, Object> filterMap = new HashMap<String, Object>();
-        filterMap.put("include","sort");
-        params.put("filter",filterMap);
-        productRepository. invokeStaticMethod("all", params, new JsonArrayParser<PriceModel>(productRepository,new ListCallback<PriceModel>() {
+        Map<String, Object> where = new HashMap<String, Object>();
+        final Map<String, Object> priceDate = new HashMap<String, Object>();
 
+        priceDate.put("lt",endDate);
+        priceDate.put("gte",startDate);
+
+        where.put("priceDate",priceDate);
+        if (locationRegion == null) {
+            where.put("regionId",1); //以北京为例
+        } else {
+            where.put("regionId",locationRegion.getId());
+        }
+
+        filterMap.put("where",where);
+
+        List<String> include = new ArrayList<>();
+        include.add("sort");
+        include.add("grade");
+        include.add("region");
+
+        filterMap.put("include",include);
+
+        List<String> order = new ArrayList<>();
+        order.add("sortId");
+        order.add("priceDate");
+
+        filterMap.put("order",order); //按品种排序
+
+        Gson gson1 = new Gson();
+        String filterStr =  gson1.toJson(filterMap);
+
+        params.put("filter",filterStr);
+
+        showLoadingDialog(true);
+        PriceRepository priceRepository = PriceRepository.getInstance(getContext(),null);
+        priceRepository.invokeStaticMethod("all", params, new Adapter.JsonArrayCallback() {
             @Override
-            public void onSuccess(List<PriceModel> objects) {
+            public void onSuccess(JSONArray response) {
+                showLoadingDialog(false);
+                int len = response.length();
+                if (len > 0) {
+                    Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+                    todayPriceList.clear();
+                    yesterdayPriceList.clear();
+                    for (int i = 0; i < len; i++) {
+                        JSONObject jsonObject = response.optJSONObject(i);
+                        PriceModel priceModel = gson.fromJson(jsonObject.toString(),PriceModel.class);
 
-                getYesterdayArray(objects);
+                        String priceDateStr = dateFormat.format(priceModel.getPriceDate());
 
-            }
-            @Override
-            public void onError(Throwable t) {
-                Log.d("test","Throwable..Obj..."+t.toString());
-            }
-        }));
-    }
-
-    private String getTend(SearchList searchList) {
-        String tend="-";
-        for(int i=0;i<yesterdayArray.size();i++){
-            if (searchList.getSort().equals(yesterdayArray.get(i).getSort())){
-                tend= String.valueOf(((int)searchList.getPrice()-yesterdayArray.get(i).getPrice())*100/searchList.getPrice())+"%";
-                if ((searchList.getPrice()-yesterdayArray.get(i).getPrice())<0){
-                    tend= String.valueOf((searchList.getPrice()-yesterdayArray.get(i).getPrice())*100/searchList.getPrice())+"%";
+                        if (TextUtils.equals(nowStr,priceDateStr)) {
+                            //今天同一产品
+                            todayPriceList.add(priceModel);
+                        } else {
+                            yesterdayPriceList.add(priceModel);
+                        }
+                    }
+                    calculateRiseAndFall();
                 }
-            }
-        }
-        return tend;
-    }
-
-    private void getYesterdayArray(List<PriceModel> objects) {
-        Date date=new Date();//取时间
-        Calendar calendar = new GregorianCalendar();
-        calendar.setTime(date);
-        calendar.add(calendar.DATE,-1);//把日期往后增加一天.整数往后推,负数往前移动
-        date=calendar.getTime(); //这个时间就是日期往后推一天的结果
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        String dateString = formatter.format(date);
-        int price2=0;
-        int number2=0;
-        String lastDate2="";
-        Log.d("test",".....110");
-        for (int i=0;i<objects.size();i++){
-            if (objects.get(i).getRegionId()==regionId&&dateString.equals(objects.get(i).getPriceDate().substring(0,10))){
-                if (objects.get(i).getPriceDate().substring(0,10).equals(lastDate2)){
-                    number2++;
-                    price2= (int) (price2+objects.get(i).getPrice());
-                }else {
-                    number2++;
-                    price2= (int) (price2+objects.get(i).getPrice());
-                    yesterdayArray.add(new SearchList(price2/number2,getSort(objects.get(i).getSortId())));
-                    lastDate2=objects.get(i).getPriceDate().substring(0,10);
-                    number2=0;
-                    price2=0;
-                }
-
-            }
-        }
-        Log.d("test",".....111");
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");//设置日期格式
-        final String dateNow=df.format(new Date());
-        priceArray.clear();
-        int price=0;
-        int number=0;
-        String lastDate="";
-        Log.d("test",".....112");
-        for (int i=0;i<objects.size();i++){
-            Log.d("test",".....113");
-            if (objects.get(i).getRegionId()==regionId&&objects.get(i).getPriceDate().substring(0,10).equals(dateNow)) {
-
-                if (objects.get(i).getPriceDate().substring(0,10).equals(lastDate)){
-                    Log.d("test",".....114");
-                    number++;
-                    price= (int) (price+objects.get(i).getPrice());
-                }else {
-                    number++;
-                    price= (int) (price+objects.get(i).getPrice());
-                    lastDate=objects.get(i).getPriceDate().substring(0,10);
-                    SearchList searchDate = new SearchList();
-                    searchDate.setArea(cityText.getText().toString());
-                    searchDate.setPrice(price/number);
-                    Log.d("test",".....1151");
-                    searchDate.setTend(getTend(new SearchList(price/number,getSort(objects.get(i).getSortId()))));
-                    Log.d("test",".....1152");
-                    searchDate.setSort(getSort(objects.get(i).getSortId()));
-                    priceArray.add(searchDate);
-                    Log.d("test",".....115");
-                    number=0;
-                    price=0;
-                }
-
-            }
-        }
-        SearchListAdapter adapter=new SearchListAdapter(context,R.layout.item_search_list,priceArray);
-        listView.setAdapter(adapter);
-    }
-
-    private String getSort(int id) {
-        String sort="未知";
-        for (int i=0;i<sortObjects.size();i++){
-            if ((int)sortObjects.get(i).getId()==id){
-                sort=sortObjects.get(i).getSubName();
-                break;
-            }
-        }
-        return sort;
-    }
-
-    private void getSortObjects() {
-        RestAdapter adapter = new RestAdapter(getApplicationContext(),apiUrl);
-        adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
-        SortRepository sortRepository = adapter.createRepository(SortRepository.class);
-        Log.d("test","a");
-        sortRepository.findAll(new ListCallback<SortModel>() {
-            @Override
-            public void onSuccess(List<SortModel> objects) {
-                sortObjects=objects;
             }
 
             @Override
             public void onError(Throwable t) {
-                Log.d("test","Throwable..Objs..."+t.toString());
+                showLoadingDialog(false);
             }
-
         });
     }
+    /**
+     * 计算今天的同一产品的平均价格
+     * */
+    private List<RiseAndFallBean> calculateToday(){
+        int lastSortId1 = -1;
+        double sumPrice1 = 0;
+        int num1 = 0;
+        PriceModel lastPrice1 = null;
 
-    //用于一次性上传省市信息的方法
-    private void upload() {
-        String[][] areas= Areas.areas;
-        for (int i=0;i<areas.length;i++){
-            for (int j=1;j<areas[i].length;j++){
-                RestAdapter adapter = new RestAdapter(getApplicationContext(),apiUrl);
-                adapter.setAccessToken("4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
-                RegionRepository regionRepository = adapter.createRepository(RegionRepository.class);
-                RegionModel region= regionRepository.createObject(ImmutableMap.of("Province", areas[i][0]));
-//                region.setProvince(areas[i][0]);
-                region.setCity(areas[i][j]);
-                region.save(new VoidCallback() {
-                    @Override
-                    public void onSuccess() {
-                        Log.d("test","上传成功");
+        List<RiseAndFallBean> todayList = new ArrayList<>();
+
+        int len1 = todayPriceList.size();
+        for (int i = 0; i < len1; i++) {
+            PriceModel priceModel = todayPriceList.get(i);
+            if (priceModel.getSortId() == lastSortId1) { // 计算今天报价的相同品种的平均价格信息
+                sumPrice1 += priceModel.getPrice();
+                num1 += 1;
+            } else {
+                if (num1 > 0){
+                    RiseAndFallBean temp = new RiseAndFallBean();
+                    temp.setId(lastSortId1);
+                    temp.setPrice(sumPrice1/num1);
+                    temp.setDateStr(dateFormat.format(lastPrice1.getPriceDate()));
+                    if (lastPrice1.getRegion().getCity() != null) {
+                        temp.setRegion(lastPrice1.getRegion().getCity());
+                    } else {
+                        temp.setRegion(lastPrice1.getRegion().getProvince());
                     }
-
-                    @Override
-                    public void onError(Throwable t) {
-
-                    }
-                });
+                    temp.setSort(lastPrice1.getSort().getSubName());
+                    todayList.add(temp);
+                }
+                sumPrice1 = priceModel.getPrice();
+                num1 = 1;
+                lastSortId1 = priceModel.getSortId();
+                lastPrice1 = priceModel;
             }
 
+            if (i == len1-1) {
+                RiseAndFallBean temp = new RiseAndFallBean();
+                temp.setId(lastSortId1);
+                temp.setPrice(sumPrice1/num1);
+                temp.setDateStr(dateFormat.format(lastPrice1.getPriceDate()));
+                if (lastPrice1.getRegion().getCity() != null) {
+                    temp.setRegion(lastPrice1.getRegion().getCity());
+                } else {
+                    temp.setRegion(lastPrice1.getRegion().getProvince());
+                }
+                temp.setSort(lastPrice1.getSort().getSubName());
+                todayList.add(temp);
+            }
         }
-    }
 
-    @Override
-    protected void onResumeLazy() {
-        super.onResumeLazy();
-        Log.d("cccc", "Fragment所在的Activity onResume, onResumeLazy " + this);
+        return todayList;
+    }
+    /**
+     * 计算昨天的同一品种的平均价格
+     * */
+    private SparseArray<RiseAndFallBean> calculateYesterday(){
+        int lastSortId2 = -1;
+        double sumPrice2 = 0;
+        int num2 = 0;
+        PriceModel lastPrice2 = null;
+
+        int len2 = yesterdayPriceList.size();
+
+        SparseArray<RiseAndFallBean> yesterdayMap = new SparseArray<>(); //昨天的价格都是按照sortId排序
+
+        for (int i = 0; i < len2; i++) { //所有的数据都是根据sortId排好序的
+            if (i<len2){ //分析昨天的报价信息
+                PriceModel priceModel = yesterdayPriceList.get(i);
+                if (priceModel.getSortId() == lastSortId2) {
+                    sumPrice2 += priceModel.getPrice();
+                    num2 += 1;
+                } else {
+                    if (num2 > 0){
+                        RiseAndFallBean temp = new RiseAndFallBean();
+                        temp.setId(lastSortId2);
+                        temp.setPrice(sumPrice2/num2);
+                        temp.setDateStr(dateFormat.format(lastPrice2.getPriceDate()));
+                        if (lastPrice2.getRegion().getCity() != null) {
+                            temp.setRegion(lastPrice2.getRegion().getCity());
+                        } else {
+                            temp.setRegion(lastPrice2.getRegion().getProvince());
+                        }
+                        temp.setSort(lastPrice2.getSort().getSubName());
+                        yesterdayMap.put(lastSortId2,temp);
+                    }
+                    sumPrice2 = priceModel.getPrice();
+                    num2 = 1;
+                    lastSortId2 = priceModel.getSortId();
+                    lastPrice2 = priceModel;
+                }
+
+                if (i == len2-1) {
+                    RiseAndFallBean temp = new RiseAndFallBean();
+                    temp.setId(lastSortId2);
+                    temp.setPrice(sumPrice2/num2);
+                    temp.setDateStr(dateFormat.format(lastPrice2.getPriceDate()));
+                    if (lastPrice2.getRegion().getCity() != null) {
+                        temp.setRegion(lastPrice2.getRegion().getCity());
+                    } else {
+                        temp.setRegion(lastPrice2.getRegion().getProvince());
+                    }
+                    temp.setSort(lastPrice2.getSort().getSubName());
+                    yesterdayMap.put(lastSortId2,temp);
+                }
+            }
+        }
+
+        return yesterdayMap;
+    }
+    //判断涨跌
+    private void calculateRiseAndFall(){
+        List<RiseAndFallBean> todayList = calculateToday();
+        SparseArray<RiseAndFallBean> yesterdayMap = calculateYesterday();
+
+        for (int i = 0; i < todayList.size(); i++) {
+            RiseAndFallBean rise1 = todayList.get(i);
+            RiseAndFallBean rise2 = yesterdayMap.get(rise1.getId());
+            if (rise2 == null) {
+                rise1.setRiseAndFall("-");
+            } else {
+                double d = (rise1.getPrice() - rise2.getPrice()) / rise2.getPrice();
+                rise1.setRiseAndFall(String.format("%.2f %%", d));
+            }
+        }
+        listViewAdapter = new RiseAndFallListAdapter(getContext(),todayList);
+        listView.setAdapter(listViewAdapter);
     }
 
     @Override
     protected void onFragmentStartLazy() {
         super.onFragmentStartLazy();
-        Log.d("cccc", "Fragment 显示 " + this);
+        Log.d("SearchFragment", "Fragment 显示, onFragmentStartLazy");
+        if (!loc) {
+            locationClient.startLocation();
+            initListData();
+        }
     }
 
     @Override
-    protected void onFragmentStopLazy() {
-        super.onFragmentStopLazy();
-        Log.d("cccc", "Fragment 掩藏 " + this);
+    public void onLocationChanged(AMapLocation aMapLocation) {
+        if (aMapLocation != null) {
+            if (aMapLocation.getErrorCode() == 0) {
+                String province = aMapLocation.getProvince();
+                String city = aMapLocation.getCity();
+                loc = true;
+                Log.i("Province",province);
+                Log.i("City",city);
+
+                regionTxt.setText(city);
+                regionTxt.setEnabled(true);
+
+                if (locationRegion != null) {
+                    if (TextUtils.equals(locationRegion.getCity(),city) || TextUtils.equals(locationRegion.getProvince(),city)) {
+                        initListData();
+                        return;
+                    }
+                }
+                if (TextUtils.isEmpty(province)) {
+                    getCityId(city,null); //直辖市，港澳台。自治区
+                } else {
+                    getCityId(city,province);
+                }
+            }
+        }
     }
 
-    @Override
-    protected void onPauseLazy() {
-        super.onPauseLazy();
-        Log.d("cccc", "Fragment所在的Activity onPause, onPauseLazy " + this);
+    private void showLoadingDialog(boolean show) {
+        if (loadingDialog == null) {
+            View v2 = LayoutInflater.from(getContext()).inflate(R.layout.loading_dialog2, null);// 得到加载view
+            LinearLayout layout2 = (LinearLayout) v2.findViewById(R.id.dialog_view2);
+
+            loadingDialog = new Dialog(getContext(), R.style.loading_dialog);
+            loadingDialog.setContentView(layout2, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT));
+        }
+        if (show) {
+            loadingDialog.show();
+        } else {
+            loadingDialog.dismiss();
+        }
     }
 
-    @Override
-    protected void onDestroyViewLazy() {
-        super.onDestroyViewLazy();
-        Log.d("cccc", "Fragment View将被销毁 " + this);
+    //获取城市信息
+    private void getRegionInfo() {
+        showLoadingDialog(true);
+        RegionRepository regionRepository = RegionRepository.getInstance(getContext(), null);
+        regionRepository.findAll(new ListCallback<RegionModel>() {
+            @Override
+            public void onSuccess(List<RegionModel> objects) {
+                showLoadingDialog(false);
+                regionTxt.setEnabled(true);
+                for (int i = 0; i < objects.size(); i++) {
+                    RegionModel regionModel = objects.get(i);
+                    List<RegionModel> list = chinaMap.get(regionModel.getProvince());
+                    if (list == null) {
+                        list = new ArrayList<RegionModel>();
+                        list.add(regionModel);
+                        chinaMap.put(regionModel.getProvince(), list);
+                    } else {
+                        list.add(regionModel);
+                    }
+                }
+
+                ProvinceTDialog dialog = new ProvinceTDialog(getContext(), hanProvinceDialog, chinaMap);
+                dialog.show();
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                regionTxt.setEnabled(true);
+                showLoadingDialog(false);
+            }
+        });
     }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Log.d("cccc", "Fragment 所在的Activity onDestroy " + this);
-    }
-
-
 }

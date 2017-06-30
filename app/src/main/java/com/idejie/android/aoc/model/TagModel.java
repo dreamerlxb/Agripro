@@ -2,13 +2,24 @@ package com.idejie.android.aoc.model;
 
 import com.strongloop.android.loopback.Model;
 
+import java.io.Serializable;
+
 /**
  * Created by shandongdaxue on 16/8/17.
  */
-public class TagModel extends Model {
+public class TagModel extends Model implements Serializable{
     public String name;
     public String description;
-    public Object id;
+
+    private int tagId;
+
+    public int getTagId() {
+        return tagId;
+    }
+
+    public void setTagId(int tagId) {
+        this.tagId = tagId;
+    }
 
     public String getName() {
         return name;
@@ -26,12 +37,4 @@ public class TagModel extends Model {
         this.description = description;
     }
 
-    @Override
-    public Object getId() {
-        return id;
-    }
-
-    public void setId(Object id) {
-        this.id = id;
-    }
 }

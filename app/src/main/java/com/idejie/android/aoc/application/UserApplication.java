@@ -2,54 +2,37 @@ package com.idejie.android.aoc.application;
 
 import android.app.Application;
 
+import com.idejie.android.aoc.model.UserModel;
+
 /**
  * Created by slf on 16/9/21.
  */
 
 public class UserApplication extends Application{
-    private String id;
-    private String score;
-    private String name;
-    private int imageId;
+
+    private String accessToken;
+    private UserModel user;
 
     public void onCreate(){
         super.onCreate();
-        setId("0");
-        setName("用户");
-        setImageId(0);
-        setScore("0");
+        accessToken = "";
+        user = null;
     }
 
-    public String getScore() {
-        return score;
+    public String getAccessToken() {
+        return accessToken;
     }
 
-    public void setScore(String score) {
-        this.score = score;
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
     }
 
-    public String getName() {
-        return name;
+    public UserModel getUser() {
+        return user;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getImageId() {
-        return imageId;
-    }
-
-    public void setImageId(int imageId) {
-        this.imageId = imageId;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
+    public void setUser(UserModel user) {
+        this.user = user;
     }
 
 }

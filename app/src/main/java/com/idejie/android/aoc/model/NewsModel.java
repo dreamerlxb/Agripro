@@ -1,62 +1,90 @@
 package com.idejie.android.aoc.model;
 
-import android.media.Image;
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.widget.ListView;
-
 import com.strongloop.android.loopback.Model;
+
+import java.io.Serializable;
+import java.util.Date;
 
 
 /**
  * Created by shandongdaxue on 16/8/17.
  */
 
-public class NewsModel extends Model  {
-    public static final String URL="http:192.168.1.110:3001/api";
-    private ListView list;
-    public String title;
-    public String content;
-    public String summary;
-    public String created;
-    public String lastUpdated;
-    public Object id;
-    public Object userId;
-    public Object categoryId;
-    public Object tagId;
-    public Object imageId;
+public class NewsModel extends Model implements Serializable{
+//    public static final String URL="http:192.168.1.110:3001/api";
 
+    private String title;
+    private String content;
+    private String summary;
+    private String avatarUrl;
 
-    public ImageModel getImage() {
-        return image;
+    private Date created;
+    private Date lastUpdated;
+
+    private int userId;
+    private int categoryId;
+    private int tagId;
+    private int imageId;
+    private int newsId;
+
+    private ImageModel avatar;
+    private CategoryModel category;
+    private TagModel tag;
+
+    private int favoursCount;
+    private int likersCount;
+    private int commentsCount;
+
+    private boolean isLikersCountSync;
+    private boolean isCommentsCountSync;
+
+    public String getAvatarUrl() {
+        return avatarUrl;
     }
 
-    public void setImage(ImageModel image) {
-        this.image = image;
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
     }
 
-
-
-
-    public CategoryModel getCategory() {
-        return category;
+    public boolean isLikersCountSync() {
+        return isLikersCountSync;
     }
 
-    public void setCategory(CategoryModel category) {
-        this.category = category;
+    public void setLikersCountSync(boolean likersCountSync) {
+        isLikersCountSync = likersCountSync;
     }
 
-    public TagModel getTag() {
-        return tag;
+    public boolean isCommentsCountSync() {
+        return isCommentsCountSync;
     }
 
-    public void setTag(TagModel tag) {
-        this.tag = tag;
+    public int getLikersCount() {
+        return likersCount;
     }
 
-    public ImageModel image;
-    public CategoryModel category;
-    public TagModel tag;
+    public void setLikersCount(int likersCount) {
+        this.likersCount = likersCount;
+    }
+
+    public int getCommentsCount() {
+        return commentsCount;
+    }
+
+    public void setCommentsCount(int commentsCount) {
+        this.commentsCount = commentsCount;
+    }
+
+    public void setCommentsCountSync(boolean commentsCountSync) {
+        isCommentsCountSync = commentsCountSync;
+    }
+
+    public int getFavoursCount() {
+        return favoursCount;
+    }
+
+    public void setFavoursCount(int favoursCount) {
+        this.favoursCount = favoursCount;
+    }
 
     public String getTitle() {
         return title;
@@ -82,63 +110,83 @@ public class NewsModel extends Model  {
         this.summary = summary;
     }
 
-    public String getCreated() {
-        return created;
-    }
-
-    public void setCreated(String created) {
-        this.created = created;
-    }
-
-    public String getLastUpdated() {
-        return lastUpdated;
-    }
-
-    public void setLastUpdated(String lastUpdated) {
-        this.lastUpdated = lastUpdated;
-    }
-
-    @Override
-    public Object getId() {
-        return id;
-    }
-
-    public void setId(Object id) {
-        this.id = id;
-    }
-
-    public Object getUserId() {
+    public int getUserId() {
         return userId;
     }
 
-    public void setUserId(Object userId) {
+    public void setUserId(int userId) {
         this.userId = userId;
     }
 
-    public Object getCategoryId() {
+    public int getCategoryId() {
         return categoryId;
     }
 
-    public void setCategoryId(Object categoryId) {
+    public void setCategoryId(int categoryId) {
         this.categoryId = categoryId;
     }
 
-    public Object getTagId() {
+    public int getTagId() {
         return tagId;
     }
 
-    public void setTagId(Object tagId) {
+    public void setTagId(int tagId) {
         this.tagId = tagId;
     }
 
-    public Object getImageId() {
+    public int getImageId() {
         return imageId;
     }
 
-    public void setImageId(Object imageId) {
+    public void setImageId(int imageId) {
         this.imageId = imageId;
     }
 
+    public int getNewsId() {
+        return newsId;
+    }
 
+    public void setNewsId(int newsId) {
+        this.newsId = newsId;
+    }
 
+    public Date getCreated() {
+        return created;
+    }
+
+    public void setCreated(Date created) {
+        this.created = created;
+    }
+
+    public Date getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public void setLastUpdated(Date lastUpdated) {
+        this.lastUpdated = lastUpdated;
+    }
+
+    public ImageModel getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(ImageModel avatar) {
+        this.avatar = avatar;
+    }
+
+    public CategoryModel getCategory() {
+        return category;
+    }
+
+    public void setCategory(CategoryModel category) {
+        this.category = category;
+    }
+
+    public TagModel getTag() {
+        return tag;
+    }
+
+    public void setTag(TagModel tag) {
+        this.tag = tag;
+    }
 }

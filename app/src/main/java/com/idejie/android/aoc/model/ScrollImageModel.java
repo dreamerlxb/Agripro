@@ -2,24 +2,47 @@ package com.idejie.android.aoc.model;
 
 import com.strongloop.android.loopback.Model;
 
+import java.util.Date;
+
 /**
  * Created by shandongdaxue on 16/9/6.
  */
 
 public class ScrollImageModel extends Model {
-    /**
-     * title (string),
-     enabled (boolean, optional),
-     order (number, optional),
-     created (string, optional),
-     lastUpdated (string, optional),
-     id (number, optional),
-     imageId (number, optional),
-     newsId (number, optional)
-     */
-    public String title,created,lastUpdated,id,imageID,newsID;
-    public boolean enabled;
-    public int order;
+    private String title;
+    private Date created,lastUpdated;
+    private int imageId,newsId;
+    private boolean enabled;
+    private int order;
+    private int scrollImageId;
+
+    private NewsModel news;
+
+    public NewsModel getNews() {
+        return news;
+    }
+
+    public void setNews(NewsModel news) {
+        this.news = news;
+    }
+
+    public int getScrollImageId() {
+        return scrollImageId;
+    }
+
+    public void setScrollImageId(int scrollImageId) {
+        this.scrollImageId = scrollImageId;
+    }
+
+    private ImageModel image;
+
+    public ImageModel getImage() {
+        return image;
+    }
+
+    public void setImage(ImageModel image) {
+        this.image = image;
+    }
 
     public String getTitle() {
         return title;
@@ -29,45 +52,36 @@ public class ScrollImageModel extends Model {
         this.title = title;
     }
 
-    public String getCreated() {
+    public Date getCreated() {
         return created;
     }
 
-    public void setCreated(String created) {
+    public void setCreated(Date created) {
         this.created = created;
     }
 
-    public String getLastUpdated() {
+    public Date getLastUpdated() {
         return lastUpdated;
     }
 
-    public void setLastUpdated(String lastUpdated) {
+    public void setLastUpdated(Date lastUpdated) {
         this.lastUpdated = lastUpdated;
     }
 
-    @Override
-    public String getId() {
-        return id;
+    public int getImageId() {
+        return imageId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setImageId(int imageId) {
+        this.imageId = imageId;
     }
 
-    public String getImageID() {
-        return imageID;
+    public int getNewsId() {
+        return newsId;
     }
 
-    public void setImageID(String imageID) {
-        this.imageID = imageID;
-    }
-
-    public String getNewsID() {
-        return newsID;
-    }
-
-    public void setNewsID(String newsID) {
-        this.newsID = newsID;
+    public void setNewsId(int newsId) {
+        this.newsId = newsId;
     }
 
     public boolean isEnabled() {

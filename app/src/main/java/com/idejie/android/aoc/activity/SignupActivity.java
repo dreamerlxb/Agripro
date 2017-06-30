@@ -3,6 +3,8 @@ package com.idejie.android.aoc.activity;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.Dialog;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.os.Message;
@@ -15,7 +17,6 @@ import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 
 import android.os.Build;
 import android.os.Bundle;
@@ -30,65 +31,64 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.idejie.android.aoc.R;
 import com.idejie.android.aoc.bean.UserId;
-import com.idejie.android.aoc.repository.UserRepository;
+import com.idejie.android.aoc.model.UserModel;
+import com.idejie.android.aoc.repository.UserModelRepository;
 import com.idejie.android.aoc.tools.AutoString;
 import com.idejie.android.aoc.tools.NetThread;
-import com.strongloop.android.loopback.RestAdapter;
-import com.strongloop.android.loopback.User;
-import com.strongloop.android.loopback.callbacks.VoidCallback;
+import com.idejie.android.aoc.utils.LoadingDialog;
+import com.strongloop.android.remoting.adapters.Adapter;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
-/**
- * A login screen that offers login via email/password.
- */
+
 public class SignupActivity extends AppCompatActivity implements LoaderCallbacks<Cursor>, OnClickListener {
 
-    /**
-     * Id to identity READ_CONTACTS permission request.
-     */
     private static final int REQUEST_READ_CONTACTS = 0;
 
-    /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:hello", "bar@example.com:world"
-    };
-    /**
-     * Keep track of the login task to ensure we can cancel it if requested.
-     */
-
-    // UI references.
     private AutoCompleteTextView mEmailView;
-    private String apiUrl="http://211.87.227.214:3001/api";
-    private String SMSUrl="http://211.87.227.214:3001/api/users/sendSMS";
-    private String signUpUrl="http://211.87.227.214:3001/api/users/createUser";
     private EditText mPasswordView,mPasswordRepeat;
     private EditText editCode;
-    private View mProgressView;
-    private View mLoginFormView;
     private Button codeBtn;
-    private Handler han,hanSignUp;
+
+    Dialog loadingDialog;
+    TimerTask timerTask;
+    Timer timer;
+    Handler timerHandler;
+    int length = 60 * 1000;
+
+    private ImageView backImg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
-        // Set up the login form.
-        Log.d("test1","UserId.id..."+ UserId.id);
+
+        backImg = (ImageView) findViewById(R.id.back_img);
+        backImg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
         codeBtn= (Button) findViewById(R.id.button);
         codeBtn.setOnClickListener(this);
         mEmailView = (AutoCompleteTextView) findViewById(R.id.signupPhone);
@@ -106,66 +106,6 @@ public class SignupActivity extends AppCompatActivity implements LoaderCallbacks
                 return false;
             }
         });
-        //短信后的回调
-        han = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                // TODO Auto-generated method stub
-                int x=msg.what;
-                String Jsmess = (String) msg.obj;
-                super.handleMessage(msg);
-
-
-                JSONObject temp = null;
-                try {
-                    temp = new JSONObject(Jsmess);
-                    //得到数据
-                    int statusCode=temp.getInt("statusCode");
-                    Log.d("test","statusCode...."+statusCode);
-                    if (statusCode==200){
-                        Toast.makeText(SignupActivity.this, "验证码已发送", Toast.LENGTH_SHORT).show();
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-
-
-
-            }
-        };
-        //注册后的回调
-        hanSignUp = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                // TODO Auto-generated method stub
-                int x=msg.what;
-                String Jsmess = (String) msg.obj;
-                super.handleMessage(msg);
-
-
-                JSONObject temp = null;
-                try {
-                    temp = new JSONObject(Jsmess);
-                    //得到数据
-                    String user=temp.getString("user");
-                    JSONObject temp1 = new JSONObject(user);
-                    String phone=temp1.getString("mobileNumber");
-                    if (phone.equals(mEmailView.getText().toString())){
-                        Toast.makeText(SignupActivity.this, "注册成功", Toast.LENGTH_SHORT).show();
-                        finish();
-
-                    }
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-
-
-
-            }
-        };
 
         Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
@@ -175,15 +115,62 @@ public class SignupActivity extends AppCompatActivity implements LoaderCallbacks
             }
         });
 
-        mLoginFormView = findViewById(R.id.login_form);
-        mProgressView = findViewById(R.id.login_progress);
+        timerHandler = new Handler() {
+            public void handleMessage(android.os.Message msg) {
+                super.handleMessage(msg);
+                length -= 1000;
+                codeBtn.setText(length / 1000 + "秒");
+                if (length < 0) {
+                    codeBtn.setEnabled(true);
+                    codeBtn.setText("获取验证码");
+                    clearTimer();
+                    length = 60 * 1000;
+                }
+            };
+        };
+    }
+
+    /**
+     * 初始化时间
+     */
+    private void initTimer() {
+        timer = new Timer();
+        timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                timerHandler.sendEmptyMessage(1);
+            }
+        };
+    }
+
+    /***
+     * 开始倒计时
+     */
+    private void startTimer() {
+        //发送验证码倒计时
+        initTimer();
+        codeBtn.setText(60 + "秒");
+        codeBtn.setEnabled(false);
+        timer.schedule(timerTask, 0, 1000);
+    }
+    /**
+     * 清除倒计时
+     */
+    private void clearTimer() {
+        if (timerTask != null) {
+            timerTask.cancel();
+            timerTask = null;
+        }
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
     }
 
     private void populateAutoComplete() {
         if (!mayRequestContacts()) {
             return;
         }
-
         getLoaderManager().initLoader(0, null, this);
     }
 
@@ -222,109 +209,79 @@ public class SignupActivity extends AppCompatActivity implements LoaderCallbacks
         }
     }
 
-
-    /**
-     * Attempts to sign in or register the account specified by the login form.
-     * If there are form errors (invalid email, missing fields, etc.), the
-     * errors are presented and no actual login attempt is made.
-     */
     private void attemptLogin() {
-
-        // Reset errors.
-        mEmailView.setError(null);
-        mPasswordView.setError(null);
-
-        // Store values at the time of the login attempt.
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
+        String confirmPwd = mPasswordRepeat.getText().toString();
         String code = editCode.getText().toString();
 
-        boolean cancel = false;
-        View focusView = null;
-
-        // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-            mPasswordView.setError(getString(R.string.error_invalid_password));
-            focusView = mPasswordView;
-            cancel = true;
-        }
-
-        // Check for a valid email address.
         if (TextUtils.isEmpty(email)) {
-            mEmailView.setError(getString(R.string.error_field_required));
-            focusView = mEmailView;
-            cancel = true;
+            mEmailView.requestFocus();
+            Toast.makeText(SignupActivity.this,"手机号不能为空",Toast.LENGTH_SHORT).show();
+            return;
+        } else if(!email.matches("^[1]+[3,4,5,7,8]+\\d{9}$")) {
+            mEmailView.requestFocus();
+            Toast.makeText(SignupActivity.this,"手机号格式不正确",Toast.LENGTH_SHORT).show();
+            return;
         }
-        if (!mPasswordView.getText().toString().equals(mPasswordRepeat.getText().toString())){
-            Toast.makeText(SignupActivity.this,"两次密码不同",Toast.LENGTH_SHORT).show();
+
+        if (TextUtils.isEmpty(password)) {
+            mPasswordView.requestFocus();
+            Toast.makeText(SignupActivity.this,"密码不能为空",Toast.LENGTH_SHORT).show();
+            return;
+        } else if(password.length() < 4) {
+            mPasswordView.requestFocus();
+            Toast.makeText(SignupActivity.this,"密码太短",Toast.LENGTH_SHORT).show();
+            return;
         }
 
-        if (cancel) {
-            // There was an error; don't attempt login and focus the first
-            // form field with an error.
-            focusView.requestFocus();
-        } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
-            showProgress(true);
-            //在这里写
-            AutoString autoString=new AutoString("access_token","4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
-            autoString.addToResult("name",mEmailView.getText().toString());
-            autoString.addToResult("zoneCode","86");
-            autoString.addToResult("mobileNumber",mEmailView.getText().toString());
-            autoString.addToResult("password",mPasswordView.getText().toString());
-            autoString.addToResult("code",editCode.getText().toString());
-            NetThread netThread=new NetThread(hanSignUp,signUpUrl,autoString.getResult());
-            netThread.start();
-            showProgress(false);
-
+        if (!password.equals(confirmPwd)){
+            mPasswordRepeat.requestFocus();
+            Toast.makeText(SignupActivity.this,"您两次输入的密码不一致，请重新输入密码",Toast.LENGTH_SHORT).show();
+            return;
         }
-    }
 
-    private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
-        return email.contains("@");
-    }
+        if(TextUtils.isEmpty(code)) {
+            editCode.requestFocus();
+            Toast.makeText(SignupActivity.this,"请填写验证码",Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-    private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
-        return password.length() > 4;
-    }
+        showProgress();
+        // 在这里写
+        HashMap<String, Object> params = new HashMap<String, Object>();
+        params.put("zoneCode",  "86");
+        params.put("password",  password);
+        params.put("mobileNumber", email);
+        params.put("code",code);
 
-    /**
-     * Shows the progress UI and hides the login form.
-     */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-    private void showProgress(final boolean show) {
-        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
-        // for very easy animations. If available, use these APIs to fade-in
-        // the progress spinner.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
-
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-            mLoginFormView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+        UserModelRepository userModelRepository = UserModelRepository.getInstance(this,null);
+        userModelRepository.invokeStaticMethod("createUser", params, new Adapter.JsonObjectCallback() {
+            @Override
+            public void onSuccess(JSONObject response) {
+                loadingDialog.dismiss();
+                if(response.optInt("statusCode") == 401) {
+                    Toast.makeText(SignupActivity.this,"手机号已存在",Toast.LENGTH_SHORT).show();
+                    return;
                 }
-            });
+                Toast.makeText(SignupActivity.this,"注册成功",Toast.LENGTH_SHORT).show();
+                finish();
+            } // 您的密码填写有误，请重新填写
 
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mProgressView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-                }
-            });
-        } else {
-            // The ViewPropertyAnimator APIs are not available, so simply show
-            // and hide the relevant UI components.
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+            @Override
+            public void onError(Throwable t) {
+                Log.i("Register",t.toString());
+                loadingDialog.dismiss();
+                Toast.makeText(SignupActivity.this,"注册失败，请重试",Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void showProgress() {
+        if (loadingDialog == null) {
+            loadingDialog = LoadingDialog.createLoadingDialog(this, "");
         }
+        loadingDialog.show();
     }
 
     @Override
@@ -374,26 +331,61 @@ public class SignupActivity extends AppCompatActivity implements LoaderCallbacks
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.button:
-                AutoString autoString=new AutoString("access_token","4miVFTq2Yt3nDPPrTLLvJGSQNKH5k0x78fNyHENbwyICjii206NqmjL5ByChP6dO");
-                autoString.addToResult("zoneCode","86");
-                autoString.addToResult("mobileNumber",mEmailView.getText().toString());
-                NetThread netThread=new NetThread(han,SMSUrl,autoString.getResult());
-                netThread.start();
+                String phone = mEmailView.getText().toString();
+                if (TextUtils.isEmpty(phone)) {
+                    Toast.makeText(SignupActivity.this,"手机号不能为空",Toast.LENGTH_SHORT).show();
+                    mEmailView.requestFocus();
+                    return;
+                } else if(!phone.matches("^[1]+[3,4,5,7,8]+\\d{9}$")) {
+                    Toast.makeText(SignupActivity.this,"手机号格式不正确",Toast.LENGTH_SHORT).show();
+                    mEmailView.requestFocus();
+                    return;
+                }
+
+                HashMap<String, Object> params = new HashMap<String, Object>();
+                params.put("zoneCode",  "86");
+                params.put("mobileNumber", phone);
+
+                UserModelRepository userModelRepository = UserModelRepository.getInstance(this,null);
+                userModelRepository.invokeStaticMethod("sendSMS", params, new Adapter.JsonObjectCallback() {
+                    @Override
+                    public void onSuccess(JSONObject response) { // 401手机号已存在 200发送成功 400频率过快
+                        Log.i("SendSMS success", response.toString());
+                        int statusCode = response.optInt("statusCode");
+                        if(statusCode == 200) {
+                            Toast.makeText(SignupActivity.this,"已发送",Toast.LENGTH_SHORT).show();
+                        } else if(statusCode == 400) {
+                            Toast.makeText(SignupActivity.this,"频率过快，请稍后重试",Toast.LENGTH_SHORT).show();
+                        }
+                    } // 您的密码填写有误，请重新填写
+
+                    @Override
+                    public void onError(Throwable t) {
+                        Log.i("SendSMS error",t.toString());
+                        Toast.makeText(SignupActivity.this,"请求失败，请检查网络后，重试",Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                startTimer();
+
                 break;
         }
     }
 
+    @Override
+    public void onDetachedFromWindow() {
+        clearTimer();
+        super.onDetachedFromWindow();
+    }
 
     private interface ProfileQuery {
         String[] PROJECTION = {
-                ContactsContract.CommonDataKinds.Email.ADDRESS,
-                ContactsContract.CommonDataKinds.Email.IS_PRIMARY,
+            ContactsContract.CommonDataKinds.Email.ADDRESS,
+            ContactsContract.CommonDataKinds.Email.IS_PRIMARY,
         };
 
         int ADDRESS = 0;
         int IS_PRIMARY = 1;
     }
-
-
 }
 

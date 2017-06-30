@@ -1,16 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-    <include
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        layout="@layout/index_top"/>
+        android:background="@color/white"
+        android:orientation="horizontal"
+        android:layout_height="48dp">
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <ImageView
+            app:srcCompat="@mipmap/icon"
+            android:id="@+id/imageView2"
+            android:contentDescription=""
+            tools:ignore="ContentDescription"
+            android:layout_gravity="center"
+            android:layout_width="45dp"
+            android:layout_height="45dp" />
+
+        <TextView
+            android:text="@string/app_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView2"
+            android:textColor="@color/colorPrimary"
+            android:textSize="20sp"
+            android:textAlignment="center"
+            android:fontFamily="sans-serif"
+            android:layout_gravity="center" />
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@mipmap/ic_action_search"
+            android:id="@+id/search_img"
+            android:layout_gravity="center_vertical"
+            android:padding="5dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
+            tools:ignore="ContentDescription" />
+
+    </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary">
+
         <com.idejie.android.library.view.indicator.FixedIndicatorView
             android:id="@+id/fragment_tabmain_indicator"
             android:layout_width="match_parent"

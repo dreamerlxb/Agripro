@@ -5,12 +5,20 @@ package com.idejie.android.aoc.bean;
  */
 
 public class LineData {
-    private int price;
+    private double price;
     private String date;
 
-    public LineData(int price, String date) {
+    public LineData(double price, String date) {
         this.price = price;
         this.date = date;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
     }
 
     public String getDate() {
@@ -19,13 +27,5 @@ public class LineData {
 
     public void setDate(String date) {
         this.date = date;
-    }
-
-    public int getPrice() {
-        return price;
-    }
-
-    public void setPrice(int price) {
-        this.price = price;
     }
 }

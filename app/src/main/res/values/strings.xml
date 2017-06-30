@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="app_name">农业监测预警</string>
     <string name="enter">开始浏览</string>
     <string name="title_activity_main">MainActivity</string>
@@ -114,6 +114,15 @@
     <string name="title_activity_verify">找回密码</string>
     <string name="title_activity_modify_psword">找回密码</string>
     <string name="title_activity_modify_success">找回密码</string>
+    <string name="star_placeholder">*</string>
     <string name="zan">%d赞</string>
     <string name="comment">%d评</string>
+
+    <!--   http://111.203.20.153:3001/api-->
+    <string name="mh_base_url">http://111.203.20.153:3001/api</string>
+    <string name="qiniu_token">http://111.203.20.153:3001/newstoken</string>
+
+    <string name="search_placeholder">请输入关键字</string>
+    <string name="logout_txt">退 出</string>
+    <string name="login_logout_txt">登录/注册</string>
 </resources>

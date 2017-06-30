@@ -16,6 +16,15 @@ public class GradeModel extends Model {
     private String name;
     private int sortId ;
     private String description;
+    private int gradeId;
+
+    public int getGradeId() {
+        return gradeId;
+    }
+
+    public void setGradeId(int gradeId) {
+        this.gradeId = gradeId;
+    }
 
     public String getName() {
         return name;

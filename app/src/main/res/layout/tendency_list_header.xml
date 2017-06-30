@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:weightSum="5"
+    android:background="#ffffff"
+    android:layout_height="40dp">
+
+    <TextView
+        android:id="@+id/text_area"
+        android:gravity="center"
+        android:textSize="@dimen/item_size"
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:text="地区"
+        android:layout_height="40dp" />
+    <TextView
+        android:id="@+id/text_sort"
+        android:gravity="center"
+        android:textSize="@dimen/item_size"
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:text="品种"
+        android:layout_height="40dp" />
+    <TextView
+        android:id="@+id/text_rank"
+        android:gravity="center"
+        android:textSize="@dimen/item_size"
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:text="等级"
+        android:layout_height="40dp" />
+    <TextView
+        android:id="@+id/text_price"
+        android:gravity="center"
+        android:textSize="@dimen/item_size"
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:text="价格"
+        android:layout_height="40dp" />
+    <TextView
+        android:id="@+id/text_date"
+        android:gravity="center"
+        android:textSize="@dimen/item_size"
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:text="日期"
+        android:layout_height="40dp" />
+
+</LinearLayout>

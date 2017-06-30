@@ -6,9 +6,9 @@ package com.idejie.android.aoc.bean;
 
 public class MapData {
     private String name;
-    private int value;
+    private double value;
 
-    public MapData(String name, int value) {
+    public MapData(String name, double value) {
         this.name = name;
         this.value = value;
     }
@@ -21,11 +21,11 @@ public class MapData {
         this.name = name;
     }
 
-    public int getValue() {
+    public double getValue() {
         return value;
     }
 
-    public void setValue(int value) {
+    public void setValue(double value) {
         this.value = value;
     }
 }

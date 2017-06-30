@@ -2,6 +2,8 @@ package com.idejie.android.aoc.model;
 
 import com.strongloop.android.loopback.Model;
 
+import java.util.Date;
+
 /**
  * Created by slf on 16/8/28.
  */
@@ -20,47 +22,21 @@ public class PriceModel extends Model {
      sortId (number, optional),
      gradeId (number, optional)
      */
-    private double price,turnover;
-    private String marketName,priceDate,created,lastUpdated;
+    private double price;
+    private double turnover;
+    private String marketName;
 
+    private Date priceDate;
+    private Date created;
+    private Date lastUpdated;
 
-    private int UserId,regionId,sortId,gradeId;
-    private Region region;
+    private int userId,regionId,sortId,gradeId;
+    private int priceId;
 
-    public int getRegionId() {
-        return regionId;
-    }
+    private RegionModel region;
+    private SortModel sort;
+    private GradeModel grade;
 
-    public void setRegionId(int regionId) {
-        this.regionId = regionId;
-    }
-
-    private RegionModel regionModel;
-    private SortModel sortModel;
-
-    public Region getRegion() {
-        return region;
-    }
-
-    public void setRegion(Region region) {
-        this.region = region;
-    }
-
-    public RegionModel getRegionModel() {
-        return regionModel;
-    }
-
-    public void setRegionModel(RegionModel regionModel) {
-        this.regionModel = regionModel;
-    }
-
-    public SortModel getSortModel() {
-        return sortModel;
-    }
-
-    public void setSortModel(SortModel sortModel) {
-        this.sortModel = sortModel;
-    }
 
     public double getPrice() {
         return price;
@@ -86,40 +62,45 @@ public class PriceModel extends Model {
         this.marketName = marketName;
     }
 
-    public String getPriceDate() {
+    public Date getPriceDate() {
         return priceDate;
     }
 
-    public void setPriceDate(String priceDate) {
+    public void setPriceDate(Date priceDate) {
         this.priceDate = priceDate;
     }
 
-    public String getCreated() {
+    public Date getCreated() {
         return created;
     }
 
-    public void setCreated(String created) {
+    public void setCreated(Date created) {
         this.created = created;
     }
 
-    public String getLastUpdated() {
+    public Date getLastUpdated() {
         return lastUpdated;
     }
 
-    public void setLastUpdated(String lastUpdated) {
+    public void setLastUpdated(Date lastUpdated) {
         this.lastUpdated = lastUpdated;
     }
 
-
-
     public int getUserId() {
-        return UserId;
+        return userId;
     }
 
     public void setUserId(int userId) {
-        UserId = userId;
+        this.userId = userId;
     }
 
+    public int getRegionId() {
+        return regionId;
+    }
+
+    public void setRegionId(int regionId) {
+        this.regionId = regionId;
+    }
 
     public int getSortId() {
         return sortId;
@@ -135,5 +116,37 @@ public class PriceModel extends Model {
 
     public void setGradeId(int gradeId) {
         this.gradeId = gradeId;
+    }
+
+    public int getPriceId() {
+        return priceId;
+    }
+
+    public void setPriceId(int priceId) {
+        this.priceId = priceId;
+    }
+
+    public RegionModel getRegion() {
+        return region;
+    }
+
+    public void setRegion(RegionModel region) {
+        this.region = region;
+    }
+
+    public SortModel getSort() {
+        return sort;
+    }
+
+    public void setSort(SortModel sort) {
+        this.sort = sort;
+    }
+
+    public GradeModel getGrade() {
+        return grade;
+    }
+
+    public void setGrade(GradeModel grade) {
+        this.grade = grade;
     }
 }

@@ -3,14 +3,18 @@
     package="com.idejie.android.aoc">
 
     <!-- 申请权限 -->
+    <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
     <uses-permission android:name="android.permission.READ_LOGS" />
+    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
@@ -19,6 +23,10 @@
     <!-- 定位权限 -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <!-- 蓝牙分享所需要的权限 -->
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
     <supports-screens
         android:anyDensity="true"
@@ -33,14 +41,20 @@
     <uses-permission android:name="android.permission.READ_CONTACTS" />
 
     <application
+        android:name=".application.UserApplication"
         android:allowBackup="true"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/icon"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:name=".application.UserApplication"
         android:theme="@style/AppTheme">
+        <meta-data
+            android:name="com.amap.api.v2.apikey"
+            android:value="272f7ae313f275549e15bb9390ae5d69" />
 
+        <service android:name="com.amap.api.location.APSService" />
+
+        <activity android:name="com.tangxiaolv.telegramgallery.GalleryActivity" />
         <!-- 欢迎界面 -->
         <activity
             android:name=".activity.FirstScreenActivity"
@@ -54,24 +68,21 @@
             android:name=".activity.WelcomeActivity"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
-        android:name=".activity.MainActivity"
-        android:label="@string/title_activity_main"
-        android:theme="@style/AppTheme.NoActionBar" />
-
+            android:name=".activity.MainActivity"
+            android:label="@string/title_activity_main"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activity.TendencyActivity" />
         <activity
             android:name=".activity.LoginActivity"
-            android:label="@string/title_activity_login" >
-        </activity>
-
+            android:label="@string/title_activity_login" />
         <activity
             android:name=".activity.SettingsActivity"
             android:label="@string/title_activity_settings" />
-        <activity android:name=".activity.MyPriceActivity" >
-        </activity>
-        <activity android:name=".activity.MyCommentActivity" />
+        <activity android:name=".activity.MyPriceActivity" />
+        <activity
+            android:name=".activity.NewsCommentActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activity.MallActivity" />
         <activity android:name=".activity.TuiActivity" />
         <activity android:name=".activity.SignupActivity" />
@@ -82,16 +93,53 @@
             android:name=".activity.VerifyActivity"
             android:label="@string/title_activity_verify" />
         <activity
-            android:name=".activity.ModifyPswordActivity"
+            android:name=".activity.ModifyPwdActivity"
             android:label="@string/title_activity_modify_psword" />
         <activity
-            android:name=".activity.ModifySuccessActivity"
+            android:name=".activity.ModifyUsernameActivity"
             android:label="@string/title_activity_modify_success" />
-        <activity android:name=".activity.GuanzhuActivity" />
+        <activity android:name=".activity.MyFollowActivity" />
         <activity
             android:name=".activity.NewsDetailActivity"
             android:hardwareAccelerated="true"
-            android:theme="@style/AppTheme.NoActionBar" ></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name="com.mob.tools.MobUIShell"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:windowSoftInputMode="stateHidden|adjustResize">
+
+            <!-- tencent后面的appid要保持和您配置的QQ的appid一致 -->
+            <intent-filter>
+                <data android:scheme="tencent100371282" />
+
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
+            <!-- 调用新浪原生SDK，需要注册的回调activity -->
+            <intent-filter>
+                <action android:name="com.sina.weibo.sdk.action.ACTION_SDK_REQ_ACTIVITY" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!-- 微信分享回调 -->
+        <activity
+            android:name=".wxapi.WXEntryActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+        <activity android:name=".activity.MyCommentActivity" />
+        <activity android:name=".activity.SettingActivity" />
+        <activity android:name=".activity.SearchNewsActivity" />
+        <activity android:name=".activity.SelectActivity" />
+        <activity android:name=".utils.PermissionsActivity"></activity>
     </application>
 
 </manifest>

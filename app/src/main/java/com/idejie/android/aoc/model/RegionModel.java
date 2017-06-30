@@ -17,6 +17,8 @@ public class RegionModel extends Model {
     private String city;
     private String description;
 
+    private int regionId;
+
 
     public String getProvince() {
         return province;
@@ -40,5 +42,13 @@ public class RegionModel extends Model {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public int getRegionId() {
+        return regionId;
+    }
+
+    public void setRegionId(int regionId) {
+        this.regionId = regionId;
     }
 }

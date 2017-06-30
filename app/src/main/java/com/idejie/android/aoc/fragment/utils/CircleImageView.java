@@ -1,4 +1,5 @@
 package com.idejie.android.aoc.fragment.utils;
+
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -14,6 +15,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.widget.ImageView;
+
 import com.idejie.android.aoc.R;
 
 /**

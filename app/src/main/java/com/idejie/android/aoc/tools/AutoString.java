@@ -6,14 +6,17 @@ package com.idejie.android.aoc.tools;
 
 public class AutoString {
 
-    private String result="";
+    private String result = "";
 
-    public AutoString(String name, String value) {
-        result=result+name+"="+value;
+    public AutoString() {
     }
 
-    public void addToResult(String name,String value){
-        result=result+"&"+name+"="+value;
+    public AutoString(String name, String value) {
+        result = result + name + "=" + value;
+    }
+
+    public void addToResult(String name, String value) {
+        result = result + "&" + name + "=" + value;
     }
 
     public String getResult() {
