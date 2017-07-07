@@ -254,6 +254,7 @@ public class PriceFragment extends LazyFragment implements View.OnClickListener,
         });
         banner.setBannerTitles(bannerTitles);
         banner.setImages(bannerImgUrls);
+        banner.setDelayTime(4000);
         banner.start();
     }
 

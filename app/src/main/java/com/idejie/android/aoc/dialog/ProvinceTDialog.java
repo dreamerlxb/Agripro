@@ -2,6 +2,8 @@ package com.idejie.android.aoc.dialog;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -53,7 +55,9 @@ public class ProvinceTDialog extends Dialog {
         int width = LocalDisplay.getScreenWidthPixels(getContext());
         Window window = getWindow();//这部分是设置dialog宽高的，宽高是我从sharedpreferences里面获取到的。之前程序启动的时候有获取
         window.getDecorView().setPadding(0, 0, 0, 0);
+        window.setBackgroundDrawable(new ColorDrawable(Color.WHITE));
         WindowManager.LayoutParams lp = window.getAttributes();
+        lp.gravity = Gravity.CENTER;
         lp.width = width;
         window.setAttributes(lp);
 
@@ -64,7 +68,6 @@ public class ProvinceTDialog extends Dialog {
         localView.setAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.slide_bottom_to_top));
 
         setContentView(localView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        getWindow().getAttributes().gravity = Gravity.CENTER;
 
         initData();
     }

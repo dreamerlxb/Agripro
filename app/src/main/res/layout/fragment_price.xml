@@ -62,7 +62,7 @@
             <com.youth.banner.Banner
                 android:id="@+id/main_banner"
                 android:layout_width="match_parent"
-                android:layout_height="200dp" />
+                android:layout_height="180dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -105,6 +105,7 @@
                     android:drawableRight="@mipmap/arrow_down"
                     android:gravity="left|center"
                     android:hint="省市"
+                    android:lines="1"
                     android:padding="6dp"
                     android:textColor="@color/grey"
                     android:textSize="14sp" />
@@ -158,6 +159,7 @@
                     android:drawableRight="@mipmap/arrow_down"
                     android:gravity="left|center"
                     android:hint="品种"
+                    android:lines="1"
                     android:padding="6dp"
                     android:textColor="@color/grey"
                     android:textSize="14sp" />
@@ -203,6 +205,7 @@
                     android:drawableRight="@mipmap/arrow_down"
                     android:gravity="left|center"
                     android:hint="级别"
+                    android:lines="1"
                     android:padding="6dp"
                     android:textColor="@color/grey"
                     android:textSize="14sp" />
@@ -246,7 +249,8 @@
                     android:layout_weight="1"
                     android:background="@drawable/border"
                     android:gravity="left|center"
-                    android:hint="20"
+                    android:hint="0"
+                    android:lines="1"
                     android:padding="6dp"
                     android:textColor="@color/grey"
                     android:textSize="14sp" />
@@ -299,7 +303,8 @@
                     android:layout_weight="1"
                     android:background="@drawable/border"
                     android:gravity="left|center"
-                    android:hint="20"
+                    android:hint="0"
+                    android:lines="1"
                     android:padding="6dp"
                     android:textColor="@color/grey"
                     android:textSize="14sp" />
@@ -351,6 +356,7 @@
                     android:background="@drawable/border"
                     android:gravity="left|center"
                     android:hint="市场名称"
+                    android:lines="1"
                     android:padding="6dp"
                     android:textColor="@color/grey"
                     android:textSize="14sp" />
@@ -378,7 +384,7 @@
                     android:background="?attr/colorPrimary"
                     android:text="上传"
                     android:textColor="@color/white"
-                    android:textSize="18sp" />
+                    android:textSize="24sp" />
 
                 <Button
                     android:id="@+id/btn_cancel"
@@ -391,7 +397,7 @@
                     android:background="@color/red"
                     android:text="取消"
                     android:textColor="@color/white"
-                    android:textSize="18sp" />
+                    android:textSize="24sp" />
 
 
             </LinearLayout>

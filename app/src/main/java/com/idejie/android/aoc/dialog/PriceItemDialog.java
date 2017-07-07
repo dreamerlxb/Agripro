@@ -2,6 +2,8 @@ package com.idejie.android.aoc.dialog;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -32,8 +34,10 @@ public class PriceItemDialog extends Dialog implements View.OnClickListener{
         int width = LocalDisplay.getScreenWidthPixels(getContext());
         Window window = getWindow();//这部分是设置dialog宽高的，宽高是我从sharedpreferences里面获取到的。之前程序启动的时候有获取
         window.getDecorView().setPadding(0, 0, 0, 0);
+        window.setBackgroundDrawable(new ColorDrawable(Color.WHITE));
         WindowManager.LayoutParams lp = window.getAttributes();
         lp.width = width;
+        lp.gravity = Gravity.CENTER;
         window.setAttributes(lp);
 
         localView = getLayoutInflater().inflate(R.layout.price_item_confirm, null);
@@ -42,7 +46,6 @@ public class PriceItemDialog extends Dialog implements View.OnClickListener{
         localView.setAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.slide_bottom_to_top));
 
         setContentView(localView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        getWindow().getAttributes().gravity = Gravity.CENTER;
     }
 
     @Override

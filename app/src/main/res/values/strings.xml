@@ -125,4 +125,9 @@
     <string name="search_placeholder">请输入关键字</string>
     <string name="logout_txt">退 出</string>
     <string name="login_logout_txt">登录/注册</string>
+    <string name="settings">设置</string>
+    <string name="nickname">昵称</string>
+    <string name="my_prices">我的报价</string>
+    <string name="my_info">我的</string>
+    <string name="modify_nickname">修改昵称</string>
 </resources>

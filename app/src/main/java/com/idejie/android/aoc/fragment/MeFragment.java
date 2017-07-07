@@ -121,6 +121,7 @@ public class MeFragment extends LazyFragment implements View.OnClickListener{
         exitBtn.setOnClickListener(this);
     }
     private void loadData(){
+//        Log.i("=======", userApplication.getUser().getAvatar().toString());
         if (userApplication.getUser() == null) {
             exitBtn.setVisibility(View.GONE);
             loginTxt.setVisibility(View.VISIBLE);
@@ -136,7 +137,8 @@ public class MeFragment extends LazyFragment implements View.OnClickListener{
             textName.setText(String.format("昵称: %s", userApplication.getUser().getName()));
             textScore.setText(String.format("积分: %d", userApplication.getUser().getScore()));
 
-            if ( userApplication.getUser().getAvatar() != null) {
+            if (userApplication.getUser().getAvatar() != null) {
+                Log.i("2=========", "here");
                 Glide
                     .with(this)
                     .load(userApplication.getUser().getAvatar().getUrl())
@@ -144,7 +146,9 @@ public class MeFragment extends LazyFragment implements View.OnClickListener{
                     .crossFade()
                     .into(circleImageView);
             } else {
+                Log.i("3=========", "here");
                 if (!isLoadAvatar) {
+                    Log.i("4=========", "here");
                     fetchUserAvatar();
                 }
             }
@@ -154,7 +158,7 @@ public class MeFragment extends LazyFragment implements View.OnClickListener{
     private void fetchUserAvatar() {
         UserModelRepository userModelRepository = UserModelRepository.getInstance(this.getContext(), userApplication.getAccessToken());
         Map<String, Object> params = new HashMap<>();
-        params.put("id", userApplication.getUser().getId());
+        params.put("id", (int)userApplication.getUser().getId());
         userModelRepository.invokeStaticMethod("usersAvatar", params, new Adapter.JsonObjectCallback() {
             @Override
             public void onSuccess(JSONObject response) {
@@ -162,9 +166,8 @@ public class MeFragment extends LazyFragment implements View.OnClickListener{
                 Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create();
                 ImageModel ima = gson.fromJson(response.toString(), ImageModel.class);
                 userApplication.getUser().setAvatar(ima);
-
-                Glide
-                    .with(getContext())
+                Log.i("5==========", ima.getUrl());
+                Glide.with(getContext())
                     .load(ima.getUrl())
                     .centerCrop()
                     .crossFade()
@@ -173,7 +176,7 @@ public class MeFragment extends LazyFragment implements View.OnClickListener{
 
             @Override
             public void onError(Throwable t) {
-                Log.i("fetchUserAvatar", t.toString());
+                Log.i("fetchUserAvatar error", t.toString());
             }
         });
     }

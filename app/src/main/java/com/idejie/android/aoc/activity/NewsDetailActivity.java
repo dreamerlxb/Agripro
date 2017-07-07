@@ -2,7 +2,10 @@ package com.idejie.android.aoc.activity;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.speech.tts.TextToSpeechService;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -29,6 +32,7 @@ import android.widget.Toast;
 import com.idejie.android.aoc.R;
 import com.idejie.android.aoc.application.UserApplication;
 import com.idejie.android.aoc.callback.CustomCallback;
+import com.idejie.android.aoc.dialog.PostCommentDialog;
 import com.idejie.android.aoc.model.FavourModel;
 import com.idejie.android.aoc.model.LikeModel;
 import com.idejie.android.aoc.model.NewsModel;
@@ -74,6 +78,8 @@ public class NewsDetailActivity extends AppCompatActivity {
 
     private LikeModel likeModel = null;
     private FavourModel favourModel = null;
+
+    private Dialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -223,18 +229,24 @@ public class NewsDetailActivity extends AppCompatActivity {
      * 发送评论
      * */
     private void postComment(){
-        final Dialog dialog = new Dialog(this);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        int width = LocalDisplay.getScreenWidthPixels(this);
+        if (dialog != null) {
+            dialog.show();
+            return;
+        }
+        dialog = new Dialog(this, R.style.comment_dialog);
         Window window = dialog.getWindow();//这部分是设置dialog宽高的，宽高是我从sharedpreferences里面获取到的。之前程序启动的时候有获取
+        window.requestFeature(Window.FEATURE_NO_TITLE);
         window.getDecorView().setPadding(0, 0, 0, 0);
+        window.setBackgroundDrawable(new ColorDrawable(Color.WHITE));
         WindowManager.LayoutParams lp = window.getAttributes();
-        lp.width = width;
+        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        lp.gravity = Gravity.BOTTOM;
         window.setAttributes(lp);
+        window.setContentView(R.layout.comment_txt_view);
 
-        View view = getLayoutInflater().inflate(R.layout.comment_txt_view,null);
-        final EditText contentTxt = (EditText) view.findViewById(R.id.comment_content);
-        final Button sentBtn = (Button) view.findViewById(R.id.comment_send_btn);
+        final EditText contentTxt = (EditText) dialog.findViewById(R.id.comment_content);
+        final Button sentBtn = (Button) dialog.findViewById(R.id.comment_send_btn);
         sentBtn.setBackgroundResource(R.color.gray_light);
         sentBtn.setClickable(false);
         contentTxt.addTextChangedListener(new TextWatcher() {
@@ -288,23 +300,23 @@ public class NewsDetailActivity extends AppCompatActivity {
                 });
             }
         });
-        dialog.setContentView(view,new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        dialog.getWindow().getAttributes().gravity = Gravity.CENTER|Gravity.BOTTOM;
-        dialog.show();
-
-
-        Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
-            public void run() {
-                contentTxt.setFocusable(true);
-                contentTxt.setFocusableInTouchMode(true);
-                contentTxt.requestFocus();
-                InputMethodManager inputManager =
-                        (InputMethodManager)contentTxt.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputManager.showSoftInput(contentTxt, 0);
+            public void onShow(DialogInterface dialog) {
+                new Timer().schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        contentTxt.setFocusable(true);
+                        contentTxt.setFocusableInTouchMode(true);
+                        contentTxt.requestFocus();
+                        InputMethodManager inputManager =
+                                (InputMethodManager)contentTxt.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        inputManager.showSoftInput(contentTxt, 0);
+                    }
+                }, 100);
             }
-        }, 100);
+        });
+        dialog.show();
     }
 
     // 点击关注

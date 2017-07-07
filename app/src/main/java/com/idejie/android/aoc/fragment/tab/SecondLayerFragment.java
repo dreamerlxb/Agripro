@@ -170,6 +170,7 @@ public class SecondLayerFragment extends LazyFragment
     private void initBannerInfo() {
         banner.setBannerStyle(BannerConfig.CIRCLE_INDICATOR_TITLE_INSIDE);
         banner.setImageLoader(new BannerImageLoader());
+        banner.setDelayTime(4000);
         banner.setOnBannerClickListener(new OnBannerClickListener() {
             @Override
             public void OnBannerClick(int position) {

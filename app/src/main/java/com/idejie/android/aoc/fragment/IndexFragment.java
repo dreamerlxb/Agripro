@@ -84,7 +84,7 @@ public class IndexFragment extends LazyFragment implements View.OnClickListener 
         float selectSize = unSelectSize * 1.2f;
 
         int selectColor = res.getColor(R.color.tab_top_text_2);
-        int unSelectColor = res.getColor(R.color.tab_top_text_1);
+        int unSelectColor = res.getColor(R.color.tab_top_text_2);
         indicator.setOnTransitionListener(new OnTransitionTextListener().setColor(selectColor, unSelectColor).setSize(selectSize, unSelectSize));
 
         viewPager.setOffscreenPageLimit(4);
@@ -95,9 +95,6 @@ public class IndexFragment extends LazyFragment implements View.OnClickListener 
         // 注意这里 的FragmentManager 是 getChildFragmentManager(); 因为是在Fragment里面
         // 而在activity里面用FragmentManager 是 getSupportFragmentManager()
         indicatorViewPager.setAdapter(new MyAdapter(getChildFragmentManager()));
-
-
-        Log.d("cccc", "Fragment 将要创建View " + this);
     }
 
     @Override
@@ -109,32 +106,27 @@ public class IndexFragment extends LazyFragment implements View.OnClickListener 
     @Override
     protected void onFragmentStartLazy() {
         super.onFragmentStartLazy();
-        Log.d("cccc", "IndexFragment 显示 ");
         indicatorViewPager.setCurrentItem(0, false);
     }
 
     @Override
     protected void onFragmentStopLazy() {
         super.onFragmentStopLazy();
-        Log.d("cccc", "IndexFragment 掩藏 " );
     }
 
     @Override
     protected void onPauseLazy() {
         super.onPauseLazy();
-        Log.d("cccc", "Fragment所在的Activity onPause, onPauseLazy " );
     }
 
     @Override
     protected void onDestroyViewLazy() {
         super.onDestroyViewLazy();
-        Log.d("cccc", "Fragment View将被销毁 " + this);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d("cccc", "Fragment 所在的Activity onDestroy " + this);
     }
 
     @Override

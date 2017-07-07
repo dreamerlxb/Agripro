@@ -79,7 +79,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         SViewPager viewPager = (SViewPager) findViewById(R.id.tabmain_viewPager);
         indicator = (FixedIndicatorView) findViewById(R.id.tabmain_indicator);
-        indicator.setOnTransitionListener(new OnTransitionTextListener().setColor(Color.BLUE, Color.BLACK));
+//        Color. Color.argb(255, 17, 179, 100)
+        indicator.setOnTransitionListener(new OnTransitionTextListener().setColor(Color.argb(255, 5, 112, 67), Color.BLACK));
 
     //        //这里可以添加一个view，作为centerView，会位于Indicator的tab的中间
     //        centerView = getLayoutInflater().inflate(R.layout.tab_main_center, indicator, false);
@@ -91,13 +92,11 @@ public class MainActivity extends AppCompatActivity {
         indicatorViewPager.setOnIndicatorPageChangeListener(new IndicatorViewPager.OnIndicatorPageChangeListener() {
             @Override
             public void onIndicatorPageChange(int preItem, int currentItem) {
-//                Log.i("MainActivity", preItem + "");
-//                Log.i("MainActivity", currentItem + "");
 
                 TextView tv = (TextView) indicator.getItemView(currentItem);
                 Drawable top = tv.getCompoundDrawables()[1];
                 Drawable wrappedDrawable = DrawableCompat.wrap(top);
-                DrawableCompat.setTintList(wrappedDrawable, ColorStateList.valueOf(Color.BLUE));
+                DrawableCompat.setTintList(wrappedDrawable, ColorStateList.valueOf(Color.argb(255, 5, 112, 67)));
                 tv.setCompoundDrawables(null, wrappedDrawable, null, null);
 
                 TextView preTv = (TextView) indicator.getItemView(preItem);
@@ -196,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
             if (position == 0) {
                 Drawable top = ContextCompat.getDrawable(MainActivity.this, tabIcons[position]);
                 Drawable wrappedDrawable = DrawableCompat.wrap(top);
-                DrawableCompat.setTintList(wrappedDrawable, ColorStateList.valueOf(Color.BLUE));
+                DrawableCompat.setTintList(wrappedDrawable, ColorStateList.valueOf(Color.argb(255, 5, 112, 67)));
                 textView.setCompoundDrawablesWithIntrinsicBounds(null, wrappedDrawable, null, null);
             } else {
                 textView.setCompoundDrawablesWithIntrinsicBounds(0, tabIcons[position], 0, 0);

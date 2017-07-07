@@ -18,7 +18,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:gravity="center"
-            android:text="修改昵称"
+            android:text="@string/modify_nickname"
             android:textColor="@color/white"
             android:textSize="20sp"
             android:layout_centerInParent="true" />
@@ -85,11 +85,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="修改昵称"
-                android:textSize="18sp"
-                android:textColor="@color/white"
                 android:background="@color/colorPrimary"
-                android:textAllCaps="false" />
+                android:text="@string/modify_nickname"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="18sp" />
 
         </LinearLayout>
     </ScrollView>

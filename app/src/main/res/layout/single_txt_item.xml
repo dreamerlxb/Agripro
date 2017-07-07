@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content" android:layout_height="wrap_content"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
     android:background="@drawable/search_corner"
-    android:textSize="14sp"
-    tools:text="北京"
     android:padding="5dp"
-    android:layout_margin="3dp">
-</TextView>
+    android:textSize="18sp"
+    tools:text="北京"></TextView>
