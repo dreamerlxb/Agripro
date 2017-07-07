@@ -114,7 +114,8 @@ public class SearchFragment extends LazyFragment implements View.OnClickListener
 
         emptyView = findViewById(R.id.list_no_data);
         listView.setEmptyView(emptyView);
-
+        listViewAdapter = new RiseAndFallListAdapter(getContext());
+        listView.setAdapter(listViewAdapter);
         initLocationClient();
 
         hanProvinceDialog = new Handler() {
@@ -142,9 +143,14 @@ public class SearchFragment extends LazyFragment implements View.OnClickListener
                 Intent intent=new Intent(getContext(), TendencyActivity.class);
                 if (locationRegion == null){
                     intent.putExtra("defaultRegionId", 1);
+                    intent.putExtra("defaultRegionName", "北京");
                 } else {
-                    Double id = (Double) locationRegion.getId();
-                    intent.putExtra("defaultRegionId", id.intValue());
+                    intent.putExtra("defaultRegionId", (Integer) locationRegion.getId());
+                    if (locationRegion.getCity() != null) {
+                        intent.putExtra("defaultRegionName", locationRegion.getCity());
+                    } else {
+                        intent.putExtra("defaultRegionName", locationRegion.getProvince());
+                    }
                 }
                 startActivity(intent);
                 break;
@@ -273,6 +279,9 @@ public class SearchFragment extends LazyFragment implements View.OnClickListener
                         }
                     }
                     calculateRiseAndFall();
+                } else {
+                    listViewAdapter.updateItems(new ArrayList<RiseAndFallBean>());
+                    listViewAdapter.notifyDataSetChanged();
                 }
             }
 
@@ -408,14 +417,14 @@ public class SearchFragment extends LazyFragment implements View.OnClickListener
                 rise1.setRiseAndFall(String.format("%.2f %%", d));
             }
         }
-        listViewAdapter = new RiseAndFallListAdapter(getContext(),todayList);
-        listView.setAdapter(listViewAdapter);
+
+        listViewAdapter.updateItems(todayList);
+        listViewAdapter.notifyDataSetChanged();
     }
 
     @Override
     protected void onFragmentStartLazy() {
         super.onFragmentStartLazy();
-        Log.d("SearchFragment", "Fragment 显示, onFragmentStartLazy");
         if (!loc) {
             locationClient.startLocation();
             initListData();

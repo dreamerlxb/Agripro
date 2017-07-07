@@ -74,17 +74,14 @@ public class RiseAndFallListAdapter extends BaseAdapter {
             viewHolder.textSort=(TextView) convertView.findViewById(R.id.text_sort);
             viewHolder.textRank= (TextView) convertView.findViewById(R.id.text_rank);
             viewHolder.textPrice=(TextView)convertView.findViewById(R.id.text_price);
-//            viewHolder.textDate=(TextView)convertView.findViewById(R.id.text_date);
             convertView.setTag(viewHolder);
         }else{
             viewHolder=(ViewHolder) convertView.getTag();
         }
         viewHolder.textArea.setText(textTendList.getRegion());
         viewHolder.textSort.setText(textTendList.getSort());
-//        String.
         viewHolder.textPrice.setText(String.format("%.2f", textTendList.getPrice()));//
         viewHolder.textRank.setText(textTendList.getRiseAndFall());
-//        viewHolder.textDate.setText(textTendList.getDateStr());
 
         return convertView;
     }

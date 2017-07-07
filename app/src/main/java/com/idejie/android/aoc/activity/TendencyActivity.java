@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.ArrayMap;
 import android.util.Log;
@@ -59,7 +60,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TendencyActivity extends Activity implements View.OnClickListener {
+public class TendencyActivity extends AppCompatActivity implements View.OnClickListener {
 
     private ListScrollView scrollView;
     private WebView chartWeb;
@@ -95,6 +96,7 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
 
     SimpleDateFormat dateFormat;
     private int defaultRegionId;
+    private String defaultRegionName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,6 +106,7 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
         dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
         defaultRegionId = getIntent().getIntExtra("defaultRegionId", 1);
+        defaultRegionName = getIntent().getStringExtra("defaultRegionName");
         initViews();
         initWeb();
         initHandles();
@@ -122,9 +125,11 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
         scrollView.setListView(listView);
 
         textProvince = (TextView) findViewById(R.id.province);//省市
+        textProvince.setText(defaultRegionName);
         textProvince.setOnClickListener(this);
 
         textType = (TextView) findViewById(R.id.type);//品种
+        textType.setText("生猪");
         textType.setOnClickListener(this);
 
         textRank = (TextView) findViewById(R.id.rank);//级别
@@ -262,7 +267,6 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
                 if (isReady()) {
                     listView.setVisibility(View.GONE);
                     chartWeb.setVisibility(View.VISIBLE);
-//                    chartWeb.loadUrl("file:///android_asset/loading.html");
                     //变色
                     btnLine.setBackgroundResource(R.drawable.border_green);
                     btnGraph.setBackgroundResource(R.drawable.border_grey);
@@ -301,7 +305,6 @@ public class TendencyActivity extends Activity implements View.OnClickListener {
                 btnLine.setBackgroundResource(R.drawable.border_grey);
                 btnGraph.setBackgroundResource(R.drawable.border_grey);
                 btnMap.setBackgroundResource(R.drawable.border_green);
-//                chartWeb.setBackgroundResource(R.color.white);
                 ifMap = true;
 
                 initPriceMap();

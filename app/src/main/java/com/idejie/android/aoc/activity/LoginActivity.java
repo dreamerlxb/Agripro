@@ -62,6 +62,8 @@ import static android.Manifest.permission.READ_CONTACTS;
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor>,View.OnClickListener {
 
     private static final int REQUEST_READ_CONTACTS = 0;
+    private static final int REQUEST_CODE = 3003;
+    public static final int RESULT_CODE = 3004;
 
     private AutoCompleteTextView mEmailView;
     private UserApplication userApplication;
@@ -205,12 +207,29 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 Log.d("Login Res",response.toString());
 
                 //新建一个线程保存数据
-                new Thread(saveUserRunnable).start();
 
                 Intent intent = new Intent();
-                intent.putExtra("OK",2000);
-                LoginActivity.this.setResult(2000,intent);
+                intent.putExtra("OK", true);
+                LoginActivity.this.setResult(RESULT_CODE, intent);
                 finish();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        SharedPreferences sharedPreferences = getSharedPreferences("LoginUser", MODE_PRIVATE);
+                        //getBoolean(String key, boolean defValue) 获取键isFirst的值，若无此键则获取默认值（第一次打开程序的时候没有isFirst这个键
+                        UserApplication ua = (UserApplication) getApplication();
+                        int userId = sharedPreferences.getInt("userId",-1);
+                        if (userId == ua.getUser().getUserId()) {
+                            return;
+                        } else { //重新保存数据
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.putInt("userId",ua.getUser().getUserId());
+                            editor.putString("accessToken",ua.getAccessToken());
+                            editor.putString("userName",ua.getUser().getName());
+                            editor.commit();
+                        }
+                    }
+                }).start();
             } // 您的密码填写有误，请重新填写
 
             @Override
@@ -222,23 +241,23 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         });
     }
 
-    private Runnable saveUserRunnable = new Runnable() {
-        @Override
-        public void run() {
-            SharedPreferences sharedPreferences = getSharedPreferences("LoginUser", MODE_PRIVATE);
-            //getBoolean(String key, boolean defValue) 获取键isFirst的值，若无此键则获取默认值（第一次打开程序的时候没有isFirst这个键
-            int userId = sharedPreferences.getInt("userId",-1);
-            if (userId == userApplication.getUser().getUserId()) {
-                return;
-            } else { //重新保存数据
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putInt("userId",userApplication.getUser().getUserId());
-                editor.putString("accessToken",userApplication.getAccessToken());
-                editor.putString("userName",userApplication.getUser().getName());
-                editor.commit();
-            }
-        }
-    };
+//    private Runnable saveUserRunnable = new Runnable() {
+//        @Override
+//        public void run() {
+//            SharedPreferences sharedPreferences = getSharedPreferences("LoginUser", MODE_PRIVATE);
+//            //getBoolean(String key, boolean defValue) 获取键isFirst的值，若无此键则获取默认值（第一次打开程序的时候没有isFirst这个键
+//            int userId = sharedPreferences.getInt("userId",-1);
+//            if (userId == userApplication.getUser().getUserId()) {
+//                return;
+//            } else { //重新保存数据
+//                SharedPreferences.Editor editor = sharedPreferences.edit();
+//                editor.putInt("userId",userApplication.getUser().getUserId());
+//                editor.putString("accessToken",userApplication.getAccessToken());
+//                editor.putString("userName",userApplication.getUser().getName());
+//                editor.commit();
+//            }
+//        }
+//    };
 
 
     /**

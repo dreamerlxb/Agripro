@@ -44,10 +44,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:background="@drawable/bottom_top_line_bg"
-        android:drawableLeft="@mipmap/icon_price"
+        android:background="@drawable/bottom_line_bg"
+        android:drawableLeft="@mipmap/password"
         android:drawablePadding="10dp"
-        android:drawableStart="@mipmap/icon_price"
+        android:drawableStart="@mipmap/password"
         android:gravity="center_vertical"
         android:paddingBottom="10dp"
         android:paddingEnd="10dp"
@@ -58,23 +58,23 @@
         android:text="修改密码"
         android:textSize="16sp" />
 
-    <!--<TextView-->
-        <!--android:id="@+id/modify_name_txt"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:background="@drawable/bottom_line_bg"-->
-        <!--android:drawableLeft="@mipmap/icon_price"-->
-        <!--android:drawablePadding="10dp"-->
-        <!--android:drawableStart="@mipmap/icon_price"-->
-        <!--android:gravity="center_vertical"-->
-        <!--android:paddingBottom="10dp"-->
-        <!--android:paddingEnd="10dp"-->
-        <!--android:paddingLeft="20dp"-->
-        <!--android:paddingRight="10dp"-->
-        <!--android:paddingStart="20dp"-->
-        <!--android:paddingTop="10dp"-->
-        <!--android:text="修改昵称"-->
-        <!--android:textSize="16sp" />-->
+    <TextView
+        android:id="@+id/modify_name_txt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bottom_line_bg"
+        android:drawableLeft="@mipmap/nickname"
+        android:drawablePadding="10dp"
+        android:drawableStart="@mipmap/nickname"
+        android:gravity="center_vertical"
+        android:paddingBottom="10dp"
+        android:paddingEnd="10dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="10dp"
+        android:paddingStart="20dp"
+        android:paddingTop="10dp"
+        android:text="修改昵称"
+        android:textSize="16sp" />
 
     <LinearLayout
         android:id="@+id/clear_cache"
@@ -87,9 +87,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:drawableLeft="@mipmap/icon_price"
+            android:drawableLeft="@mipmap/icon_cache"
             android:drawablePadding="10dp"
-            android:drawableStart="@mipmap/icon_price"
+            android:drawableStart="@mipmap/icon_cache"
             android:gravity="center_vertical"
             android:paddingBottom="10dp"
             android:paddingEnd="10dp"

@@ -69,6 +69,8 @@ import static android.content.Context.MODE_PRIVATE;
  * Created by shandongdaxue on 16/8/11.
  */
 public class MeFragment extends LazyFragment implements View.OnClickListener{
+    public static final int REQUEST_CODE = 3003;
+
     private UserApplication userApplication;
     private View view;
     private TextView textName,textScore;
@@ -121,7 +123,6 @@ public class MeFragment extends LazyFragment implements View.OnClickListener{
         exitBtn.setOnClickListener(this);
     }
     private void loadData(){
-//        Log.i("=======", userApplication.getUser().getAvatar().toString());
         if (userApplication.getUser() == null) {
             exitBtn.setVisibility(View.GONE);
             loginTxt.setVisibility(View.VISIBLE);
@@ -158,7 +159,7 @@ public class MeFragment extends LazyFragment implements View.OnClickListener{
     private void fetchUserAvatar() {
         UserModelRepository userModelRepository = UserModelRepository.getInstance(this.getContext(), userApplication.getAccessToken());
         Map<String, Object> params = new HashMap<>();
-        params.put("id", (int)userApplication.getUser().getId());
+        params.put("id", userApplication.getUser().getId());
         userModelRepository.invokeStaticMethod("usersAvatar", params, new Adapter.JsonObjectCallback() {
             @Override
             public void onSuccess(JSONObject response) {
@@ -191,7 +192,7 @@ public class MeFragment extends LazyFragment implements View.OnClickListener{
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.tv_login) {
-            this.startActivityForResult(new Intent(getContext(), LoginActivity.class),1000);
+            this.startActivityForResult(new Intent(getContext(), LoginActivity.class), REQUEST_CODE);
             return;
         }
 
@@ -216,7 +217,8 @@ public class MeFragment extends LazyFragment implements View.OnClickListener{
                 startActivity(new Intent(getContext(), TuiActivity.class));
                 break;
             case R.id.tv_set:
-                startActivity(new Intent(getContext(), SettingActivity.class));
+//                startActivity(new Intent(getContext(), SettingActivity.class));
+                startActivityForResult(new Intent(getContext(), SettingActivity.class), REQUEST_CODE);
                 break;
             case R.id.exitButton:
                 dialog();
@@ -239,7 +241,7 @@ public class MeFragment extends LazyFragment implements View.OnClickListener{
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Log.i("=====", requestCode + "  " + resultCode);
-        if (requestCode == 1000 && resultCode == 2000) {
+        if (requestCode == REQUEST_CODE && resultCode == LoginActivity.RESULT_CODE) {
             //重新加载数据
             loadData();
         } else if(requestCode == 1001) {
@@ -254,17 +256,15 @@ public class MeFragment extends LazyFragment implements View.OnClickListener{
                     e.printStackTrace();
                 }
             }
+        } else if (requestCode == REQUEST_CODE && resultCode == SettingActivity.RESULT_CODE) {
+            if (data.getBooleanExtra(SettingActivity.MODIFY_NAME, false)) {
+                textName.setText(String.format("昵称: %s", userApplication.getUser().getName()));
+            }
         }
     }
 
     private void sendMsgToServer(String key) {
         showProgress(true);
-//        UserModelRepository userRepo = UserModelRepository.getInstance(getContext(), userApplication.getAccessToken());
-//        Map<String,Object> params =new HashMap<>();
-//        params.put("userId", userApplication.getUser().getId());
-//        params.put("imgKey", key);
-//        params.put("imgName", avatarName);
-//        params.put("imgType", avatarType);
 
         UserModelRepository userRepo = UserModelRepository.getInstance(getContext(), userApplication.getAccessToken());
         Map<String,Object> params =new HashMap<>();
@@ -288,7 +288,7 @@ public class MeFragment extends LazyFragment implements View.OnClickListener{
                     .crossFade()
                     .into(circleImageView);
             }
-
+//1Vjq4ZhmGj9ayCb1C9anWtHuwYUijV2vGgi2sMQsNXcr9ywM2YY6CwxHhnBpeIzF
             @Override
             public void onError(Throwable t) {
                 showProgress(false);

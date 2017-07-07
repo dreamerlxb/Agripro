@@ -104,7 +104,9 @@ public class NewsDetailActivity extends AppCompatActivity {
         webSettings.setUseWideViewPort(true);//将图片调整到适合webview的大小
         webSettings.setLoadWithOverviewMode(true);// 缩放至屏幕的大小
 //        webView.getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NARROW_COLUMNS);//适应内容大小
-        webView.getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);//适应屏幕，内容将自动缩放
+        webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);//适应屏幕，内容将自动缩放
+        webSettings.setSupportZoom(true);
+        webSettings.setTextZoom(350);
         webView.setWebChromeClient(new WebChromeClient());
 
         tv_time = (TextView) findViewById(R.id.tv_detail_time);

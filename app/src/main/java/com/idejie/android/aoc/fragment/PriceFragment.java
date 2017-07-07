@@ -290,9 +290,6 @@ public class PriceFragment extends LazyFragment implements View.OnClickListener,
                 beEmpty();
                 break;
             case R.id.province:
-//                Intent intent = new Intent(getContext(), SelectActivity.class);
-//                intent.putExtra(SELECT_TYPE, 0); // 代表省市选择
-//                startActivityForResult(intent, REQUEST_CODE);
                 if (chinaMap == null) {
                     chinaMap = new ArrayMap<>();
                     getRegionInfo();

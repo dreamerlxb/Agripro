@@ -49,33 +49,6 @@
 
     </android.support.v7.widget.Toolbar>
 
-    <!--<LinearLayout-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="48dp"-->
-    <!--android:orientation="horizontal"-->
-    <!--android:background="@color/colorPrimary">-->
-    <!--<ImageView-->
-    <!--android:id="@+id/imageView6"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_gravity="center"-->
-    <!--android:layout_marginLeft="10dp"-->
-    <!--app:srcCompat="@mipmap/ic_action_back"-->
-    <!--android:padding="5dp"-->
-    <!--android:layout_marginStart="10dp"-->
-    <!--android:contentDescription=""-->
-    <!--tools:ignore="ContentDescription" />-->
-    <!--<TextView-->
-    <!--android:id="@+id/textView4"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_gravity="center"-->
-    <!--android:gravity="center"-->
-    <!--android:text="价格查询"-->
-    <!--android:textColor="@color/white"-->
-    <!--android:textSize="20sp" />-->
-    <!--</LinearLayout>-->
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

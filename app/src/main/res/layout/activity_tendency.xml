@@ -75,6 +75,7 @@
             android:layout_toLeftOf="@+id/textView4"
             android:layout_toStartOf="@+id/textView4"
             android:scaleType="fitCenter"
+            android:visibility="visible"
             app:srcCompat="@mipmap/icon"
             tools:ignore="ContentDescription" />
 
