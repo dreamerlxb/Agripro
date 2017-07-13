@@ -40,7 +40,7 @@ import java.util.Map;
 public class SecondLayerFragment extends LazyFragment
         implements SwipeRefreshLayout.OnRefreshListener,
             HomeRecyclerAdapter.OnRecyclerViewItemClickListener,
-            HomeRecyclerAdapter.OnRecyclerViewLoadMoreListener {
+            HomeRecyclerAdapter.OnRecyclerViewLoadMoreListener, HomeRecyclerAdapter.OnRecyclerViewItemVisibleListener {
     public static final String INTENT_INT_POSITION = "intent_int_position";
 
     private static final int LOAD_COUNT = 10;
@@ -86,6 +86,7 @@ public class SecondLayerFragment extends LazyFragment
 //        homeRecyclerAdapter.setLayoutManager(linearLayoutManager);
         homeRecyclerAdapter.setOnItemClickListener(this);
         homeRecyclerAdapter.setOnLoadMoreListener(this);
+        homeRecyclerAdapter.setOnItemVisibleListener(this);
         swipeRefreshLayout.setOnRefreshListener(this);
         queryNews(categoryId, true);
         initBannerInfo();
@@ -275,7 +276,8 @@ public class SecondLayerFragment extends LazyFragment
                 if (response.length() > 0) {
                     if (isLoadMore) {
                         homeRecyclerAdapter.addItems(objects);
-                        homeRecyclerAdapter.notifyItemRangeInserted(homeRecyclerAdapter.getItemCount() - 1 - objects.size() , objects.size());
+//                        homeRecyclerAdapter.notifyItemRangeInserted(homeRecyclerAdapter.getItemCount() - 1 - objects.size() , objects.size());
+                        homeRecyclerAdapter.notifyItemRangeChanged(homeRecyclerAdapter.getItemCount() - 1 - objects.size() , objects.size());
                     } else {
                         homeRecyclerAdapter.updateItems(objects);
                         homeRecyclerAdapter.notifyDataSetChanged();
@@ -283,12 +285,6 @@ public class SecondLayerFragment extends LazyFragment
                 }
                 if (isLoadMore) {
                     homeRecyclerAdapter.loadMoreComplete(response.length() > 0); //还有数据
-                    int firstItemPosition = linearLayoutManager.findFirstVisibleItemPosition();
-                    int lastItemPosition = linearLayoutManager.findLastVisibleItemPosition();
-                    int loadMoreIndex = homeRecyclerAdapter.getItemCount() - 1;
-                    if (loadMoreIndex <= lastItemPosition) {
-                        homeRecyclerAdapter.notifyItemChanged(loadMoreIndex);
-                    }
                 } else {
                     swipeRefreshLayout.setRefreshing(false);
                 }
@@ -325,6 +321,15 @@ public class SecondLayerFragment extends LazyFragment
     public void onLoadMore(View view, int position) {
         Log.i("RecyclerView", "正在加载中...");
         queryNews(categoryId, true);
+    }
+
+    @Override
+    public boolean onItemVisible(int pos) {
+        if(pos >= linearLayoutManager.findFirstVisibleItemPosition()
+                && pos <= linearLayoutManager.findLastVisibleItemPosition()) {
+            return true;
+        }
+        return false;
     }
 }
 

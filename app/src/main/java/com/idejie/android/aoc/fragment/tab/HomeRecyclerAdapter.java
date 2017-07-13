@@ -58,9 +58,17 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public static interface OnRecyclerViewItemClickListener {
         void onItemClick(View view, int position);
     }
-
     public void setOnItemClickListener(OnRecyclerViewItemClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
+    }
+
+
+    private OnRecyclerViewItemVisibleListener onItemVisibleListener;
+    public static interface OnRecyclerViewItemVisibleListener {
+        boolean onItemVisible(int pos);
+    }
+    public void setOnItemVisibleListener(OnRecyclerViewItemVisibleListener onItemVisibleListener) {
+        this.onItemVisibleListener = onItemVisibleListener;
     }
 
 
@@ -98,11 +106,10 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         hasMore = more; // 是否还有更多数据
         isLoadingMore = false; //加载结束
 
-//        int lastItemPosition = layoutManager.findLastVisibleItemPosition();
-//        int loadMoreIndex = newsList.size();
-//        if (loadMoreIndex <= lastItemPosition) {
-//            notifyItemChanged(loadMoreIndex);
-//        }
+        int loadMoreIndex = getItemCount() - 1;
+        if (onItemVisibleListener.onItemVisible(loadMoreIndex)) {
+            notifyItemChanged(loadMoreIndex);
+        }
     }
 
     public Object getItemObject(int position) {
@@ -198,7 +205,9 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                             NewsModel newsModel1 = newsList.get(position);
                             newsModel1.setCommentsCount((Integer) count);
                             newsModel1.setCommentsCountSync(true);
-                            notifyItemChanged(position);
+                            if(onItemVisibleListener.onItemVisible(position)) {
+                                notifyItemChanged(position);
+                            }
                         }
                     }
                     @Override
@@ -219,7 +228,9 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                             NewsModel newsModel1 = newsList.get(position);
                             newsModel1.setLikersCount((Integer) count);
                             newsModel1.setLikersCountSync(true);
-                            notifyItemChanged(position);
+                            if(onItemVisibleListener.onItemVisible(position)) {
+                                notifyItemChanged(position);
+                            }
                         }
                     }
                     @Override
