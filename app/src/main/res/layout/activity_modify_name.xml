@@ -10,32 +10,32 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:background="@color/colorPrimary">
+        android:background="@color/toolbar_top">
 
         <TextView
             android:id="@+id/textView4"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_centerInParent="true"
             android:layout_gravity="center"
             android:gravity="center"
             android:text="@string/modify_nickname"
             android:textColor="@color/white"
-            android:textSize="20sp"
-            android:layout_centerInParent="true" />
+            android:textSize="20sp" />
 
         <ImageView
             android:id="@+id/back_img"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            app:srcCompat="@mipmap/ic_action_back"
-            android:padding="5dp"
-            android:contentDescription=""
-            tools:ignore="ContentDescription"
-            android:tint="@color/white"
-            android:layout_centerVertical="true"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center"
+            android:contentDescription=""
+            android:padding="5dp"
+            android:tint="@color/white"
+            app:srcCompat="@mipmap/ic_action_back"
+            tools:ignore="ContentDescription" />
 
     </RelativeLayout>
 

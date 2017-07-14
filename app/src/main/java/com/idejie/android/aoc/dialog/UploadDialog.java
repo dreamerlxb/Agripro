@@ -44,7 +44,7 @@ public class UploadDialog extends Dialog{
         setCanceledOnTouchOutside(false);
     }
 
-    public void setPercentTxt(double d) {
-        percentTxt.setText(String.format("%.2f %%", d));
+    public void setPercentTxt(int percent) {
+        percentTxt.setText(percent + "%");
     }
 }

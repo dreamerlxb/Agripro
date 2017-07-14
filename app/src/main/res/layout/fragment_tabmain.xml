@@ -65,13 +65,12 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary">
+        android:background="@color/toolbar_top">
 
         <com.idejie.android.library.view.indicator.FixedIndicatorView
             android:id="@+id/fragment_tabmain_indicator"
             android:layout_width="match_parent"
-            android:layout_height="45dp"
-            >
+            android:layout_height="45dp">
 
         </com.idejie.android.library.view.indicator.FixedIndicatorView>
     </LinearLayout>

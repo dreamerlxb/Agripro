@@ -18,13 +18,13 @@
 
         <TextView
             android:id="@+id/top_name"
-            android:textColor="@color/white"
-            android:gravity="center"
-            android:background="@drawable/price_grade_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@drawable/price_grade_title"
+            android:gravity="center"
             android:hint="品种"
             android:padding="5dp"
+            android:textColor="@android:color/white"
             android:textSize="14sp" />
 
         <TextView

@@ -6,32 +6,33 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:background="@color/colorPrimary">
+        android:background="@color/toolbar_top">
 
         <ImageView
+            android:id="@+id/back_img"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@mipmap/ic_action_back"
-            android:id="@+id/back_img"
-            android:layout_centerVertical="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:contentDescription=""
             android:padding="10dp"
             android:tint="@color/white"
-            android:contentDescription=""
+            app:srcCompat="@mipmap/ic_action_back"
             tools:ignore="ContentDescription" />
 
         <TextView
-            android:text="我的评论"
+            android:id="@+id/textView6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/textView6"
-            android:textSize="20sp"
             android:layout_centerInParent="true"
-            android:textColor="@color/white" />
+            android:text="我的评论"
+            android:textColor="@color/white"
+            android:textSize="20sp" />
     </RelativeLayout>
     <FrameLayout
         android:layout_width="match_parent"

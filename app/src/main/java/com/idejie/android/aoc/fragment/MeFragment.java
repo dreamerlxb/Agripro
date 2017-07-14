@@ -326,9 +326,9 @@ public class MeFragment extends LazyFragment implements View.OnClickListener{
         }, new UploadOptions(null, null, false, new UpProgressHandler() {
             @Override
             public void progress(String key, double percent) {
-                uploadDialog.setPercentTxt(percent);
-                Log.i("key", key + "");
-                Log.i("percent", percent + "");
+                uploadDialog.setPercentTxt((int)(percent * 100));
+//                Log.i("key", key + "");
+//                Log.i("percent", percent + "");
             }
         }, null));
     }

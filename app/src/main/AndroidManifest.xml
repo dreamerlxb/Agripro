@@ -76,9 +76,6 @@
         <activity
             android:name=".activity.LoginActivity"
             android:label="@string/title_activity_login" />
-        <activity
-            android:name=".activity.SettingsActivity"
-            android:label="@string/title_activity_settings" />
         <activity android:name=".activity.MyPriceActivity" />
         <activity
             android:name=".activity.NewsCommentActivity"
