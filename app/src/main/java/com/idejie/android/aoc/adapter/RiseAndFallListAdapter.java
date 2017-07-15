@@ -5,20 +5,14 @@ package com.idejie.android.aoc.adapter;
  */
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
-import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import com.idejie.android.aoc.R;
 import com.idejie.android.aoc.bean.RiseAndFallBean;
-import com.idejie.android.aoc.bean.SearchList;
-import com.idejie.android.aoc.bean.TendList;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,8 +1,8 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion "24.0.1"
+    compileSdkVersion 25
+    buildToolsVersion "25.0.3"
     defaultConfig {
         applicationId "com.idejie.android.aoc"
         minSdkVersion 15
@@ -30,32 +30,8 @@ repositories {
 }
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    //viewpager
-
-    //viewpager
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    //时间选择器
-
-    //Tabhost 另一种实现
+    testCompile 'junit:junit:4.12'
     compile project(':library')
-    //图片加载
-
-    //网络请求
-
-    //android support
-
-    //loopback SDK
-
-    //butter knife 快速初始化view
-
-    //自动轮播banner
-
-    //最新版本
-    compile files('libs/imageloder.jar')
-    compile files('libs/imageloder.jar')
-    compile files('libs/gson-2.3.1.jar')
     compile files('libs/MobCommons-2016.0830.1940.jar')
     compile files('libs/MobTools-2016.0830.1940.jar')
     compile files('libs/ShareSDK-Core-2.7.7.jar')
@@ -67,28 +43,23 @@ dependencies {
     compile files('libs/ShareSDK-Wechat-2.7.7.jar')
     compile files('libs/ShareSDK-Wechat-Core-2.7.7.jar')
     compile files('libs/ShareSDK-Wechat-Moments-2.7.7.jar')
-    compile 'com.jorge.circleview:circlelibrary:1.0.0'
-    compile 'com.bigkoo:pickerview:2.1.1'
-    compile 'com.github.bumptech.glide:glide:3.7.0'
-    compile 'junit:junit:4.12'
     compile files('libs/AMapSearch_3.5.0_AMapLocation_3.0.0_20161019.jar')
     compile 'com.jorge.circleview:circlelibrary:1.0.0'
     compile 'com.bigkoo:pickerview:2.1.1'
-    compile 'junit:junit:4.12'
     compile 'com.github.bumptech.glide:glide:3.7.0'
-    compile 'com.android.support:support-v4:24.2.1'
+    compile 'com.android.support:support-v4:25.3.1'
     compile 'com.squareup.okhttp3:okhttp:3.4.1'
     compile 'com.squareup.okio:okio:1.9.0'
-    compile 'com.android.support:recyclerview-v7:24.2.1'
-    compile 'com.android.support:cardview-v7:24.2.1'
-    compile 'com.android.support:design:24.2.1'
-    compile 'com.android.support:appcompat-v7:24.2.1'
+    compile 'com.android.support:recyclerview-v7:25.3.1'
+    compile 'com.android.support:cardview-v7:25.3.1'
+    compile 'com.android.support:design:25.3.1'
+    compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.strongloop:loopback-sdk-android:1.5.2'
-    compile 'com.jakewharton:butterknife:6.1.0'
     compile 'com.youth.banner:banner:1.4.1'
-    compile 'com.android.support:support-vector-drawable:24.2.1'
+    compile 'com.android.support:support-vector-drawable:25.3.1'
     compile 'com.zhy:flowlayout-lib:1.0.3'
-    compile 'com.qiniu:qiniu-android-sdk:7.3.+'
+    compile 'com.qiniu:qiniu-android-sdk:7.3.6'
     compile 'com.library.tangxiaolv:telegramgallery:1.0.3'
-    testCompile 'junit:junit:4.12'
+    compile files('libs/gson-2.3.1.jar')
 }
+

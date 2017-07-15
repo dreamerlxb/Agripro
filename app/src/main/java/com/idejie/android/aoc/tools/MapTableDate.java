@@ -1,6 +1,5 @@
 package com.idejie.android.aoc.tools;
 
-import android.content.Context;
 import android.webkit.JavascriptInterface;
 
 /**

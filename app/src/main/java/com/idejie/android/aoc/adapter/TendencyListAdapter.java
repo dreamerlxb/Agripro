@@ -8,14 +8,11 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.idejie.android.aoc.R;
-import com.idejie.android.aoc.bean.TendList;
 import com.idejie.android.aoc.model.PriceModel;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 
 /**
  * Created by sxb on 16/10/19.
