@@ -3,12 +3,10 @@ package com.idejie.android.aoc.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +19,6 @@ import com.idejie.android.aoc.fragment.tab.SecondLayerFragment;
 import com.idejie.android.library.fragment.LazyFragment;
 import com.idejie.android.library.view.indicator.Indicator;
 import com.idejie.android.library.view.indicator.IndicatorViewPager;
-import com.idejie.android.library.view.indicator.slidebar.ColorBar;
 import com.idejie.android.library.view.indicator.transition.OnTransitionTextListener;
 
 import static com.idejie.android.aoc.fragment.tab.SecondLayerFragment.INTENT_INT_POSITION;
@@ -64,21 +61,6 @@ public class IndexFragment extends LazyFragment implements View.OnClickListener 
         searchImg.setOnClickListener(this);
         ViewPager viewPager = (ViewPager) findViewById(R.id.fragment_tabmain_viewPager);
         Indicator indicator = (Indicator) findViewById(R.id.fragment_tabmain_indicator);
-
-//        switch (index) {
-//            case 0:
-//                indicator.setScrollBar(new ColorBar(getApplicationContext(), Color.rgb(255,255,255), 5));
-//                break;
-//            case 1:
-//                indicator.setScrollBar(new ColorBar(getApplicationContext(), Color.rgb(255,255,255), 5));
-//                break;
-//            case 2:
-//                indicator.setScrollBar(new ColorBar(getApplicationContext(), Color.rgb(255,255,255), 5));
-//                break;
-//            case 3:
-//                indicator.setScrollBar(new ColorBar(getApplicationContext(), Color.rgb(255,255,255), 5));
-//                break;
-//        }
 
         float unSelectSize = 16;
         float selectSize = unSelectSize * 1.2f;
