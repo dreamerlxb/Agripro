@@ -217,7 +217,6 @@ public class MeFragment extends LazyFragment implements View.OnClickListener{
                 startActivity(new Intent(getContext(), TuiActivity.class));
                 break;
             case R.id.tv_set:
-//                startActivity(new Intent(getContext(), SettingActivity.class));
                 startActivityForResult(new Intent(getContext(), SettingActivity.class), REQUEST_CODE);
                 break;
             case R.id.exitButton:
