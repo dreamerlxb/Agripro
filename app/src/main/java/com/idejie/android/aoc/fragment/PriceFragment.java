@@ -30,7 +30,6 @@ import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.idejie.android.aoc.R;
 import com.idejie.android.aoc.activity.NewsDetailActivity;
-import com.idejie.android.aoc.activity.SelectActivity;
 import com.idejie.android.aoc.application.UserApplication;
 import com.idejie.android.aoc.dialog.GradeDialog;
 import com.idejie.android.aoc.dialog.ProvinceTDialog;

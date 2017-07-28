@@ -1,13 +1,9 @@
 package com.idejie.android.aoc.activity;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Dialog;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -41,20 +37,12 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.idejie.android.aoc.R;
-import com.idejie.android.aoc.bean.UserId;
-import com.idejie.android.aoc.model.UserModel;
 import com.idejie.android.aoc.repository.UserModelRepository;
-import com.idejie.android.aoc.tools.AutoString;
-import com.idejie.android.aoc.tools.NetThread;
 import com.idejie.android.aoc.utils.LoadingDialog;
 import com.strongloop.android.remoting.adapters.Adapter;
 
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import static android.Manifest.permission.READ_CONTACTS;
 

@@ -1,9 +1,8 @@
 package com.idejie.android.aoc.activity;
 
 import android.app.Dialog;
-import android.support.v7.app.AppCompatActivity;
-
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -60,7 +59,6 @@ public class ModifyUsernameActivity extends AppCompatActivity {
                 modifyName();
             }
         });
-
     }
 
     private void modifyName() {

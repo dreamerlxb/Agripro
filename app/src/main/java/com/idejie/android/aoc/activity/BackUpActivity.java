@@ -44,17 +44,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import com.idejie.android.aoc.R;
-import com.idejie.android.aoc.bean.UserId;
 import com.idejie.android.aoc.repository.UserModelRepository;
-import com.idejie.android.aoc.tools.AutoString;
-import com.idejie.android.aoc.tools.NetThread;
 import com.idejie.android.aoc.utils.LoadingDialog;
-import com.strongloop.android.loopback.RestAdapter;
-import com.strongloop.android.loopback.User;
-import com.strongloop.android.loopback.callbacks.VoidCallback;
 import com.strongloop.android.remoting.adapters.Adapter;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import static android.Manifest.permission.READ_CONTACTS;
@@ -80,7 +73,6 @@ public class BackUpActivity extends AppCompatActivity implements LoaderCallbacks
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_back_up);
-        Log.d("test1", "UserId.id..." + UserId.id);
         backImg = (ImageView) findViewById(R.id.back_img);
         backImg.setOnClickListener(new OnClickListener() {
             @Override

@@ -31,13 +31,10 @@ import com.idejie.android.aoc.application.UserApplication;
 import com.idejie.android.aoc.dialog.UploadDialog;
 import com.idejie.android.aoc.fragment.utils.CircleImageView;
 import com.idejie.android.aoc.model.ImageModel;
-import com.idejie.android.aoc.repository.ImageRepository;
 import com.idejie.android.aoc.repository.UserModelRepository;
 import com.idejie.android.aoc.utils.LoadingDialog;
 import com.idejie.android.library.fragment.LazyFragment;
-import com.idejie.android.library.view.indicator.IndicatorViewPager;
 import com.qiniu.android.http.ResponseInfo;
-import com.qiniu.android.storage.Configuration;
 import com.qiniu.android.storage.UpCompletionHandler;
 import com.qiniu.android.storage.UpProgressHandler;
 import com.qiniu.android.storage.UploadManager;
@@ -50,7 +47,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
@@ -139,7 +135,6 @@ public class MeFragment extends LazyFragment implements View.OnClickListener{
             textScore.setText(String.format("积分: %d", userApplication.getUser().getScore()));
 
             if (userApplication.getUser().getAvatar() != null) {
-                Log.i("2=========", "here");
                 Glide
                     .with(this)
                     .load(userApplication.getUser().getAvatar().getUrl())
@@ -147,9 +142,7 @@ public class MeFragment extends LazyFragment implements View.OnClickListener{
                     .crossFade()
                     .into(circleImageView);
             } else {
-                Log.i("3=========", "here");
                 if (!isLoadAvatar) {
-                    Log.i("4=========", "here");
                     fetchUserAvatar();
                 }
             }
