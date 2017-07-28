@@ -62,7 +62,7 @@ import java.util.Map;
 
 public class TendencyActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private ListScrollView scrollView;
+//    private ListScrollView scrollView;
     private WebView chartWeb;
     private Button btnLine, btnGraph, btnMap;
 
@@ -114,15 +114,15 @@ public class TendencyActivity extends AppCompatActivity implements View.OnClickL
 
     private void initViews() {
 
-        scrollView = (ListScrollView) findViewById(R.id.scrollView);
-        scrollView.scrollTo(0, 0);
+//        scrollView = (ListScrollView) findViewById(R.id.scrollView);
+//        scrollView.scrollTo(0, 0);
         listView = (ListView) findViewById(R.id.listView);
         listViewHeader = getLayoutInflater().inflate(R.layout.tendency_list_header, null);
         emptyView = findViewById(R.id.list_no_data);
         listView.addHeaderView(listViewHeader);
         listView.setEmptyView(emptyView);
 
-        scrollView.setListView(listView);
+//        scrollView.setListView(listView);
 
         textProvince = (TextView) findViewById(R.id.province);//省市
         textProvince.setText(defaultRegionName);
@@ -227,6 +227,7 @@ public class TendencyActivity extends AppCompatActivity implements View.OnClickL
         webSettings.setDefaultTextEncodingName("utf-8");
         // 设置可以支持缩放
         webSettings.setSupportZoom(true);
+        webSettings.setTextZoom(200);
         webSettings.setBuiltInZoomControls(true);
 
         //自适应屏幕
@@ -239,6 +240,7 @@ public class TendencyActivity extends AppCompatActivity implements View.OnClickL
         //不显示webview缩放按钮
         webSettings.setDisplayZoomControls(false);
 
+        chartWeb.setInitialScale(0);
         // 清除浏览器缓存
         chartWeb.clearCache(true);
 
@@ -264,6 +266,7 @@ public class TendencyActivity extends AppCompatActivity implements View.OnClickL
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_line: //折线图 WebView
+//                chartWeb.setInitialScale(0);
                 if (isReady()) {
                     listView.setVisibility(View.GONE);
                     chartWeb.setVisibility(View.VISIBLE);
@@ -294,6 +297,7 @@ public class TendencyActivity extends AppCompatActivity implements View.OnClickL
                 }
                 break;
             case R.id.btn_map: //地图
+//                chartWeb.setInitialScale(0);
                 if (selectedSort == null || selectedGrade == null) {
                     Toast.makeText(TendencyActivity.this, "请填写必要参数", Toast.LENGTH_SHORT).show();
                     return;
@@ -362,29 +366,37 @@ public class TendencyActivity extends AppCompatActivity implements View.OnClickL
 
     /**
      * 初始化列表信息
+     * 默认是一周内的信息
      */
     private void initListData() {
         if (endDate == null) {
             endDate = new Date();
         }
         if (startDate == null) {
-            startDate = new Date(endDate.getTime() - 7 * 24 * 60 * 60 * 1000); //默认是一周内的信息
+            startDate = new Date(endDate.getTime() - 7 * 24 * 60 * 60 * 1000);
         }
+        textTimeO.setText(dateFormat.format(endDate));
+        textTimeS.setText(dateFormat.format(startDate));
+
         Map<String, Object> params = new HashMap<String, Object>();
         Map<String, Object> filterMap = new HashMap<String, Object>();
         Map<String, Object> where = new HashMap<String, Object>();
         Map<String, Object> priceDate = new HashMap<String, Object>();
 
-        priceDate.put("lt", endDate);
-        priceDate.put("gte", startDate);
-
-        where.put("priceDate", priceDate);
         where.put("regionId", selectedRegion.getId());
         where.put("sortId", selectedSort.getId());
 
         if (selectedGrade != null) {
             where.put("gradeId", selectedGrade.getId());
         }
+
+        List<Object> between = new ArrayList<>();
+        String e = dateFormat.format(endDate) + " 23:59:59";
+        String s = dateFormat.format(startDate) + " 00:00:00";
+        between.add(s);
+        between.add(e);
+        priceDate.put("between", between);
+        where.put("priceDate", priceDate);
 
         filterMap.put("where", where);
 
@@ -513,13 +525,14 @@ public class TendencyActivity extends AppCompatActivity implements View.OnClickL
     private void initPriceLine() {
         if (endDate == null) {
             endDate = new Date();
+
         }
         if (startDate == null) {
             startDate = new Date(endDate.getTime() - 7 * 24 * 60 * 60 * 1000);
         }
 
-        Log.i("开始时间", dateFormat.format(startDate));
-        Log.i("结束时间", dateFormat.format(endDate));
+        textTimeO.setText(dateFormat.format(endDate));
+        textTimeS.setText(dateFormat.format(startDate));
 
         PriceRepository priceRepository = PriceRepository.getInstance(this, null);
 
@@ -529,10 +542,20 @@ public class TendencyActivity extends AppCompatActivity implements View.OnClickL
         Map<String, Object> priceDate = new HashMap<String, Object>();
         List<Object> includeList = new ArrayList<>();
 
-        priceDate.put("lt", endDate);
-        priceDate.put("gte", startDate);
+//        priceDate.put("lt", endDate);
+//        priceDate.put("gte", startDate);
+//        where.put("priceDate", priceDate);
 
+
+        List<Object> between = new ArrayList<>();
+        String e = dateFormat.format(endDate) + " 23:59:59";
+        String s = dateFormat.format(startDate) + " 00:00:00";
+        between.add(s);
+        between.add(e);
+        priceDate.put("between", between);
         where.put("priceDate", priceDate);
+
+
         if (selectedRegion == null) {
             where.put("regionId", defaultRegionId);
         } else {
@@ -609,6 +632,8 @@ public class TendencyActivity extends AppCompatActivity implements View.OnClickL
                     Log.i("Json->Data", data);
                     chartWeb.addJavascriptInterface(new LineTableDate(data), "lineData");
                     chartWeb.loadUrl("file:///android_asset/lineChart.html");
+                } else {
+                    chartWeb.setVisibility(View.GONE);
                 }
             }
 
@@ -626,32 +651,31 @@ public class TendencyActivity extends AppCompatActivity implements View.OnClickL
      */
     private void initPriceMap() {
         if (startDate == null) { //默认：2016-10-26 00:00:00 ~ 2016-10-27 00:00:00
-            String todayStr = dateFormat.format(new Date());
-            try {
-                startDate = new Date(dateFormat.parse(todayStr).getTime());
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            endDate = new Date(startDate.getTime() + 24 * 60 * 60 * 1000);
-        } else { //
-            try {
-                startDate = dateFormat.parse(textTimeS.getText().toString());
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            endDate = new Date(startDate.getTime() + 24 * 60 * 60 * 1000);
+            startDate = new Date();
         }
+
+        endDate = startDate;
+
+        textTimeO.setText(dateFormat.format(endDate));
+        textTimeS.setText(dateFormat.format(startDate));
 
         Map<String, Object> params = new HashMap<String, Object>();
         Map<String, Object> filterMap = new HashMap<String, Object>();
         Map<String, Object> where = new HashMap<String, Object>();
         Map<String, Object> priceDate = new HashMap<String, Object>();
 
+//        priceDate.put("lte", dateFormat.format(endDate) + " 23:59:59");
+//        priceDate.put("gte", dateFormat.format(startDate) + " 00:00:00");
+//        where.put("priceDate", priceDate);
 
-        priceDate.put("lt", endDate);
-        priceDate.put("gte", startDate);
-
+        List<Object> between = new ArrayList<>();
+        String e = dateFormat.format(endDate) + " 23:59:59";
+        String s = dateFormat.format(startDate) + " 00:00:00";
+        between.add(s);
+        between.add(e);
+        priceDate.put("between", between);
         where.put("priceDate", priceDate);
+
         where.put("sortId", selectedSort.getId());
         where.put("gradeId", selectedGrade.getId());
 
@@ -717,6 +741,8 @@ public class TendencyActivity extends AppCompatActivity implements View.OnClickL
                     Log.i("Json->Data", data);
                     chartWeb.addJavascriptInterface(new MapTableDate(data), "mapData");
                     chartWeb.loadUrl("file:///android_asset/mapChart.html");
+                } else {
+                    chartWeb.setVisibility(View.GONE);
                 }
             }
 
@@ -730,13 +756,13 @@ public class TendencyActivity extends AppCompatActivity implements View.OnClickL
     private void showStartTime() {
         if (pvStartTime == null) {
             pvStartTime = new TimePickerView(this, TimePickerView.Type.YEAR_MONTH_DAY);
-//            pvStartTime.set
             pvStartTime.setTime(new Date());
             pvStartTime.setCyclic(false);
             pvStartTime.setCancelable(true);
             pvStartTime.setOnTimeSelectListener(new TimePickerView.OnTimeSelectListener() {
                 @Override
                 public void onTimeSelect(Date date) {
+                    Log.i("S====", date.toString());
                     startDate = date;
                     String dateStr = dateFormat.format(date);
                     textTimeS.setText(dateStr);
@@ -755,6 +781,7 @@ public class TendencyActivity extends AppCompatActivity implements View.OnClickL
             pvEndTime.setOnTimeSelectListener(new TimePickerView.OnTimeSelectListener() {
                 @Override
                 public void onTimeSelect(Date date) {
+                    Log.i("E====", date.toString());
                     if (startDate.getTime() > date.getTime()) {
                         Toast.makeText(TendencyActivity.this, "请选择更大的时间", Toast.LENGTH_SHORT).show();
                     } else {

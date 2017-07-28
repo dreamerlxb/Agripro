@@ -32,7 +32,10 @@
             // 初始 option
             var option = {
                 title: {
-                    text: '折线图'
+                    text: '折线图',
+                    textStyle: {
+                      fontSize: 20
+                    }
                 },
                 tooltip: {
                     trigger:'axis'
@@ -43,9 +46,18 @@
                 xAxis: {
                     type : 'category',
                     boundaryGap : false,
-                    data: s
+                    data: s,
+                    nameTextStyle : {
+                        fontSize: 18
+                    }
                 },
-                yAxis: {},
+                yAxis: {
+                    type : 'value',
+                    scale: true,
+                    nameTextStyle : {
+                        fontSize: 18
+                    }
+                },
                 series: [{
                     name: '价格',
                     type: 'line',
