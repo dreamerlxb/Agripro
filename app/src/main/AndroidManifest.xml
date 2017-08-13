@@ -132,7 +132,6 @@
         <activity android:name=".activity.MyCommentActivity" />
         <activity android:name=".activity.SettingActivity" />
         <activity android:name=".activity.SearchNewsActivity" />
-        <activity android:name=".utils.PermissionsActivity"></activity>
     </application>
 
 </manifest>

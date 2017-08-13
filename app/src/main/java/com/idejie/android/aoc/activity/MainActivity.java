@@ -32,10 +32,7 @@ import com.idejie.android.aoc.fragment.PriceFragment;
 import com.idejie.android.aoc.fragment.tab.SecondLayerFragment;
 import com.idejie.android.aoc.model.UserModel;
 import com.idejie.android.aoc.repository.UserModelRepository;
-import com.idejie.android.aoc.utils.PermissionsActivity;
-import com.idejie.android.aoc.utils.PermissionsChecker;
 import com.idejie.android.library.view.indicator.FixedIndicatorView;
-import com.idejie.android.library.view.indicator.Indicator;
 import com.idejie.android.library.view.indicator.IndicatorViewPager;
 import com.idejie.android.library.view.indicator.transition.OnTransitionTextListener;
 import com.idejie.android.library.view.viewpager.SViewPager;
@@ -58,7 +55,6 @@ public class MainActivity extends AppCompatActivity {
     private UserApplication userApplication;
 
     private Dialog loadingDialog;
-//    private PermissionsChecker mPermissionsChecker; // 权限检测器
 
     static final String[] PERMISSIONS = new String[]{
         Manifest.permission.ACCESS_LOCATION_EXTRA_COMMANDS,
@@ -72,7 +68,6 @@ public class MainActivity extends AppCompatActivity {
         secondLayerFragment =new SecondLayerFragment();
 
         userApplication = (UserApplication) getApplication();
-//        mPermissionsChecker = new PermissionsChecker(this);
 
         TimeZone.setDefault(TimeZone.getTimeZone("Asia/Shanghai"));
 
@@ -155,18 +150,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         // 缺少权限时, 进入权限配置页面
-//        if (mPermissionsChecker.lacksPermissions(PERMISSIONS)) {
-//            PermissionsActivity.startActivityForResult(this, REQUEST_CODE, PERMISSIONS);
-//        }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         // 拒绝时, 关闭页面, 缺少主要权限, 无法运行
-//        if (requestCode == REQUEST_CODE && resultCode == PermissionsActivity.PERMISSIONS_DENIED) {
-//            finish();
-//        }
     }
 
     private class MyAdapter extends IndicatorViewPager.IndicatorFragmentPagerAdapter {
