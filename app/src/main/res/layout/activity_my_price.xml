@@ -27,7 +27,7 @@
             android:id="@+id/back_img"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="left|start"
+            android:layout_gravity="start"
             android:padding="10dp"
             android:src="@mipmap/ic_action_back"
             android:tint="@color/white"
@@ -55,7 +55,7 @@
             android:layout_marginLeft="5dp"
             android:layout_marginStart="5dp"
             android:gravity="center"
-            android:text="我的报价"
+            android:text="@string/my_price"
             android:textColor="@color/white"
             android:textSize="20sp" />
 
@@ -79,18 +79,18 @@
                 android:layout_marginBottom="30dp"
                 android:background="@drawable/search_corner"
                 android:padding="10dp"
-                android:text="点我重新加载" />
+                android:text="@string/click_reload" />
 
             <TextView
                 android:id="@+id/empty_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_above="@+id/refresh_btn"
+                android:layout_centerInParent="true"
                 android:layout_marginBottom="10dp"
                 android:gravity="center"
-                android:text="没有数据"
-                android:textSize="18sp"
-                android:layout_centerInParent="true" />
+                android:text="@string/no_data"
+                android:textSize="18sp" />
         </RelativeLayout>
 
         <android.support.v4.widget.SwipeRefreshLayout

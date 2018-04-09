@@ -23,7 +23,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bigkoo.pickerview.TimePickerView;
+import com.bigkoo.pickerview.builder.TimePickerBuilder;
+import com.bigkoo.pickerview.listener.OnTimeSelectListener;
+import com.bigkoo.pickerview.view.TimePickerView;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.idejie.android.aoc.adapter.TendencyListAdapter;
@@ -54,6 +56,7 @@ import org.json.JSONObject;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -755,32 +758,30 @@ public class TendencyActivity extends AppCompatActivity implements View.OnClickL
 
     private void showStartTime() {
         if (pvStartTime == null) {
-            pvStartTime = new TimePickerView(this, TimePickerView.Type.YEAR_MONTH_DAY);
-            pvStartTime.setTime(new Date());
-            pvStartTime.setCyclic(false);
-            pvStartTime.setCancelable(true);
-            pvStartTime.setOnTimeSelectListener(new TimePickerView.OnTimeSelectListener() {
+            pvStartTime = new TimePickerBuilder(this, new OnTimeSelectListener() {
                 @Override
-                public void onTimeSelect(Date date) {
+                public void onTimeSelect(Date date, View v) {
                     Log.i("S====", date.toString());
                     startDate = date;
                     String dateStr = dateFormat.format(date);
                     textTimeS.setText(dateStr);
                 }
-            });
+            })
+                    .setDate(Calendar.getInstance())
+                    .isCyclic(false)
+                    .setOutSideCancelable(true)
+                    .setLabel("年","月", "日", "时", "分", "秒")
+                    .setType(new boolean[] {true, true, true, false, false, false})
+                    .build();//new TimePickerView(this, TimePickerView.Type.YEAR_MONTH_DAY);
         }
         pvStartTime.show();
     }
 
     private void showEndTime() {
         if (pvEndTime == null) {
-            pvEndTime = new TimePickerView(this, TimePickerView.Type.YEAR_MONTH_DAY);
-            pvEndTime.setTime(new Date());
-            pvEndTime.setCyclic(false);
-            pvEndTime.setCancelable(true);
-            pvEndTime.setOnTimeSelectListener(new TimePickerView.OnTimeSelectListener() {
+            pvStartTime = new TimePickerBuilder(this, new OnTimeSelectListener() {
                 @Override
-                public void onTimeSelect(Date date) {
+                public void onTimeSelect(Date date, View v) {
                     Log.i("E====", date.toString());
                     if (startDate.getTime() > date.getTime()) {
                         Toast.makeText(TendencyActivity.this, "请选择更大的时间", Toast.LENGTH_SHORT).show();
@@ -790,7 +791,14 @@ public class TendencyActivity extends AppCompatActivity implements View.OnClickL
                         textTimeO.setText(dateStr);
                     }
                 }
-            });
+            })
+                    .setDate(Calendar.getInstance())
+                    .isCyclic(false)
+                    .setOutSideCancelable(true)
+                    .setLabel("年","月", "日", "时", "分", "秒")
+                    .setType(new boolean[] {true, true, true, false, false, false})
+                    .build();//new TimePickerView(this, TimePickerView.Type.YEAR_MONTH_DAY);
+
         }
         pvEndTime.show();
     }

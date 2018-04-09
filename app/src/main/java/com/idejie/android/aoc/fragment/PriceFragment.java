@@ -4,13 +4,11 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.util.ArrayMap;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -52,7 +50,9 @@ import com.youth.banner.Banner;
 import com.youth.banner.BannerConfig;
 
 import com.youth.banner.listener.OnBannerClickListener;
+import com.youth.banner.listener.OnBannerListener;
 import com.youth.banner.loader.ImageLoader;
+import com.youth.banner.loader.ImageLoaderInterface;
 
 
 import org.json.JSONObject;
@@ -69,7 +69,7 @@ import static android.content.Context.MODE_PRIVATE;
 /**
  * Created by shandongdaxue on 16/8/10.
  */
-public class PriceFragment extends LazyFragment implements View.OnClickListener, ImageLoader, TextWatcher {
+public class PriceFragment extends LazyFragment implements View.OnClickListener, TextWatcher {
     public static final int REQUEST_CODE = 2000;
     public static final String SELECT_TYPE = "select_type";
 
@@ -195,16 +195,16 @@ public class PriceFragment extends LazyFragment implements View.OnClickListener,
         list.add("image");
         list.add("news");
 
-        where.put("enabled",true);
+        where.put("enabled", true);
         where.put("categoryId", 7); //说明是报价的轮播图
 
-        filter.put("where",where);
-        filter.put("order","order");
-        filter.put("include",list);
+        filter.put("where", where);
+        filter.put("order", "order");
+        filter.put("include", list);
         filter.put("limit", 4);
 
         Gson gson1 = new Gson();
-        String filterStr =  gson1.toJson(filter);
+        String filterStr = gson1.toJson(filter);
 
         params.put("filter", filterStr);
         ScrollImageRepository scrollImageRepository = ScrollImageRepository.getInstance(getContext());
@@ -232,9 +232,25 @@ public class PriceFragment extends LazyFragment implements View.OnClickListener,
         //banner加点
         banner.setBannerStyle(BannerConfig.CIRCLE_INDICATOR_TITLE_INSIDE);
         //记得设置标题列表哦
-        banner.setImageLoader(this);
+        banner.setImageLoader(new ImageLoaderInterface() {
+
+            @Override
+            public void displayImage(Context context, Object path, View imageView) {
+                Glide
+                        .with(context)
+                        .load(path)
+                        .centerCrop()
+                        .crossFade()
+                        .into((ImageView) imageView);
+            }
+
+            @Override
+            public View createImageView(Context context) {
+                return null;
+            }
+        });
         //bannerde图片的点击事件
-        banner.setOnBannerClickListener(new OnBannerClickListener() {
+        banner.setOnBannerListener(new OnBannerListener() {
             @Override
             public void OnBannerClick(int position) {
                 ScrollImageModel scrollImageModel = scrollImageList.get(position - 1);
@@ -251,6 +267,23 @@ public class PriceFragment extends LazyFragment implements View.OnClickListener,
                 startActivity(intent);
             }
         });
+//        banner.setOnBannerClickListener(new OnBannerClickListener() {
+//            @Override
+//            public void OnBannerClick(int position) {
+//                ScrollImageModel scrollImageModel = scrollImageList.get(position - 1);
+//
+//                NewsModel newsModel = scrollImageModel.getNews();
+//                Double d = (Double) newsModel.getId();
+//                newsModel.setNewsId(d.intValue());
+//
+//                Intent intent = new Intent();
+//                Bundle bundle = new Bundle();
+//                bundle.putSerializable("news", newsModel);
+//                intent.putExtras(bundle);
+//                intent.setClass(PriceFragment.this.getContext(), NewsDetailActivity.class);
+//                startActivity(intent);
+//            }
+//        });
         banner.setBannerTitles(bannerTitles);
         banner.setImages(bannerImgUrls);
         banner.setDelayTime(4000);
@@ -399,9 +432,9 @@ public class PriceFragment extends LazyFragment implements View.OnClickListener,
     private void upLoad() {
         if (selectedRegion == null || selectedSort == null || TextUtils.isEmpty(textRank.getText()) || TextUtils.isEmpty(editPrice.getText())) {
             Toast.makeText(getContext(), "请填写必要信息", Toast.LENGTH_SHORT).show();
-        } else if(!TextUtils.isDigitsOnly(editPrice.getText())) {
+        } else if (!TextUtils.isDigitsOnly(editPrice.getText())) {
             Toast.makeText(getContext(), "价钱应该为数字", Toast.LENGTH_SHORT).show();
-        } else if(!TextUtils.isEmpty(editAmount.getText()) && !TextUtils.isDigitsOnly(editPrice.getText())) {
+        } else if (!TextUtils.isEmpty(editAmount.getText()) && !TextUtils.isDigitsOnly(editPrice.getText())) {
             Toast.makeText(getContext(), "成交量应该为数字", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(getContext(), "上传中", Toast.LENGTH_SHORT).show();
@@ -498,15 +531,15 @@ public class PriceFragment extends LazyFragment implements View.OnClickListener,
         textRank.setText("");
     }
 
-    @Override
-    public void displayImage(Context context, Object path, ImageView imageView) {
-        Glide
-            .with(context)
-            .load(path)
-            .centerCrop()
-            .crossFade()
-            .into(imageView);
-    }
+//    @Override
+//    public void displayImage(Context context, Object path, ImageView imageView) {
+//        Glide
+//            .with(context)
+//            .load(path)
+//            .centerCrop()
+//            .crossFade()
+//            .into(imageView);
+//    }
 
     @Override
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -526,7 +559,7 @@ public class PriceFragment extends LazyFragment implements View.OnClickListener,
                 && !TextUtils.isEmpty(editPrice.getText())) {
             btnUpload.setEnabled(true);
             btnUpload.setBackgroundResource(R.color.colorPrimary);
-        } else  {
+        } else {
             btnUpload.setEnabled(false);
             btnUpload.setBackgroundResource(R.color.gray_light);
         }

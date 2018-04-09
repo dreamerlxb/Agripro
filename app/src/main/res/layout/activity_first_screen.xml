@@ -15,6 +15,7 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:src="@mipmap/icon"
+        tools:ignore="ContentDescription"
         android:layout_marginTop="125dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />

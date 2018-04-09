@@ -147,7 +147,7 @@ public class BackUpActivity extends AppCompatActivity implements LoaderCallbacks
     private void startTimer() {
         //发送验证码倒计时
         initTimer();
-        codeBtn.setText(60 + "秒");
+        codeBtn.setText(String.format("%d秒", 60));
         codeBtn.setEnabled(false);
         timer.schedule(timerTask, 0, 1000);
     }

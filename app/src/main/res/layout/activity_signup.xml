@@ -30,7 +30,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="注册"
+            android:text="@string/register_txt"
             android:textColor="@color/white"
             android:textSize="20sp" />
     </RelativeLayout>
@@ -92,7 +92,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="3"
                         android:ems="6"
-                        android:hint="请输入验证码"
+                        android:hint="@string/input_verify_code"
                         android:maxLines="1" />
                 </android.support.design.widget.TextInputLayout>
 
@@ -101,8 +101,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:elevation="0dp"
-                    android:text="获取验证码"
+                    android:text="@string/get_verify_code"
                     android:textColor="@android:color/holo_green_dark" />
             </LinearLayout>
 
@@ -116,8 +115,7 @@
                     android:id="@+id/password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="请输入密码"
-                    android:imeActionId="@+id/login"
+                    android:hint="@string/input_pwd"
                     android:imeActionLabel="@string/action_sign_in_short"
                     android:imeOptions="actionUnspecified"
                     android:inputType="textPassword"
@@ -134,8 +132,7 @@
                     android:id="@+id/password2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="请再次输入密码"
-                    android:imeActionId="@+id/login"
+                    android:hint="@string/confirm_pwd"
                     android:imeActionLabel="@string/action_sign_in_short"
                     android:imeOptions="actionUnspecified"
                     android:inputType="textPassword"
@@ -150,7 +147,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:background="@color/colorPrimary"
-                android:text="注册"
+                android:text="@string/register_txt"
                 android:textColor="@color/white"
                 android:textSize="18sp" />
 

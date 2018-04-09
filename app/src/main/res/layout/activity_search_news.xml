@@ -110,7 +110,7 @@
             android:layout_height="match_parent"
             android:background="@color/btn_bg"
             android:gravity="center"
-            android:text="无相关数据"
+            android:text="@string/no_related_data"
             android:textSize="18sp" />
     </FrameLayout>
 

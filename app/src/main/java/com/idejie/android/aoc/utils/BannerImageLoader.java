@@ -5,12 +5,13 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.youth.banner.loader.ImageLoader;
+import com.youth.banner.loader.ImageLoaderInterface;
 
 /**
  * Created by sxb on 2017/1/20.
  */
 
-public class BannerImageLoader implements ImageLoader {
+public class BannerImageLoader implements ImageLoaderInterface<ImageView> {
     @Override
     public void displayImage(Context context, Object path, ImageView imageView) {
         Glide
@@ -19,5 +20,10 @@ public class BannerImageLoader implements ImageLoader {
             .centerCrop()
             .crossFade()
             .into(imageView);
+    }
+
+    @Override
+    public ImageView createImageView(Context context) {
+        return null;
     }
 }

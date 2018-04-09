@@ -33,7 +33,7 @@
             android:layout_centerInParent="true"
             android:layout_gravity="center"
             android:gravity="center"
-            android:text="我的设置"
+            android:text="@string/my_setting"
             android:textColor="@color/white"
             android:textSize="18sp" />
 
@@ -55,7 +55,7 @@
         android:paddingRight="10dp"
         android:paddingStart="20dp"
         android:paddingTop="10dp"
-        android:text="修改密码"
+        android:text="@string/update_pwd"
         android:textSize="16sp" />
 
     <TextView
@@ -73,7 +73,7 @@
         android:paddingRight="10dp"
         android:paddingStart="20dp"
         android:paddingTop="10dp"
-        android:text="修改昵称"
+        android:text="@string/modify_nickname"
         android:textSize="16sp" />
 
     <LinearLayout
@@ -97,7 +97,7 @@
             android:paddingRight="10dp"
             android:paddingStart="20dp"
             android:paddingTop="10dp"
-            android:text="清除缓存"
+            android:text="@string/clear_cache"
             android:textSize="16sp" />
 
         <TextView
@@ -105,10 +105,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
-            android:gravity="right|center_vertical|end"
+            android:gravity="center_vertical|end"
             android:padding="10dp"
-            android:text="12.3M"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            tools:text="12.3M" />
     </LinearLayout>
 
 </LinearLayout>

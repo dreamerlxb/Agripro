@@ -30,7 +30,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="登陆"
+            android:text="@string/login"
             android:textColor="@color/white"
             android:textSize="20sp" />
     </RelativeLayout>
@@ -83,7 +83,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/prompt_password"
-                    android:imeActionId="@+id/login"
                     android:imeActionLabel="@string/action_sign_in_short"
                     android:imeOptions="actionUnspecified"
                     android:inputType="textPassword"
@@ -108,16 +107,16 @@
                 android:layout_height="match_parent">
 
                 <TextView
-                    android:text="手机快速注册"
-                    android:gravity="center|left"
+                    android:text="@string/register"
+                    android:gravity="center|start"
                     android:layout_width="wrap_content"
                     android:layout_height="30dp"
                     android:id="@+id/tv_signup"
                     android:layout_weight="1" />
 
                 <TextView
-                    android:text="找回密码"
-                    android:gravity="center|right"
+                    android:text="@string/find_pwd"
+                    android:gravity="center|end"
                     android:layout_height="30dp"
                     android:layout_width="wrap_content"
                     android:id="@+id/tv_backup"

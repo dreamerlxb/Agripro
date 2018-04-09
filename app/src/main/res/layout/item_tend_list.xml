@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal" android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:weightSum="5"
@@ -8,53 +9,57 @@
 
     <TextView
         android:id="@+id/text_area"
-        android:gravity="center"
-        android:textSize="14sp"
-        android:layout_weight="1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="AAA"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:paddingBottom="5dp"
         android:paddingTop="5dp"
-        android:paddingBottom="5dp" />
+        android:textSize="14sp"
+        tools:text="AAA" />
+
     <TextView
         android:id="@+id/text_sort"
-        android:gravity="center"
-        android:textSize="14sp"
-        android:layout_weight="1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="AAA"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:paddingBottom="5dp"
         android:paddingTop="5dp"
-        android:paddingBottom="5dp" />
+        android:textSize="14sp"
+        tools:text="AAA" />
+
     <TextView
         android:id="@+id/text_rank"
-        android:gravity="center"
-        android:textSize="14sp"
-        android:layout_weight="1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="AAA"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:paddingBottom="5dp"
         android:paddingTop="5dp"
-        android:paddingBottom="5dp" />
+        android:textSize="14sp"
+        tools:text="AAA" />
+
     <TextView
         android:id="@+id/text_price"
-        android:gravity="center"
-        android:textSize="14sp"
-        android:layout_weight="1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="AAA"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:paddingBottom="5dp"
         android:paddingTop="5dp"
-        android:paddingBottom="5dp" />
+        android:textSize="14sp"
+        tools:text="AAA" />
+
     <TextView
         android:id="@+id/text_date"
-        android:gravity="center"
-        android:textSize="14sp"
-        android:layout_weight="1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="AAA"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:paddingBottom="5dp"
         android:paddingTop="5dp"
-        android:paddingBottom="5dp" />
+        android:textSize="14sp"
+        tools:text="AAA" />
 
 </LinearLayout>

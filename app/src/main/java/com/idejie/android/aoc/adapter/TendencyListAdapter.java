@@ -68,7 +68,7 @@ public class TendencyListAdapter extends BaseAdapter {
         viewHolder.textArea.setText(priceModel.getRegion().getProvince());
         viewHolder.textSort.setText(priceModel.getSort().getSubName());
         viewHolder.textRank.setText(priceModel.getGrade().getName());
-        viewHolder.textPrice.setText(priceModel.getPrice()+"");
+        viewHolder.textPrice.setText(String.format("%s", priceModel.getPrice()));
         viewHolder.textDate.setText(dateFormat.format(priceModel.getPriceDate()));
 
         return convertView;

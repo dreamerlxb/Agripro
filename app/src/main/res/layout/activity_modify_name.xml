@@ -71,11 +71,11 @@
                     android:id="@+id/user_name_txt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="请输入您的新昵称"
-                    android:imeActionId="@+id/login"
+                    android:hint="@string/input_nickname"
                     android:imeActionLabel="@string/action_sign_in_short"
                     android:imeOptions="actionUnspecified"
-                    android:maxLines="1" />
+                    android:maxLines="1"
+                    android:inputType="" />
 
             </android.support.design.widget.TextInputLayout>
 

@@ -7,40 +7,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <!--<RelativeLayout-->
-        <!--android:background="@color/colorPrimary"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:orientation="horizontal"-->
-        <!--android:layout_height="48dp">-->
-
-        <!--<ImageView-->
-            <!--android:layout_gravity="center_vertical|center"-->
-            <!--android:id="@+id/back"-->
-            <!--android:layout_centerVertical="true"-->
-            <!--android:contentDescription=""-->
-            <!--tools:ignore="ContentDescription"-->
-            <!--android:layout_marginLeft="5dp"-->
-            <!--android:layout_marginStart="5dp"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:padding="10dp"-->
-            <!--android:src="@mipmap/ic_action_back"-->
-            <!--android:tint="@color/white" />-->
-
-        <!--<TextView-->
-                <!--android:text="查看走势"-->
-                <!--android:gravity="center"-->
-                <!--android:textSize="18sp"-->
-            <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:id="@+id/textView4"-->
-                <!--android:layout_gravity="center"-->
-                <!--android:textColor="@color/white"-->
-            <!--android:layout_centerHorizontal="false"-->
-            <!--android:layout_centerInParent="true" />-->
-
-    <!--</RelativeLayout>-->
-
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar2"
         android:layout_width="match_parent"
@@ -60,7 +26,7 @@
             android:id="@+id/back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="left"
+            android:layout_gravity="start"
             android:padding="10dp"
             android:src="@mipmap/ic_action_back"
             android:tint="@color/white"
@@ -89,7 +55,7 @@
             android:layout_marginLeft="5dp"
             android:layout_marginStart="5dp"
             android:gravity="center"
-            android:text="查看走势"
+            android:text="@string/check_tendency"
             android:textColor="@color/white"
             android:textSize="18sp" />
 
@@ -127,7 +93,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:text="地区."
+                android:text="@string/region_txt"
                 android:textSize="14sp" />
 
             <TextView
@@ -151,8 +117,8 @@
                 android:background="@drawable/border"
                 android:drawableEnd="@mipmap/arrow_down"
                 android:drawableRight="@mipmap/arrow_down"
-                android:gravity="left|center|start"
-                android:hint="省市"
+                android:gravity="center|start"
+                android:hint="@string/province_city"
                 android:padding="6dp"
                 android:textColor="@color/grey"
                 android:textSize="14sp" />
@@ -180,7 +146,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:gravity="center"
-                android:text="品种."
+                android:text="@string/type_txt"
                 android:textSize="14sp" />
 
             <TextView
@@ -203,8 +169,8 @@
                 android:background="@drawable/border"
                 android:drawableEnd="@mipmap/arrow_down"
                 android:drawableRight="@mipmap/arrow_down"
-                android:gravity="left|center|start"
-                android:hint="品种"
+                android:gravity="center|start"
+                android:hint="@string/type_txt"
                 android:padding="6dp"
                 android:textColor="@color/grey"
                 android:textSize="14sp" />
@@ -254,7 +220,7 @@
                 android:background="@drawable/border"
                 android:drawableEnd="@mipmap/arrow_down"
                 android:drawableRight="@mipmap/arrow_down"
-                android:gravity="left|center|start"
+                android:gravity="center|start"
                 android:hint="级别"
                 android:padding="6dp"
                 android:textColor="@color/grey"
@@ -305,7 +271,7 @@
                 android:background="@drawable/border"
                 android:drawableEnd="@mipmap/arrow_down"
                 android:drawableRight="@mipmap/arrow_down"
-                android:gravity="left|center|start"
+                android:gravity="center|start"
                 android:hint="开始"
                 android:padding="6dp"
                 android:textColor="@color/grey"
@@ -322,7 +288,7 @@
                 android:background="@drawable/border"
                 android:drawableEnd="@mipmap/arrow_down"
                 android:drawableRight="@mipmap/arrow_down"
-                android:gravity="left|center|start"
+                android:gravity="center|start"
                 android:hint="结束"
                 android:padding="6dp"
                 android:textColor="@color/grey"

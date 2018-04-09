@@ -30,7 +30,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="我的评论"
+            android:text="@string/my_comments"
             android:textColor="@color/white"
             android:textSize="20sp" />
     </RelativeLayout>
@@ -42,28 +42,29 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
             <Button
-                android:text="点我重新加载"
+                android:id="@+id/refresh_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
-                android:id="@+id/refresh_btn"
-                android:background="@drawable/search_corner"
-                android:layout_gravity="center"
                 android:layout_centerInParent="true"
-                android:padding="10dp" />
+                android:layout_gravity="center"
+                android:background="@drawable/search_corner"
+                android:padding="10dp"
+                android:text="@string/click_reload" />
 
             <TextView
-                android:text="没有数据"
+                android:id="@+id/empty_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/empty_view"
-                android:gravity="center"
-                android:textSize="18sp"
                 android:layout_above="@+id/refresh_btn"
                 android:layout_alignParentLeft="false"
                 android:layout_alignParentStart="false"
+                android:layout_centerInParent="true"
                 android:layout_marginBottom="10dp"
-                android:layout_centerInParent="true" />
+                android:gravity="center"
+                android:text="@string/no_data"
+                android:textSize="18sp" />
         </RelativeLayout>
 
         <android.support.v4.widget.SwipeRefreshLayout

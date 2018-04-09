@@ -17,7 +17,7 @@
             android:id="@+id/back_img"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="left|center_vertical"
+            android:layout_gravity="start|center_vertical"
             android:background="@color/transparent"
             android:padding="5dp"
             android:tint="@color/white"
@@ -33,7 +33,7 @@
             android:id="@+id/share_img"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="right|center_vertical"
+            android:layout_gravity="end|center_vertical"
             android:background="@color/transparent"
             android:padding="5dp"
             android:tint="@color/white"
@@ -59,16 +59,16 @@
             android:id="@+id/tv_detail_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="标题"
             android:textColor="@color/black"
             android:textSize="18sp"
-            android:textStyle="normal|bold" />
+            android:textStyle="normal|bold"
+            tools:text="标题" />
 
         <TextView
-            android:text="2012-12-12 12:12"
+            android:id="@+id/tv_detail_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/tv_detail_time" />
+            tools:text="2012-12-12 12:12" />
 
         <WebView
             android:layout_width="match_parent"
@@ -87,11 +87,10 @@
         android:padding="5dp">
 
         <TextView
-            android:text="我来评几句..."
+            android:text="@string/comment_txt"
             android:layout_width="0dp"
             android:layout_height="30dp"
             android:id="@+id/comment_txt"
-            android:elevation="24dp"
             android:background="@color/tab_main_text_1"
             android:layout_gravity="center_vertical"
             android:paddingEnd="5dp"
@@ -100,7 +99,7 @@
             android:paddingTop="5dp"
             android:padding="5dp"
             android:layout_weight="1"
-            android:gravity="left|center" />
+            android:gravity="start|center" />
 
         <com.idejie.android.aoc.widget.LeftDrawableButton
             android:drawableLeft="@mipmap/icon_comment"
