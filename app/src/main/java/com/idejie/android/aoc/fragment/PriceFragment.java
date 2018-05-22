@@ -1,5 +1,6 @@
 package com.idejie.android.aoc.fragment;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -52,16 +53,19 @@ import com.youth.banner.Banner;
 import com.youth.banner.BannerConfig;
 
 import com.youth.banner.listener.OnBannerClickListener;
+import com.youth.banner.listener.OnBannerListener;
 import com.youth.banner.loader.ImageLoader;
 
 
 import org.json.JSONObject;
 
+import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -69,7 +73,7 @@ import static android.content.Context.MODE_PRIVATE;
 /**
  * Created by shandongdaxue on 16/8/10.
  */
-public class PriceFragment extends LazyFragment implements View.OnClickListener, ImageLoader, TextWatcher {
+public class PriceFragment extends LazyFragment implements View.OnClickListener, TextWatcher {
     public static final int REQUEST_CODE = 2000;
     public static final String SELECT_TYPE = "select_type";
 
@@ -78,7 +82,6 @@ public class PriceFragment extends LazyFragment implements View.OnClickListener,
     private Button btnUpload, btnCancel;
     private EditText editPrice, editAmount, editMarketName;
     private TextView textProvince, textType, textRank;
-    private Handler hanProvinceDialog, hanSortDialog, hanGradeDialog;
 
     private Banner banner;
     public List<String> bannerTitles = new ArrayList<>();
@@ -97,6 +100,63 @@ public class PriceFragment extends LazyFragment implements View.OnClickListener,
 
     private SimpleDateFormat dateFormat;
     private int uploadNum = 0;
+    private ProvinceDialogHandler hanProvinceDialog;
+    private SortDialogHandler hanSortDialog;
+    private GradeDialogHandler hanGradeDialog;
+
+    static class GradeDialogHandler extends Handler {
+        WeakReference<PriceFragment> weakReference;
+
+        GradeDialogHandler(WeakReference<PriceFragment> weakReference) {
+            this.weakReference = weakReference;
+        }
+
+        public void handleMessage(Message msg) {
+            PriceFragment pri = weakReference.get();
+            if (msg.obj == null) {
+                pri.textRank.setText(pri.selectedSort.getSubName());
+                pri.selectedGrade = null;
+            } else {
+                pri.selectedGrade = (GradeModel) msg.obj;
+                pri.textRank.setText(pri.selectedGrade.getName());
+            }
+        }
+    };
+
+    static class ProvinceDialogHandler extends Handler {
+        WeakReference<PriceFragment> weakReference;
+
+        ProvinceDialogHandler(WeakReference<PriceFragment> weakReference) {
+            this.weakReference = weakReference;
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            PriceFragment pri = weakReference.get();
+            pri.selectedRegion = (RegionModel) msg.obj;
+            if (pri.selectedRegion.getCity() != null) {
+                pri.textProvince.setText(pri.selectedRegion.getCity());
+            } else {
+                pri.textProvince.setText(pri.selectedRegion.getProvince());
+            }
+        }
+    }
+
+    static class  SortDialogHandler extends Handler {
+        WeakReference<PriceFragment> weakReference;
+
+        SortDialogHandler(WeakReference<PriceFragment> weakReference) {
+            this.weakReference = weakReference;
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            PriceFragment pri = weakReference.get();
+            pri.selectedSort = (SortModel) msg.obj;
+            pri.textType.setText(pri.selectedSort.getSubName());
+        }
+    }
+
 
     /**
      * 初始化操作
@@ -104,7 +164,7 @@ public class PriceFragment extends LazyFragment implements View.OnClickListener,
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
     }
 
     /**
@@ -127,63 +187,39 @@ public class PriceFragment extends LazyFragment implements View.OnClickListener,
 
     private void init() {
         //初始化各个控件
-        btnCancel = (Button) view.findViewById(R.id.btn_cancel);
+        btnCancel = view.findViewById(R.id.btn_cancel);
         btnCancel.setOnClickListener(this);
-        btnUpload = (Button) view.findViewById(R.id.btn_upload);
+        btnUpload = view.findViewById(R.id.btn_upload);
         btnUpload.setOnClickListener(this);
         btnUpload.setEnabled(false);
         btnUpload.setBackgroundResource(R.color.gray_light);
 
-        textProvince = (TextView) view.findViewById(R.id.province);
+        textProvince = view.findViewById(R.id.province);
         textProvince.addTextChangedListener(this);
         textProvince.setOnClickListener(this);
-        textType = (TextView) view.findViewById(R.id.type);
+        textType = view.findViewById(R.id.type);
         textType.setOnClickListener(this);
         textType.addTextChangedListener(this);
-        textRank = (TextView) view.findViewById(R.id.rank);
+        textRank =  view.findViewById(R.id.rank);
         textRank.setOnClickListener(this);
         textRank.addTextChangedListener(this);
-        editPrice = (EditText) view.findViewById(R.id.edit_price);
+        editPrice = view.findViewById(R.id.edit_price);
         editPrice.setOnClickListener(this);
         editPrice.addTextChangedListener(this);
-        editAmount = (EditText) view.findViewById(R.id.edit_amount);
+        editAmount = view.findViewById(R.id.edit_amount);
         editAmount.setOnClickListener(this);
-        editMarketName = (EditText) view.findViewById(R.id.edit_Market_name);
+        editMarketName = view.findViewById(R.id.edit_Market_name);
         editMarketName.setOnClickListener(this);
 
         //初始化广告栏
-        banner = (Banner) view.findViewById(R.id.main_banner);
+        banner = view.findViewById(R.id.main_banner);
         requestBannerInfo();
 
-        hanProvinceDialog = new Handler() {
-            public void handleMessage(Message msg) {
-                selectedRegion = (RegionModel) msg.obj;
-                if (selectedRegion.getCity() != null) {
-                    textProvince.setText(selectedRegion.getCity());
-                } else {
-                    textProvince.setText(selectedRegion.getProvince());
-                }
-            }
-        };
+        hanProvinceDialog = new ProvinceDialogHandler(new WeakReference<PriceFragment>(this));
 
-        hanSortDialog = new Handler() {
-            public void handleMessage(Message msg) {
-                selectedSort = (SortModel) msg.obj;
-                textType.setText(selectedSort.getSubName());
-            }
-        };
+        hanSortDialog = new SortDialogHandler(new WeakReference<PriceFragment>(this));
 
-        hanGradeDialog = new Handler() {
-            public void handleMessage(Message msg) {
-                if (msg.obj == null) {
-                    textRank.setText(selectedSort.getSubName());
-                    selectedGrade = null;
-                } else {
-                    selectedGrade = (GradeModel) msg.obj;
-                    textRank.setText(selectedGrade.getName());
-                }
-            }
-        };
+        hanGradeDialog = new GradeDialogHandler(new WeakReference<PriceFragment>(this));
     }
 
     private void requestBannerInfo() {
@@ -232,9 +268,19 @@ public class PriceFragment extends LazyFragment implements View.OnClickListener,
         //banner加点
         banner.setBannerStyle(BannerConfig.CIRCLE_INDICATOR_TITLE_INSIDE);
         //记得设置标题列表哦
-        banner.setImageLoader(this);
+        banner.setImageLoader(new ImageLoader() {
+            @Override
+            public void displayImage(Context context, Object path, ImageView imageView) {
+                Glide
+                        .with(context)
+                        .load(path)
+                        .centerCrop()
+                        .crossFade()
+                        .into(imageView);
+            }
+        });
         //bannerde图片的点击事件
-        banner.setOnBannerClickListener(new OnBannerClickListener() {
+        banner.setOnBannerListener(new OnBannerListener() {
             @Override
             public void OnBannerClick(int position) {
                 ScrollImageModel scrollImageModel = scrollImageList.get(position - 1);
@@ -496,16 +542,6 @@ public class PriceFragment extends LazyFragment implements View.OnClickListener,
         textProvince.setText("");
         textType.setText("");
         textRank.setText("");
-    }
-
-    @Override
-    public void displayImage(Context context, Object path, ImageView imageView) {
-        Glide
-            .with(context)
-            .load(path)
-            .centerCrop()
-            .crossFade()
-            .into(imageView);
     }
 
     @Override

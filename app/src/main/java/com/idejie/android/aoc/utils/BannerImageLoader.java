@@ -10,7 +10,7 @@ import com.youth.banner.loader.ImageLoader;
  * Created by sxb on 2017/1/20.
  */
 
-public class BannerImageLoader implements ImageLoader {
+public class BannerImageLoader extends ImageLoader {
     @Override
     public void displayImage(Context context, Object path, ImageView imageView) {
         Glide

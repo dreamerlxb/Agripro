@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.3"
+    compileSdkVersion 27
+    buildToolsVersion '27.0.3'
     defaultConfig {
         applicationId "com.idejie.android.aoc"
         minSdkVersion 15
-        targetSdkVersion 24
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -29,41 +29,40 @@ repositories {
 
 }
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile project(':library')
-    testCompile 'junit:junit:4.12'
-    compile files('libs/MobCommons-2016.0830.1940.jar')
-    compile files('libs/MobTools-2016.0830.1940.jar')
-    compile files('libs/ShareSDK-Core-2.7.7.jar')
-    compile files('libs/ShareSDK-Email-2.7.7.jar')
-    compile files('libs/ShareSDK-QQ-2.7.7.jar')
-    compile files('libs/ShareSDK-QZone-2.7.7.jar')
-    compile files('libs/ShareSDK-ShortMessage-2.7.7.jar')
-    compile files('libs/ShareSDK-SinaWeibo-2.7.7.jar')
-    compile files('libs/ShareSDK-Wechat-2.7.7.jar')
-    compile files('libs/ShareSDK-Wechat-Core-2.7.7.jar')
-    compile files('libs/ShareSDK-Wechat-Moments-2.7.7.jar')
-    compile files('libs/AMapSearch_3.5.0_AMapLocation_3.0.0_20161019.jar')
-    compile 'com.jorge.circleview:circlelibrary:1.0.0'
-    compile 'com.github.bumptech.glide:glide:3.7.0'
-    compile 'com.bigkoo:pickerview:2.1.1'
-    compile 'com.github.bumptech.glide:glide:3.7.0'
-    compile 'com.android.support:support-v4:25.3.1'
-    compile 'com.squareup.okhttp3:okhttp:3.4.1'
-    compile 'com.squareup.okio:okio:1.9.0'
-    compile 'com.android.support:recyclerview-v7:25.3.1'
-    compile 'com.android.support:cardview-v7:25.3.1'
-    compile 'com.android.support:design:25.3.1'
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.strongloop:loopback-sdk-android:1.5.2'
-    compile 'com.youth.banner:banner:1.4.1'
-    compile 'com.android.support:support-vector-drawable:25.3.1'
-    compile 'com.zhy:flowlayout-lib:1.0.3'
-    compile 'com.qiniu:qiniu-android-sdk:7.3.6'
-    compile 'com.library.tangxiaolv:telegramgallery:1.0.3'
-    compile files('libs/gson-2.3.1.jar')
+    implementation project(':library')
+    testImplementation 'junit:junit:4.12'
+    implementation files('libs/MobCommons-2016.0830.1940.jar')
+    implementation files('libs/MobTools-2016.0830.1940.jar')
+    implementation files('libs/ShareSDK-Core-2.7.7.jar')
+    implementation files('libs/ShareSDK-Email-2.7.7.jar')
+    implementation files('libs/ShareSDK-QQ-2.7.7.jar')
+    implementation files('libs/ShareSDK-QZone-2.7.7.jar')
+    implementation files('libs/ShareSDK-ShortMessage-2.7.7.jar')
+    implementation files('libs/ShareSDK-SinaWeibo-2.7.7.jar')
+    implementation files('libs/ShareSDK-Wechat-2.7.7.jar')
+    implementation files('libs/ShareSDK-Wechat-Core-2.7.7.jar')
+    implementation files('libs/ShareSDK-Wechat-Moments-2.7.7.jar')
+    implementation files('libs/AMapSearch_3.5.0_AMapLocation_3.0.0_20161019.jar')
+    implementation 'com.jorge.circleview:circlelibrary:1.0.0'
+    implementation 'com.github.bumptech.glide:glide:3.7.0'
+    implementation 'com.bigkoo:pickerview:2.1.1'
+    implementation 'com.android.support:support-v4:27.1.1'
+    implementation 'com.squareup.okhttp3:okhttp:3.10.0'
+    implementation 'com.squareup.okio:okio:1.14.0'
+    implementation 'com.android.support:recyclerview-v7:27.1.1'
+    implementation 'com.android.support:cardview-v7:27.1.1'
+    implementation 'com.android.support:design:27.1.1'
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'com.strongloop:loopback-sdk-android:1.5.2'
+    implementation 'com.youth.banner:banner:1.4.10'
+    implementation 'com.android.support:support-vector-drawable:27.1.1'
+    implementation 'com.zhy:flowlayout-lib:1.0.3'
+    implementation 'com.qiniu:qiniu-android-sdk:7.3.6'
+    implementation 'com.library.tangxiaolv:telegramgallery:1.0.3'
+    implementation 'com.google.code.gson:gson:2.8.4'
 }
 
