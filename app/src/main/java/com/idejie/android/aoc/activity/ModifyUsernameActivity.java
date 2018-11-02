@@ -14,7 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.idejie.android.aoc.R;
-import com.idejie.android.aoc.application.UserApplication;
+import com.idejie.android.aoc.UserApplication;
 import com.idejie.android.aoc.model.UserModel;
 import com.idejie.android.aoc.repository.UserModelRepository;
 import com.strongloop.android.remoting.adapters.Adapter;

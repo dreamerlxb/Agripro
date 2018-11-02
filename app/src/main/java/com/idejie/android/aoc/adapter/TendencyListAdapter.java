@@ -27,7 +27,8 @@ public class TendencyListAdapter extends BaseAdapter {
         layoutInflater = LayoutInflater.from(context);
         priceModelList = new ArrayList<>();
     }
-    public TendencyListAdapter(Context context,List<PriceModel> models) {
+
+    public TendencyListAdapter(Context context, List<PriceModel> models) {
         layoutInflater = LayoutInflater.from(context);
         priceModelList = models;
         dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -53,28 +54,28 @@ public class TendencyListAdapter extends BaseAdapter {
         PriceModel priceModel = priceModelList.get(position);
 
         ViewHolder viewHolder;
-        if(convertView==null){
-            convertView = layoutInflater.inflate(R.layout.item_tend_list,null);
-            viewHolder=new ViewHolder();
-            viewHolder.textArea=(TextView)convertView.findViewById(R.id.text_area);
-            viewHolder.textSort=(TextView) convertView.findViewById(R.id.text_sort);
-            viewHolder.textRank= (TextView) convertView.findViewById(R.id.text_rank);
-            viewHolder.textPrice=(TextView)convertView.findViewById(R.id.text_price);
-            viewHolder.textDate=(TextView)convertView.findViewById(R.id.text_date);
+        if (convertView == null) {
+            convertView = layoutInflater.inflate(R.layout.item_tend_list, null);
+            viewHolder = new ViewHolder();
+            viewHolder.textArea = convertView.findViewById(R.id.text_area);
+            viewHolder.textSort = convertView.findViewById(R.id.text_sort);
+            viewHolder.textRank = convertView.findViewById(R.id.text_rank);
+            viewHolder.textPrice = convertView.findViewById(R.id.text_price);
+            viewHolder.textDate = convertView.findViewById(R.id.text_date);
             convertView.setTag(viewHolder);
-        }else{
-            viewHolder= (ViewHolder) convertView.getTag();
+        } else {
+            viewHolder = (ViewHolder) convertView.getTag();
         }
         viewHolder.textArea.setText(priceModel.getRegion().getProvince());
         viewHolder.textSort.setText(priceModel.getSort().getSubName());
         viewHolder.textRank.setText(priceModel.getGrade().getName());
-        viewHolder.textPrice.setText(priceModel.getPrice()+"");
+        viewHolder.textPrice.setText(priceModel.getPrice() + "");
         viewHolder.textDate.setText(dateFormat.format(priceModel.getPriceDate()));
 
         return convertView;
     }
 
-    class ViewHolder{
-        TextView textArea,textSort,textRank,textPrice,textDate;
+    class ViewHolder {
+        TextView textArea, textSort, textRank, textPrice, textDate;
     }
 }

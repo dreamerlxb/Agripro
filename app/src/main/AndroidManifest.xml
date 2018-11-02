@@ -41,7 +41,7 @@
     <uses-permission android:name="android.permission.READ_CONTACTS" />
 
     <application
-        android:name=".application.UserApplication"
+        android:name=".UserApplication"
         android:allowBackup="true"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/icon"
@@ -132,7 +132,7 @@
         <activity android:name=".activity.MyCommentActivity" />
         <activity android:name=".activity.SettingActivity" />
         <activity android:name=".activity.SearchNewsActivity" />
-        <activity android:name=".utils.PermissionsActivity"></activity>
+        <activity android:name=".utils.PermissionsActivity"/>
     </application>
 
 </manifest>

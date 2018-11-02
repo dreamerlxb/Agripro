@@ -1,4 +1,4 @@
-package com.idejie.android.aoc.application;
+package com.idejie.android.aoc;
 
 import android.app.Application;
 

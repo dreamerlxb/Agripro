@@ -19,31 +19,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
 import com.idejie.android.aoc.R;
-import com.idejie.android.aoc.application.UserApplication;
+import com.idejie.android.aoc.UserApplication;
 import com.idejie.android.aoc.dialog.FollowItemDialog;
 import com.idejie.android.aoc.fragment.tab.CommonUtil;
 import com.idejie.android.aoc.model.CommentModel;
-import com.idejie.android.aoc.model.FavourModel;
 import com.idejie.android.aoc.model.NewsModel;
 import com.idejie.android.aoc.repository.CommentRepository;
-import com.idejie.android.aoc.repository.FavourRepository;
 import com.strongloop.android.remoting.adapters.Adapter;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.lang.reflect.Type;
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;

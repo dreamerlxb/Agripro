@@ -22,7 +22,7 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.idejie.android.aoc.R;
-import com.idejie.android.aoc.application.UserApplication;
+import com.idejie.android.aoc.UserApplication;
 import com.idejie.android.aoc.dialog.PriceItemDialog;
 import com.idejie.android.aoc.fragment.tab.CommonUtil;
 import com.idejie.android.aoc.model.PriceModel;

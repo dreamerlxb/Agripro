@@ -53,7 +53,7 @@ import java.util.Map;
 /**
  * Created by shandongdaxue on 16/8/10.
  */
-public class SearchFragment extends LazyFragment implements View.OnClickListener,AMapLocationListener{
+public class SearchFragment extends LazyFragment implements View.OnClickListener, AMapLocationListener {
 
     public static final String INTENT_STRING_TABNAME = "intent_String_tabname";
     public static final String INTENT_INT_INDEX = "intent_int_index";
@@ -73,6 +73,7 @@ public class SearchFragment extends LazyFragment implements View.OnClickListener
     private Handler hanProvinceDialog;
     private Dialog loadingDialog;
     private ArrayMap<String, List<RegionModel>> chinaMap;
+
     /**
      * 初始化操作
      */
@@ -81,7 +82,7 @@ public class SearchFragment extends LazyFragment implements View.OnClickListener
         super.onCreate(savedInstanceState);
     }
 
-    private void initLocationClient(){
+    private void initLocationClient() {
         locationClient = new AMapLocationClient(getContext());
         locationClient.setLocationListener(this);
 
@@ -102,14 +103,14 @@ public class SearchFragment extends LazyFragment implements View.OnClickListener
     @Override
     protected void onCreateViewLazy(Bundle savedInstanceState) {
         super.onCreateViewLazy(savedInstanceState);
-        Log.d("SearchFragment","onCreateViewLazy");
+        Log.d("SearchFragment", "onCreateViewLazy");
         setContentView(R.layout.fragment_search);
 
         tendBtn = (Button) findViewById(R.id.btn_tendency);
         tendBtn.setOnClickListener(this);
         regionTxt = (TextView) findViewById(R.id.location_txt);
         regionTxt.setOnClickListener(this);
-        listView= (ListView) findViewById(R.id.listView);
+        listView = (ListView) findViewById(R.id.listView);
 
         emptyView = findViewById(R.id.list_no_data);
         listView.setEmptyView(emptyView);
@@ -137,10 +138,10 @@ public class SearchFragment extends LazyFragment implements View.OnClickListener
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.btn_tendency:
-                Intent intent=new Intent(getContext(), TendencyActivity.class);
-                if (locationRegion == null){
+                Intent intent = new Intent(getContext(), TendencyActivity.class);
+                if (locationRegion == null) {
                     intent.putExtra("defaultRegionId", 1);
                     intent.putExtra("defaultRegionName", "北京");
                 } else {
@@ -165,36 +166,38 @@ public class SearchFragment extends LazyFragment implements View.OnClickListener
                 break;
         }
     }
+
     //获取选择的城市的Id
-    private void getCityId(String city,String provinceName) {
-        RegionRepository regionRepository = RegionRepository.getInstance(getContext(),null);
-        Map<String,Object> params = new HashMap<>();
-        Map<String,Object> filter = new HashMap<>();
-        Map<String,Object> where = new HashMap<>();
+    private void getCityId(String city, String provinceName) {
+        RegionRepository regionRepository = RegionRepository.getInstance(getContext(), null);
+        Map<String, Object> params = new HashMap<>();
+        Map<String, Object> filter = new HashMap<>();
+        Map<String, Object> where = new HashMap<>();
 
         if (TextUtils.isEmpty(provinceName)) { //说明是直辖市，港澳台，自治区
-            where.put("province",city);
+            where.put("province", city);
         } else {
-            where.put("province",provinceName);//说明是普通省市
-            where.put("city",city);
+            where.put("province", provinceName);//说明是普通省市
+            where.put("city", city);
         }
 
-        filter.put("where",where);
-        params.put("filter",filter);
+        filter.put("where", where);
+        params.put("filter", filter);
         regionRepository.invokeStaticMethod("all", params, new Adapter.JsonArrayCallback() {
             @Override
             public void onSuccess(JSONArray response) {
-                if (response.length()>0){
+                if (response.length() > 0) {
                     JSONObject jsonObject = response.optJSONObject(0);
                     Gson gson = new Gson();
-                    locationRegion = gson.fromJson(jsonObject.toString(),RegionModel.class);
-                    Log.i("locationRegion",locationRegion.toString());
+                    locationRegion = gson.fromJson(jsonObject.toString(), RegionModel.class);
+                    Log.i("locationRegion", locationRegion.toString());
                     initListData();
                 }
             }
+
             @Override
             public void onError(Throwable t) {
-                Log.i("locationRegion",t.toString());
+                Log.i("locationRegion", t.toString());
             }
         });
     }
@@ -202,18 +205,18 @@ public class SearchFragment extends LazyFragment implements View.OnClickListener
     /**
      * 初始化列表信息
      * 同一个地区的同一品种的涨跌（只与前一天比较）
-     * */
-    private void initListData(){
+     */
+    private void initListData() {
         Date startDate = null;
         Date endDate = new Date(); //此时此刻
         final String nowStr = dateFormat.format(endDate); // "2016-10-19";//
         try {
             Date today = dateFormat.parse(nowStr); // 今天的 00:00:00
-            startDate = new Date(today.getTime() - 24*60*60*1000); //开始时间为起那一天的00:00:00
+            startDate = new Date(today.getTime() - 24 * 60 * 60 * 1000); //开始时间为起那一天的00:00:00
 
-            Log.d("today",dateFormat.format(today));
-            Log.d("startDate",dateFormat.format(startDate));
-            Log.d("endDate",dateFormat.format(endDate));
+            Log.d("today", dateFormat.format(today));
+            Log.d("startDate", dateFormat.format(startDate));
+            Log.d("endDate", dateFormat.format(endDate));
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -223,38 +226,38 @@ public class SearchFragment extends LazyFragment implements View.OnClickListener
         Map<String, Object> where = new HashMap<String, Object>();
         final Map<String, Object> priceDate = new HashMap<String, Object>();
 
-        priceDate.put("lt",endDate);
-        priceDate.put("gte",startDate);
+        priceDate.put("lt", endDate);
+        priceDate.put("gte", startDate);
 
-        where.put("priceDate",priceDate);
+        where.put("priceDate", priceDate);
         if (locationRegion == null) {
-            where.put("regionId",1); //以北京为例
+            where.put("regionId", 1); //以北京为例
         } else {
-            where.put("regionId",locationRegion.getId());
+            where.put("regionId", locationRegion.getId());
         }
 
-        filterMap.put("where",where);
+        filterMap.put("where", where);
 
         List<String> include = new ArrayList<>();
         include.add("sort");
         include.add("grade");
         include.add("region");
 
-        filterMap.put("include",include);
+        filterMap.put("include", include);
 
         List<String> order = new ArrayList<>();
         order.add("sortId");
         order.add("priceDate");
 
-        filterMap.put("order",order); //按品种排序
+        filterMap.put("order", order); //按品种排序
 
         Gson gson1 = new Gson();
-        String filterStr =  gson1.toJson(filterMap);
+        String filterStr = gson1.toJson(filterMap);
 
-        params.put("filter",filterStr);
+        params.put("filter", filterStr);
 
         showLoadingDialog(true);
-        PriceRepository priceRepository = PriceRepository.getInstance(getContext(),null);
+        PriceRepository priceRepository = PriceRepository.getInstance(getContext(), null);
         priceRepository.invokeStaticMethod("all", params, new Adapter.JsonArrayCallback() {
             @Override
             public void onSuccess(JSONArray response) {
@@ -266,11 +269,11 @@ public class SearchFragment extends LazyFragment implements View.OnClickListener
                     yesterdayPriceList.clear();
                     for (int i = 0; i < len; i++) {
                         JSONObject jsonObject = response.optJSONObject(i);
-                        PriceModel priceModel = gson.fromJson(jsonObject.toString(),PriceModel.class);
+                        PriceModel priceModel = gson.fromJson(jsonObject.toString(), PriceModel.class);
 
                         String priceDateStr = dateFormat.format(priceModel.getPriceDate());
 
-                        if (TextUtils.equals(nowStr,priceDateStr)) {
+                        if (TextUtils.equals(nowStr, priceDateStr)) {
                             //今天同一产品
                             todayPriceList.add(priceModel);
                         } else {
@@ -290,10 +293,11 @@ public class SearchFragment extends LazyFragment implements View.OnClickListener
             }
         });
     }
+
     /**
      * 计算今天的同一产品的平均价格
-     * */
-    private List<RiseAndFallBean> calculateToday(){
+     */
+    private List<RiseAndFallBean> calculateToday() {
         int lastSortId1 = -1;
         double sumPrice1 = 0;
         int num1 = 0;
@@ -308,10 +312,10 @@ public class SearchFragment extends LazyFragment implements View.OnClickListener
                 sumPrice1 += priceModel.getPrice();
                 num1 += 1;
             } else {
-                if (num1 > 0){
+                if (num1 > 0) {
                     RiseAndFallBean temp = new RiseAndFallBean();
                     temp.setId(lastSortId1);
-                    temp.setPrice(sumPrice1/num1);
+                    temp.setPrice(sumPrice1 / num1);
                     temp.setDateStr(dateFormat.format(lastPrice1.getPriceDate()));
                     if (lastPrice1.getRegion().getCity() != null) {
                         temp.setRegion(lastPrice1.getRegion().getCity());
@@ -327,10 +331,10 @@ public class SearchFragment extends LazyFragment implements View.OnClickListener
                 lastPrice1 = priceModel;
             }
 
-            if (i == len1-1) {
+            if (i == len1 - 1) {
                 RiseAndFallBean temp = new RiseAndFallBean();
                 temp.setId(lastSortId1);
-                temp.setPrice(sumPrice1/num1);
+                temp.setPrice(sumPrice1 / num1);
                 temp.setDateStr(dateFormat.format(lastPrice1.getPriceDate()));
                 if (lastPrice1.getRegion().getCity() != null) {
                     temp.setRegion(lastPrice1.getRegion().getCity());
@@ -344,10 +348,11 @@ public class SearchFragment extends LazyFragment implements View.OnClickListener
 
         return todayList;
     }
+
     /**
      * 计算昨天的同一品种的平均价格
-     * */
-    private SparseArray<RiseAndFallBean> calculateYesterday(){
+     */
+    private SparseArray<RiseAndFallBean> calculateYesterday() {
         int lastSortId2 = -1;
         double sumPrice2 = 0;
         int num2 = 0;
@@ -358,16 +363,16 @@ public class SearchFragment extends LazyFragment implements View.OnClickListener
         SparseArray<RiseAndFallBean> yesterdayMap = new SparseArray<>(); //昨天的价格都是按照sortId排序
 
         for (int i = 0; i < len2; i++) { //所有的数据都是根据sortId排好序的
-            if (i<len2){ //分析昨天的报价信息
+            if (i < len2) { //分析昨天的报价信息
                 PriceModel priceModel = yesterdayPriceList.get(i);
                 if (priceModel.getSortId() == lastSortId2) {
                     sumPrice2 += priceModel.getPrice();
                     num2 += 1;
                 } else {
-                    if (num2 > 0){
+                    if (num2 > 0) {
                         RiseAndFallBean temp = new RiseAndFallBean();
                         temp.setId(lastSortId2);
-                        temp.setPrice(sumPrice2/num2);
+                        temp.setPrice(sumPrice2 / num2);
                         temp.setDateStr(dateFormat.format(lastPrice2.getPriceDate()));
                         if (lastPrice2.getRegion().getCity() != null) {
                             temp.setRegion(lastPrice2.getRegion().getCity());
@@ -375,7 +380,7 @@ public class SearchFragment extends LazyFragment implements View.OnClickListener
                             temp.setRegion(lastPrice2.getRegion().getProvince());
                         }
                         temp.setSort(lastPrice2.getSort().getSubName());
-                        yesterdayMap.put(lastSortId2,temp);
+                        yesterdayMap.put(lastSortId2, temp);
                     }
                     sumPrice2 = priceModel.getPrice();
                     num2 = 1;
@@ -383,10 +388,10 @@ public class SearchFragment extends LazyFragment implements View.OnClickListener
                     lastPrice2 = priceModel;
                 }
 
-                if (i == len2-1) {
+                if (i == len2 - 1) {
                     RiseAndFallBean temp = new RiseAndFallBean();
                     temp.setId(lastSortId2);
-                    temp.setPrice(sumPrice2/num2);
+                    temp.setPrice(sumPrice2 / num2);
                     temp.setDateStr(dateFormat.format(lastPrice2.getPriceDate()));
                     if (lastPrice2.getRegion().getCity() != null) {
                         temp.setRegion(lastPrice2.getRegion().getCity());
@@ -394,15 +399,16 @@ public class SearchFragment extends LazyFragment implements View.OnClickListener
                         temp.setRegion(lastPrice2.getRegion().getProvince());
                     }
                     temp.setSort(lastPrice2.getSort().getSubName());
-                    yesterdayMap.put(lastSortId2,temp);
+                    yesterdayMap.put(lastSortId2, temp);
                 }
             }
         }
 
         return yesterdayMap;
     }
+
     //判断涨跌
-    private void calculateRiseAndFall(){
+    private void calculateRiseAndFall() {
         List<RiseAndFallBean> todayList = calculateToday();
         SparseArray<RiseAndFallBean> yesterdayMap = calculateYesterday();
 
@@ -437,22 +443,22 @@ public class SearchFragment extends LazyFragment implements View.OnClickListener
                 String province = aMapLocation.getProvince();
                 String city = aMapLocation.getCity();
                 loc = true;
-                Log.i("Province",province);
-                Log.i("City",city);
+                Log.i("Province", province);
+                Log.i("City", city);
 
                 regionTxt.setText(city);
                 regionTxt.setEnabled(true);
 
                 if (locationRegion != null) {
-                    if (TextUtils.equals(locationRegion.getCity(),city) || TextUtils.equals(locationRegion.getProvince(),city)) {
+                    if (TextUtils.equals(locationRegion.getCity(), city) || TextUtils.equals(locationRegion.getProvince(), city)) {
                         initListData();
                         return;
                     }
                 }
                 if (TextUtils.isEmpty(province)) {
-                    getCityId(city,null); //直辖市，港澳台。自治区
+                    getCityId(city, null); //直辖市，港澳台。自治区
                 } else {
-                    getCityId(city,province);
+                    getCityId(city, province);
                 }
             }
         }

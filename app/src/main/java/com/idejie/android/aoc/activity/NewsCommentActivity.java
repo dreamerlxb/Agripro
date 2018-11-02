@@ -15,14 +15,11 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.idejie.android.aoc.R;
-import com.idejie.android.aoc.application.UserApplication;
+import com.idejie.android.aoc.UserApplication;
 import com.idejie.android.aoc.fragment.tab.CommonUtil;
 import com.idejie.android.aoc.model.CommentModel;
-import com.idejie.android.aoc.model.ImageModel;
 import com.idejie.android.aoc.repository.CommentRepository;
-import com.idejie.android.aoc.repository.ImageRepository;
 import com.strongloop.android.remoting.adapters.Adapter;
 
 import org.json.JSONArray;

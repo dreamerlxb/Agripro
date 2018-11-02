@@ -25,19 +25,20 @@ public class RiseAndFallListAdapter extends BaseAdapter {
     private Context context;
     private List<RiseAndFallBean> riseAndFallBeanList;
 
-    public RiseAndFallListAdapter(Context context, List<RiseAndFallBean> objects){
-        this.context=context;
+    public RiseAndFallListAdapter(Context context, List<RiseAndFallBean> objects) {
+        this.context = context;
         riseAndFallBeanList = objects;
     }
-    public RiseAndFallListAdapter(Context context){
-        this(context,new ArrayList<RiseAndFallBean>());
+
+    public RiseAndFallListAdapter(Context context) {
+        this(context, new ArrayList<RiseAndFallBean>());
     }
 
-    public void addItems(List<RiseAndFallBean> objects){
+    public void addItems(List<RiseAndFallBean> objects) {
         riseAndFallBeanList.addAll(objects);
     }
 
-    public void updateItems(List<RiseAndFallBean> objects){
+    public void updateItems(List<RiseAndFallBean> objects) {
         riseAndFallBeanList.clear();
         riseAndFallBeanList.addAll(objects);
     }
@@ -58,19 +59,19 @@ public class RiseAndFallListAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView( int position,View convertView,ViewGroup parent){
+    public View getView(int position, View convertView, ViewGroup parent) {
         RiseAndFallBean textTendList = riseAndFallBeanList.get(position);
         ViewHolder viewHolder;
-        if(convertView==null){
-            convertView= LayoutInflater.from(context).inflate(R.layout.rise_fall_list_item,null);
-            viewHolder=new ViewHolder();
-            viewHolder.textArea=(TextView)convertView.findViewById(R.id.text_area);
-            viewHolder.textSort=(TextView) convertView.findViewById(R.id.text_sort);
-            viewHolder.textRank= (TextView) convertView.findViewById(R.id.text_rank);
-            viewHolder.textPrice=(TextView)convertView.findViewById(R.id.text_price);
+        if (convertView == null) {
+            convertView = LayoutInflater.from(context).inflate(R.layout.rise_fall_list_item, null);
+            viewHolder = new ViewHolder();
+            viewHolder.textArea = convertView.findViewById(R.id.text_area);
+            viewHolder.textSort = convertView.findViewById(R.id.text_sort);
+            viewHolder.textRank = convertView.findViewById(R.id.text_rank);
+            viewHolder.textPrice = convertView.findViewById(R.id.text_price);
             convertView.setTag(viewHolder);
-        }else{
-            viewHolder=(ViewHolder) convertView.getTag();
+        } else {
+            viewHolder = (ViewHolder) convertView.getTag();
         }
         viewHolder.textArea.setText(textTendList.getRegion());
         viewHolder.textSort.setText(textTendList.getSort());
@@ -81,7 +82,7 @@ public class RiseAndFallListAdapter extends BaseAdapter {
     }
 
 
-    class ViewHolder{
-        TextView textArea,textSort,textRank,textPrice;//textDate;
+    class ViewHolder {
+        TextView textArea, textSort, textRank, textPrice;//textDate;
     }
 }

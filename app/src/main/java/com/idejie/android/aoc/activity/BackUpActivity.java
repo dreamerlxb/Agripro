@@ -1,12 +1,9 @@
 package com.idejie.android.aoc.activity;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Dialog;
 import android.content.pm.PackageManager;
 import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -16,7 +13,6 @@ import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 
 import android.os.Build;
 import android.os.Bundle;
@@ -73,7 +69,7 @@ public class BackUpActivity extends AppCompatActivity implements LoaderCallbacks
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_back_up);
-        backImg = (ImageView) findViewById(R.id.back_img);
+        backImg = findViewById(R.id.back_img);
         backImg.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -81,16 +77,16 @@ public class BackUpActivity extends AppCompatActivity implements LoaderCallbacks
             }
         });
 
-        codeBtn = (Button) findViewById(R.id.button);
+        codeBtn = findViewById(R.id.button);
         codeBtn.setOnClickListener(this);
-        mEmailView = (AutoCompleteTextView) findViewById(R.id.signupPhone);
+        mEmailView = findViewById(R.id.signupPhone);
         mEmailView.addTextChangedListener(this);
         populateAutoComplete();
-        editCode = (EditText) findViewById(R.id.code);
+        editCode = findViewById(R.id.code);
         editCode.addTextChangedListener(this);
-        mPasswordView = (EditText) findViewById(R.id.password);
+        mPasswordView = findViewById(R.id.password);
         mPasswordView.addTextChangedListener(this);
-        mPasswordRepeat = (EditText) findViewById(R.id.password2);
+        mPasswordRepeat = findViewById(R.id.password2);
         mPasswordRepeat.addTextChangedListener(this);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -103,7 +99,7 @@ public class BackUpActivity extends AppCompatActivity implements LoaderCallbacks
             }
         });
 
-        mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
+        mEmailSignInButton = findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setBackgroundResource(R.color.gray_light);
         mEmailSignInButton.setEnabled(false);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {

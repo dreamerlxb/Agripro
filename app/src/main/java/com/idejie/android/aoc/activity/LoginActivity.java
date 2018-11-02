@@ -1,13 +1,10 @@
 package com.idejie.android.aoc.activity;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -38,18 +35,14 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.idejie.android.aoc.R;
-import com.idejie.android.aoc.application.UserApplication;
-import com.idejie.android.aoc.model.ImageModel;
+import com.idejie.android.aoc.UserApplication;
 import com.idejie.android.aoc.model.UserModel;
 import com.idejie.android.aoc.repository.UserModelRepository;
 import com.idejie.android.aoc.utils.LoadingDialog;
-import com.strongloop.android.loopback.callbacks.ObjectCallback;
 import com.strongloop.android.remoting.adapters.Adapter;
 
 import org.json.JSONObject;

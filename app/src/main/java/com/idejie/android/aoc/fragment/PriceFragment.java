@@ -1,17 +1,14 @@
 package com.idejie.android.aoc.fragment;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.util.ArrayMap;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -31,7 +28,7 @@ import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.idejie.android.aoc.R;
 import com.idejie.android.aoc.activity.NewsDetailActivity;
-import com.idejie.android.aoc.application.UserApplication;
+import com.idejie.android.aoc.UserApplication;
 import com.idejie.android.aoc.dialog.GradeDialog;
 import com.idejie.android.aoc.dialog.ProvinceTDialog;
 import com.idejie.android.aoc.dialog.SortDialog;
@@ -52,7 +49,6 @@ import com.strongloop.android.remoting.adapters.Adapter;
 import com.youth.banner.Banner;
 import com.youth.banner.BannerConfig;
 
-import com.youth.banner.listener.OnBannerClickListener;
 import com.youth.banner.listener.OnBannerListener;
 import com.youth.banner.loader.ImageLoader;
 

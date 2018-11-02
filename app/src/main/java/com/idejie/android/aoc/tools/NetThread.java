@@ -23,29 +23,28 @@ import java.util.List;
 /**
  * Created by draft on 2015/7/23.
  */
-public class NetThread extends Thread{
+public class NetThread extends Thread {
     private String params;
     private String url;
     private Handler han;
-    String result="";
+    String result = "";
 
-    public NetThread(Handler han, String url, String params){
-        this.han=han;
-        this.url=url;
+    public NetThread(Handler han, String url, String params) {
+        this.han = han;
+        this.url = url;
         this.params = params;
     }
-
 
 
     @Override
     public void run() {
         // TODO Auto-generated method stub
-        HttpURLConnection connection=null;
+        HttpURLConnection connection = null;
         try {
-            URL realUrl =new URL(url);
-            Log.d("test","n1");
+            URL realUrl = new URL(url);
+            Log.d("test", "n1");
             //打开和URL之间的连接
-            connection=(HttpURLConnection)realUrl.openConnection();
+            connection = (HttpURLConnection) realUrl.openConnection();
             //设置通用的请求属性
 
             connection.setRequestMethod("POST");
@@ -54,29 +53,28 @@ public class NetThread extends Thread{
             connection.setRequestProperty("Accept-Charset", "UTF-8");
             connection.setRequestProperty("contentType", "utf-8");
             connection.setReadTimeout(8000);
-            Log.d("test","n2");
-            DataOutputStream out=new DataOutputStream(connection.getOutputStream());
-            Log.d("test","n3");
+            Log.d("test", "n2");
+            DataOutputStream out = new DataOutputStream(connection.getOutputStream());
+            Log.d("test", "n3");
             out.writeBytes(params);
-            InputStream in=connection.getInputStream();
+            InputStream in = connection.getInputStream();
             //对获取的输入流进行读取
-            BufferedReader reader=new BufferedReader(new InputStreamReader(in));
-            StringBuilder response= new StringBuilder();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+            StringBuilder response = new StringBuilder();
             String line;
-            while ((line=reader.readLine())!=null)
-            {
-                result+=line;
+            while ((line = reader.readLine()) != null) {
+                result += line;
             }
-            Log.d("======Net thread=====","result"+"................."+result);
-            if(result.equals("1")){
-                Message mess=new Message();
-                mess.what=1;
-                mess.obj =result;
+            Log.d("======Net thread=====", "result" + "................." + result);
+            if (result.equals("1")) {
+                Message mess = new Message();
+                mess.what = 1;
+                mess.obj = result;
                 han.sendMessage(mess);
 
-            }else {
-                Message mess=new Message();
-                mess.what=0;
+            } else {
+                Message mess = new Message();
+                mess.what = 0;
                 mess.obj = result;
                 han.sendMessage(mess);
             }
@@ -85,8 +83,8 @@ public class NetThread extends Thread{
             // TODO Auto-generated catch block
             Log.i("===== Net Exception ==", e.toString());
             e.printStackTrace();
-        }finally {
-            if (connection!=null){
+        } finally {
+            if (connection != null) {
                 connection.disconnect();
             }
         }

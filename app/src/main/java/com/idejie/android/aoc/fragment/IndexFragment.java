@@ -136,25 +136,26 @@ public class IndexFragment extends LazyFragment implements View.OnClickListener 
                 convertView = inflate.inflate(R.layout.tab_top, container, false);
             }
             TextView textView = (TextView) convertView;
-            if (tabName=="主页"){
-               switch (position) {
-                   case 0:
-                       textView.setText("要闻");
-                       break;
-                   case 1:
-                       textView.setText("监测");
-                       break;
-                   case 2:
-                       textView.setText("展望");
-                       break;
-                   case 3:
-                       textView.setText("预警");
-                       break;
-               }
+            if (tabName == "主页") {
+                switch (position) {
+                    case 0:
+                        textView.setText("要闻");
+                        break;
+                    case 1:
+                        textView.setText("监测");
+                        break;
+                    case 2:
+                        textView.setText("展望");
+                        break;
+                    case 3:
+                        textView.setText("预警");
+                        break;
+                }
             }
             return convertView;
         }
-       //  每个tab对应的Fragment(要闻,检测,展望,预警)
+
+        //  每个tab对应的Fragment(要闻,检测,展望,预警)
         @Override
         public Fragment getFragmentForPage(int position) {
             SecondLayerFragment mainFragment = new SecondLayerFragment();

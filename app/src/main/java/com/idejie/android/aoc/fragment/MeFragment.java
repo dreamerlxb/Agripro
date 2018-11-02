@@ -27,7 +27,7 @@ import com.idejie.android.aoc.activity.MyCommentActivity;
 import com.idejie.android.aoc.activity.MyPriceActivity;
 import com.idejie.android.aoc.activity.SettingActivity;
 import com.idejie.android.aoc.activity.TuiActivity;
-import com.idejie.android.aoc.application.UserApplication;
+import com.idejie.android.aoc.UserApplication;
 import com.idejie.android.aoc.dialog.UploadDialog;
 import com.idejie.android.aoc.fragment.utils.CircleImageView;
 import com.idejie.android.aoc.model.ImageModel;
